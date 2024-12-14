@@ -6,7 +6,10 @@
 #define OBUUID_hpp
 
 #include "OBBase.h"
+
+#if OB_TARGET_OS_DARWIN
 #include <Foundation/Foundation.h>
+#endif
 
 typedef struct OBUUID {
     uint8_t bytes[16];
@@ -14,9 +17,11 @@ typedef struct OBUUID {
 
 OB_EXTERN_C_BEGIN
 
+#if OB_TARGET_OS_DARWIN
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
 OBUUID OBUUIDInitFromNSUUID(NSUUID *uuid) OB_SWIFT_NAME(OBUUID.init(uuid:));
+#endif
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT

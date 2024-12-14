@@ -4,11 +4,13 @@
 
 #include "OBUUID.h"
 
+#if OB_TARGET_OS_DARWIN
 OBUUID OBUUIDInitFromNSUUID(NSUUID *uuid) {
     OBUUID ob_uuid;
     [uuid getUUIDBytes:ob_uuid.bytes];
     return ob_uuid;
 }
+#endif
 
 OBUUID OBUUIDInitFromHash(uint64_t words0, uint64_t words1, uint32_t words2) {
     OBUUID ob_uuid;

@@ -26,7 +26,8 @@ struct UUIDTests {
             ]
         ),
     ])
-    func foundationUUID(uuid: UUID, expectedBytes: [UInt8]) async throws {
+    func foundationUUID(uuid: UUID, expectedBytes: [UInt8]) {
+        #if canImport(Darwin)
         let id = OBUUID(uuid: uuid)
         let bytes = id.bytes
         #expect(bytes.0 == expectedBytes[0])
@@ -45,6 +46,11 @@ struct UUIDTests {
         #expect(bytes.13 == expectedBytes[13])
         #expect(bytes.14 == expectedBytes[14])
         #expect(bytes.15 == expectedBytes[15])
+        #else
+        withKnownIssue {
+            Issue.record("NSUUID supported on non-Darwin platforms")
+        }
+        #endif
     }
     
     @Test(arguments: [
@@ -76,7 +82,7 @@ struct UUIDTests {
             ]
         ),
     ])
-    func strongHashUUID(words: (UInt32, UInt32, UInt32, UInt32, UInt32), expectedBytes: [UInt8]) async throws {
+    func strongHashUUID(words: (UInt32, UInt32, UInt32, UInt32, UInt32), expectedBytes: [UInt8]) {
         let id: OBUUID = OBUUID(hash: UInt64(words.0) | UInt64(words.1) &<< 32, UInt64(words.2) | UInt64(words.3) &<< 32, words.4)
         let bytes = id.bytes
         #expect(bytes.0 == expectedBytes[0])
