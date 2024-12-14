@@ -4,6 +4,8 @@
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FOpenSwiftUIProject%2FOpenBox%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/OpenSwiftUIProject/OpenBox)
 
+[![codecov](https://codecov.io/github/OpenSwiftUIProject/OpenBox/graph/badge.svg?token=1MC561FQUR)](https://codecov.io/github/OpenSwiftUIProject/OpenBox)
+
 OpenBox is an open source implementation of Apple's Private framework - RenderBox.
 
 RenderBox is a high performance rendering engine written in C++.
