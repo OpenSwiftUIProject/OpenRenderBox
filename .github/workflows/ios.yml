@@ -1,0 +1,61 @@
+name: iOS 
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ios_test:
+    name: Execute tests on iOS
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15]
+        xcode-version: ["16.0"]   # Swift 6.0
+        ios-version: ["18.0"]
+        include:
+          - ios-version: "18.0"
+            ios-simulator-name: "iPhone 16 Pro"
+    runs-on: ${{ matrix.os }}
+    env:
+      OPENBOX_WERROR: 1
+      OPENBOX_RENDERBOX: 0
+      OPENBOX_COMPATIBILITY_TEST: 0
+      OPENBOX_USE_LOCAL_DEPS: 1
+      OPENBOX_TARGET_RELEASE: 2024
+      DARWIN_PRIVATE_FRAMEWORKS_TARGET_RELEASE: 2024
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ matrix.xcode-version }}
+      - name: Swift version
+        run: swift --version
+      - name: Set up build environment
+        run: Scripts/CI/darwin_setup_build.sh
+        shell: bash
+      - name: Build in debug mode on iOS
+        run: |
+          xcodebuild build \
+            -scheme OpenBox-Package \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,OS=${{ matrix.ios-version }},name=${{ matrix.ios-simulator-name }}" \
+            -derivedDataPath .build-debug \
+            -skipMacroValidation \
+            -skipPackagePluginValidation \
+            OTHER_SWIFT_FLAGS="-warnings-as-errors"
+      - name: Build and run tests in debug mode with coverage on iOS Simulator
+        run: |
+          xcodebuild test \
+            -scheme OpenBox-Package \
+            -configuration Debug \
+            -destination "platform=iOS Simulator,OS=${{ matrix.ios-version }},name=${{ matrix.ios-simulator-name }}" \
+            -enableCodeCoverage=YES \
+            -derivedDataPath .build-test-debug \
+            -skipPackagePluginValidation \
+            -skipMacroValidation
+            # OTHER_SWIFT_FLAGS="-warnings-as-errors" Conflicting options '-warnings-as-errors' and '-suppress-warnings'

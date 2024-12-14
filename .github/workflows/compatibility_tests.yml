@@ -1,0 +1,49 @@
+name: Compatibility tests 
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  compatibility_tests_macos:
+    name: Execute compatibility tests
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            xcode-version: "16.0"   # Swift 6.0
+    runs-on: ${{ matrix.os }}
+    env:
+      OPENBOX_WERROR: 1
+      OPENBOX_RENDERBOX: 1
+      OPENBOX_COMPATIBILITY_TEST: 1
+      OPENBOX_USE_LOCAL_DEPS: 1
+      OPENBOX_TARGET_RELEASE: 2024
+      DARWIN_PRIVATE_FRAMEWORKS_TARGET_RELEASE: 2024
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: ${{ matrix.xcode-version }}
+      - name: Set up build environment
+        run: Scripts/CI/darwin_setup_build.sh
+        shell: bash
+      - name: Swift version
+        run: swift --version
+      - name: Run tests against Apple's RENDERBOX on macOS via SwiftPM
+        run: |
+          swift test \
+            --build-path .build-compatibility-test-debug
+      - name: Run tests against Apple's RENDERBOX on macOS via Xcode
+        run: |
+          xcodebuild test \
+            -scheme OpenBox-Package \
+            -sdk macosx \
+            -destination "platform=macOS" \
+            -skipPackagePluginValidation \
+            -skipMacroValidation
