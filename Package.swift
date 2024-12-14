@@ -1,5 +1,6 @@
 // swift-tools-version: 6.0
 
+import Foundation
 import PackageDescription
 
 func envEnable(_ key: String, default defaultValue: Bool = false) -> Bool {
@@ -22,7 +23,15 @@ let development = envEnable("OPENBOX_DEVELOPMENT")
 
 let releaseVersion = Context.environment["OPENBOX_TARGET_RELEASE"].flatMap { Int($0) } ?? 2024
 
-let sharedCSettings: [CSetting] = []
+let swiftBinPath = Context.environment["_"] ?? "/usr/bin/swift"
+let swiftBinURL = URL(fileURLWithPath: swiftBinPath)
+let SDKPath = swiftBinURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().path
+let includePath = SDKPath.appending("/usr/lib/swift")
+
+let sharedCSettings: [CSetting] = [
+    .unsafeFlags(["-I", includePath], .when(platforms: .nonDarwinPlatforms)),
+    .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
+]
 let sharedSwiftSettings: [SwiftSetting] = []
 
 // MARK: - Targets
@@ -125,5 +134,3 @@ extension [Platform] {
         [.linux, .android, .wasi, .openbsd, .windows]
     }
 }
-
-
