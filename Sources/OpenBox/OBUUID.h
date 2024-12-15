@@ -25,7 +25,7 @@ OBUUID OBUUIDInitFromNSUUID(NSUUID *uuid) OB_SWIFT_NAME(OBUUID.init(uuid:));
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-OBUUID OBUUIDInitFromHash(uint64_t words0, uint64_t words1, uint32_t words2) OB_SWIFT_NAME(OBUUID.init(hash:_:_:));
+OBUUID OBUUIDInitFromHash(uint64_t words0, uint64_t words1, uint32_t words2) OB_SWIFT_NAME(OBUUID.init(_:_:_:));
 
 OB_EXTERN_C_END
 
