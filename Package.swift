@@ -30,6 +30,12 @@ let includePath = SDKPath.appending("/usr/lib/swift")
 
 let sharedCSettings: [CSetting] = [
     .unsafeFlags(["-I", includePath], .when(platforms: .nonDarwinPlatforms)),
+    .unsafeFlags(["-fmodules"]),
+    .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
+]
+let sharedCxxSettings: [CXXSetting] = [
+    .unsafeFlags(["-I", includePath], .when(platforms: .nonDarwinPlatforms)),
+    .unsafeFlags(["-fcxx-modules"]),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
 ]
 let sharedSwiftSettings: [SwiftSetting] = [
@@ -40,7 +46,8 @@ let sharedSwiftSettings: [SwiftSetting] = [
 
 let openBoxTarget = Target.target(
     name: "OpenBox",
-    cSettings: sharedCSettings
+    cSettings: sharedCSettings,
+    cxxSettings: sharedCxxSettings
 )
 let openBoxShimsTarget = Target.target(
     name: "OpenBoxShims",
@@ -69,7 +76,7 @@ let package = Package(
     name: "OpenBox",
     products: [
         .library(name: "OpenBox", type: .dynamic, targets: ["OpenBox"]),
-        .library(name: "OpenBoxShims", targets: ["OpenBoxShims"]),
+        .library(name: "OpenBoxShims", type: .dynamic, targets: ["OpenBoxShims"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2"),
