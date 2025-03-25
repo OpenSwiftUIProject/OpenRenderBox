@@ -32,13 +32,14 @@ let sharedCSettings: [CSetting] = [
     .unsafeFlags(["-I", includePath], .when(platforms: .nonDarwinPlatforms)),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
 ]
-let sharedSwiftSettings: [SwiftSetting] = []
+let sharedSwiftSettings: [SwiftSetting] = [
+    .swiftLanguageMode(.v5),
+]
 
 // MARK: - Targets
 
 let openBoxTarget = Target.target(
     name: "OpenBox",
-    publicHeadersPath: ".",
     cSettings: sharedCSettings
 )
 let openBoxShimsTarget = Target.target(
@@ -67,7 +68,7 @@ let openBoxCompatibilityTestTarget = Target.testTarget(
 let package = Package(
     name: "OpenBox",
     products: [
-        .library(name: "OpenBox", targets: ["OpenBox"]),
+        .library(name: "OpenBox", type: .dynamic, targets: ["OpenBox"]),
         .library(name: "OpenBoxShims", targets: ["OpenBoxShims"]),
     ],
     dependencies: [
@@ -80,7 +81,7 @@ let package = Package(
         openBoxTestTarget,
         openBoxCompatibilityTestTarget,
     ],
-    cxxLanguageStandard: .cxx17
+    cxxLanguageStandard: .cxx20
 )
 
 

@@ -48,15 +48,18 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "OBTargetConditionals.h"
 #include "OBSwiftSupport.h"
+#include "OBTargetConditionals.h"
 
 #define OB_ENUM CF_ENUM
+#define OB_CLOSED_ENUM CF_CLOSED_ENUM
 #define OB_OPTIONS CF_OPTIONS
 #define OB_EXTERN_C_BEGIN CF_EXTERN_C_BEGIN
 #define OB_EXTERN_C_END CF_EXTERN_C_END
 #define OB_ASSUME_NONNULL_BEGIN CF_ASSUME_NONNULL_BEGIN
 #define OB_ASSUME_NONNULL_END CF_ASSUME_NONNULL_END
+#define OB_IMPLICIT_BRIDGING_ENABLED CF_IMPLICIT_BRIDGING_ENABLED
+#define OB_IMPLICIT_BRIDGING_DISABLED CF_IMPLICIT_BRIDGING_DISABLED
 #define OB_EXPORT CF_EXPORT
 #define OB_BRIDGED_TYPE CF_BRIDGED_TYPE
 
