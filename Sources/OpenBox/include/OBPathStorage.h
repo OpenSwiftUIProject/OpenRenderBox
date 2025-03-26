@@ -18,15 +18,15 @@ OB_EXTERN_C_BEGIN
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-void OBPathStorageInit(OBPathStorage* dst, uint32_t capacity, OBPathStorage* _Nullable source);
+void OBPathStorageInit(OBPathStorageRef dst, uint32_t capacity, OBPathStorageRef _Nullable source);
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-void OBPathStorageDestroy(OBPathStorage storage) OB_SWIFT_NAME(OBPathStorage.destroy(self:));
+void OBPathStorageDestroy(OBPathStorageRef storage) OB_SWIFT_NAME(OBPathStorage.destroy(self:));
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-void OBPathStorageClear(OBPathStorage storage) OB_SWIFT_NAME(OBPathStorage.clear(self:));
+void OBPathStorageClear(OBPathStorageRef storage) OB_SWIFT_NAME(OBPathStorage.clear(self:));
 
 //OB_EXPORT
 //OB_REFINED_FOR_SWIFT
@@ -34,28 +34,28 @@ void OBPathStorageClear(OBPathStorage storage) OB_SWIFT_NAME(OBPathStorage.clear
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-bool OBPathStorageIsEmpty(OBPathStorage storage) OB_SWIFT_NAME(getter:OBPathStorage.isEmpty(self:));
+bool OBPathStorageIsEmpty(OBPathStorageRef storage) OB_SWIFT_NAME(getter:OBPathStorage.isEmpty(self:));
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-bool OBPathStorageEqualToStorage(OBPathStorage lhs, OBPathStorage rhs) OB_SWIFT_NAME(OBPathStorage.isEqualTo(self:_:));
+bool OBPathStorageEqualToStorage(OBPathStorageRef lhs, OBPathStorageRef rhs) OB_SWIFT_NAME(OBPathStorage.isEqualTo(self:_:));
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-bool OBPathStorageIsSingleElement(OBPathStorage storage) OB_SWIFT_NAME(getter:OBPathStorage.isSingleElement(self:));
+bool OBPathStorageIsSingleElement(OBPathStorageRef storage) OB_SWIFT_NAME(getter:OBPathStorage.isSingleElement(self:));
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-uint32_t OBPathStorageGetBezierOrder(OBPathStorage storage) OB_SWIFT_NAME(getter:OBPathStorage.bezierOrder(self:));
+uint32_t OBPathStorageGetBezierOrder(OBPathStorageRef storage) OB_SWIFT_NAME(getter:OBPathStorage.bezierOrder(self:));
 
 #if OB_TARGET_OS_DARWIN
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-CGRect OBPathStorageGetBoundingRect(OBPathStorage storage) OB_SWIFT_NAME(getter:OBPathStorage.boundingRect(self:));
+CGRect OBPathStorageGetBoundingRect(OBPathStorageRef storage) OB_SWIFT_NAME(getter:OBPathStorage.boundingRect(self:));
 
 OB_EXPORT
 OB_REFINED_FOR_SWIFT
-CGPathRef RBPathStorageGetCGPath(OBPathStorage storage) OB_SWIFT_NAME(getter:OBPathStorage.cgPath(self:));
+CGPathRef RBPathStorageGetCGPath(OBPathStorageRef storage) OB_SWIFT_NAME(getter:OBPathStorage.cgPath(self:));
 #endif
 
 OB_EXTERN_C_END

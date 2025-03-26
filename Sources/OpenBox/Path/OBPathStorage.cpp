@@ -8,7 +8,7 @@
 
 using namespace OB;
 
-void OBPathStorageInit(OBPathStorage* dst, uint32_t capacity, OBPathStorage* source) {
+void OBPathStorageInit(OBPathStorageRef dst, uint32_t capacity, OBPathStorageRef source) {
     if (source != nullptr) {
         dst->storage = OB::Path::Storage(capacity, source->storage);
     } else {
@@ -16,39 +16,39 @@ void OBPathStorageInit(OBPathStorage* dst, uint32_t capacity, OBPathStorage* sou
     }
 }
 
-void OBPathStorageDestroy(OBPathStorage storage) {
-    storage.storage.~Storage();
+void OBPathStorageDestroy(OBPathStorageRef storage) {
+    storage->storage.~Storage();
 }
 
-void OBPathStorageClear(OBPathStorage storage) {
-    storage.storage.clear();
+void OBPathStorageClear(OBPathStorageRef storage) {
+    storage->storage.clear();
 }
 
 // ...
 
-bool OBPathStorageIsEmpty(OBPathStorage storage) {
-    return storage.storage.isEmpty();
+bool OBPathStorageIsEmpty(OBPathStorageRef storage) {
+    return storage->storage.isEmpty();
 }
 
-bool OBPathStorageEqualToStorage(OBPathStorage lhs, OBPathStorage rhs) {
-    return lhs.storage == rhs.storage;
+bool OBPathStorageEqualToStorage(OBPathStorageRef lhs, OBPathStorageRef rhs) {
+    return lhs->storage == rhs->storage;
 }
 
-bool OBPathStorageIsSingleElement(OBPathStorage storage) {
-    return storage.storage.flags().isSingleElement();
+bool OBPathStorageIsSingleElement(OBPathStorageRef storage) {
+    return storage->storage.flags().isSingleElement();
 }
 
-uint32_t OBPathStorageGetBezierOrder(OBPathStorage storage) {
-    return storage.storage.flags().bezierOrder();
+uint32_t OBPathStorageGetBezierOrder(OBPathStorageRef storage) {
+    return storage->storage.flags().bezierOrder();
 }
 
 #if OB_TARGET_OS_DARWIN
 
-CGRect OBPathStorageGetBoundingRect(OBPathStorage storage) {
+CGRect OBPathStorageGetBoundingRect(OBPathStorageRef storage) {
     precondition_failure("TODO");
 }
 
-CGPathRef OBPathStorageGetCGPath(OBPathStorage storage) {
+CGPathRef OBPathStorageGetCGPath(OBPathStorageRef storage) {
     precondition_failure("TODO");
 }
 #endif
