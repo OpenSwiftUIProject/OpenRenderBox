@@ -72,11 +72,21 @@ let openBoxCompatibilityTestTarget = Target.testTarget(
 
 // MARK: - Package
 
+let libraryType: Product.Library.LibraryType?
+switch Context.environment["OPENBOX_LIBRARY_TYPE"] {
+case "dynamic":
+    libraryType = .dynamic
+case "static":
+    libraryType = .static
+default:
+    libraryType = nil
+}
+
 let package = Package(
     name: "OpenBox",
     products: [
-        .library(name: "OpenBox", type: .dynamic, targets: ["OpenBox"]),
-        .library(name: "OpenBoxShims", type: .dynamic, targets: ["OpenBoxShims"]),
+        .library(name: "OpenBox", type: libraryType, targets: ["OpenBox"]),
+        .library(name: "OpenBoxShims", type: libraryType, targets: ["OpenBoxShims"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2"),
