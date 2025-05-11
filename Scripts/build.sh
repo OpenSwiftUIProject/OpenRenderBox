@@ -9,4 +9,4 @@ OPENBOX_ROOT="$(dirname $(dirname $(filepath $0)))"
 
 cd $OPENBOX_ROOT
 
-swift build
+OPENBOX_LIBRARY_EVOLUTION=0 swift build
