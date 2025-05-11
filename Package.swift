@@ -51,6 +51,7 @@ let libraryEvolutionCondition = envEnable("OPENBOX_LIBRARY_EVOLUTION")
 #endif
 
 if libraryEvolutionCondition {
+    // NOTE:  -enable-library-evolution is not supported on `swift build` yet.
     sharedSwiftSettings.append(.unsafeFlags(["-enable-library-evolution"]))
 }
 
