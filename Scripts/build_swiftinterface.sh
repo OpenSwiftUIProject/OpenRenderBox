@@ -9,4 +9,4 @@ OPENBOX_ROOT="$(dirname $(dirname $(filepath $0)))"
 
 cd $OPENBOX_ROOT
 
-swift build
+swift build -Xswiftc -emit-module-interface -Xswiftc -enable-library-evolution -Xswiftc -no-verify-emitted-module-interface
