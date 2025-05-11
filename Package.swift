@@ -38,9 +38,21 @@ let sharedCxxSettings: [CXXSetting] = [
     .unsafeFlags(["-fcxx-modules"]),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
 ]
-let sharedSwiftSettings: [SwiftSetting] = [
+var sharedSwiftSettings: [SwiftSetting] = [
     .swiftLanguageMode(.v5),
 ]
+
+// MARK: - [env] OPENBOX_LIBRARY_EVOLUTION
+
+#if os(macOS)
+let libraryEvolutionCondition = envEnable("OPENBOX_LIBRARY_EVOLUTION", default: true)
+#else
+let libraryEvolutionCondition = envEnable("OPENBOX_LIBRARY_EVOLUTION")
+#endif
+
+if libraryEvolutionCondition {
+    sharedSwiftSettings.append(.unsafeFlags(["-enable-library-evolution"]))
+}
 
 // MARK: - Targets
 
