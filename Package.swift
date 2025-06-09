@@ -16,6 +16,18 @@ func envEnable(_ key: String, default defaultValue: Bool = false) -> Bool {
     }
 }
 
+#if os(macOS)
+// NOTE: #if os(macOS) check is not accurate if we are cross compiling for Linux platform. So we add an env key to specify it.
+let buildForDarwinPlatform = envEnable("OPENSWIFTUI_BUILD_FOR_DARWIN_PLATFORM", default: true)
+#else
+let buildForDarwinPlatform = envEnable("OPENSWIFTUI_BUILD_FOR_DARWIN_PLATFORM")
+#endif
+
+
+// https://github.com/SwiftPackageIndex/SwiftPackageIndex-Server/issues/3061#issuecomment-2118821061
+// By-pass https://github.com/swiftlang/swift-package-manager/issues/7580
+let isSPIDocGenerationBuild = envEnable("SPI_GENERATE_DOCS", default: false)
+
 // MARK: - Env and Config
 
 let isXcodeEnv = Context.environment["__CFBundleIdentifier"] == "com.apple.dt.Xcode"
@@ -44,11 +56,7 @@ var sharedSwiftSettings: [SwiftSetting] = [
 
 // MARK: - [env] OPENBOX_LIBRARY_EVOLUTION
 
-#if os(macOS)
-let libraryEvolutionCondition = envEnable("OPENBOX_LIBRARY_EVOLUTION", default: true)
-#else
-let libraryEvolutionCondition = envEnable("OPENBOX_LIBRARY_EVOLUTION")
-#endif
+let libraryEvolutionCondition = envEnable("OPENBOX_LIBRARY_EVOLUTION", default: buildForDarwinPlatform)
 
 if libraryEvolutionCondition {
     // NOTE: -enable-library-evolution will cause module verify failure for `swift build`.
@@ -115,13 +123,9 @@ let package = Package(
     cxxLanguageStandard: .cxx20
 )
 
-
-#if os(macOS)
-let renderBoxCondtion = envEnable("OPENBOX_RENDERBOX", default: true)
-#else
-let renderBoxCondtion = envEnable("OPENBOX_RENDERBOX")
-#endif
 let useLocalDeps = envEnable("OPENBOX_USE_LOCAL_DEPS")
+
+let renderBoxCondtion = envEnable("OPENBOX_RENDERBOX", default: buildForDarwinPlatform && !isSPIDocGenerationBuild )
 
 if renderBoxCondtion {
     let privateFrameworkRepo: Package.Dependency
