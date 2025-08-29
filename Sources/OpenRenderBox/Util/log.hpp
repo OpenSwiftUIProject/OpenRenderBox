@@ -1,21 +1,21 @@
 //
 //  log.hpp
-//  OpenBox
+//  OpenRenderBox
 
 #ifndef log_hpp
 #define log_hpp
 
-#include "OBBase.h"
+#include "ORBBase.h"
 
-#if OB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 
 #include <os/log.h>
 
-namespace OB {
+namespace ORB {
 os_log_t misc_log();
 os_log_t error_log();
-} /* OB */
+} /* ORB */
 
-#endif /* OB_TARGET_OS_DARWIN */
+#endif /* ORB_TARGET_OS_DARWIN */
 
 #endif /* log_hpp */

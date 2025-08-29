@@ -5,8 +5,8 @@ filepath() {
   [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
 
-OPENBOX_ROOT="$(dirname $(dirname $(filepath $0)))"
+OPENRENDERBOX_ROOT="$(dirname $(dirname $(filepath $0)))"
 
-cd $OPENBOX_ROOT
+cd $OPENRENDERBOX_ROOT
 
 swift build -Xswiftc -emit-module-interface -Xswiftc -enable-library-evolution -Xswiftc -no-verify-emitted-module-interface

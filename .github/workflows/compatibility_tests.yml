@@ -17,11 +17,11 @@ jobs:
             xcode-version: "16.4"   # Swift 6.1.2
     runs-on: ${{ matrix.os }}
     env:
-      OPENBOX_WERROR: 1
-      OPENBOX_RENDERBOX: 1
-      OPENBOX_COMPATIBILITY_TEST: 1
-      OPENBOX_USE_LOCAL_DEPS: 1
-      OPENBOX_TARGET_RELEASE: 2024
+      OPENRENDERBOX_WERROR: 1
+      OPENRENDERBOX_RENDERBOX: 1
+      OPENRENDERBOX_COMPATIBILITY_TEST: 1
+      OPENRENDERBOX_USE_LOCAL_DEPS: 1
+      OPENRENDERBOX_TARGET_RELEASE: 2024
       DARWIN_PRIVATE_FRAMEWORKS_TARGET_RELEASE: 2024
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -35,16 +35,16 @@ jobs:
         shell: bash
       - name: Swift version
         run: swift --version
-      - name: Run tests against Apple's RENDERBOX on macOS via SwiftPM
+      - name: Run tests against Apple's RenderBox on macOS via SwiftPM
         env:
-          OPENBOX_LIBRARY_EVOLUTION: 0
+          OPENRENDERBOX_LIBRARY_EVOLUTION: 0
         run: |
           swift test \
             --build-path .build-compatibility-test-debug
-      - name: Run tests against Apple's RENDERBOX on macOS via Xcode
+      - name: Run tests against Apple's RenderBox on macOS via Xcode
         run: |
           xcodebuild test \
-            -scheme OpenBox-Package \
+            -scheme OpenRenderBox-Package \
             -sdk macosx \
             -destination "platform=macOS" \
             -skipPackagePluginValidation \

@@ -1,12 +1,12 @@
 //
 //  BoxShims.swift
-//  OpenBoxShims
+//  OpenRenderBoxShims
 
-#if OPENBOX_COMPATIBILITY_TEST
+#if OPENRENDERBOX_COMPATIBILITY_TEST
 @_exported public import RenderBox
-public typealias OBUUID = RBUUID
+public typealias ORBUUID = RBUUID
 public let compatibilityTestEnabled = true
 #else
-@_exported import OpenBox
+@_exported import OpenRenderBox
 public let compatibilityTestEnabled = false
 #endif

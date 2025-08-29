@@ -20,11 +20,11 @@ jobs:
             ios-simulator-name: "iPhone 16 Pro"
     runs-on: ${{ matrix.os }}
     env:
-      OPENBOX_WERROR: 1
-      OPENBOX_RENDERBOX: 0
-      OPENBOX_COMPATIBILITY_TEST: 0
-      OPENBOX_USE_LOCAL_DEPS: 1
-      OPENBOX_TARGET_RELEASE: 2024
+      OPENRENDERBOX_WERROR: 1
+      OPENRENDERBOX_RENDERBOX: 0
+      OPENRENDERBOX_COMPATIBILITY_TEST: 0
+      OPENRENDERBOX_USE_LOCAL_DEPS: 1
+      OPENRENDERBOX_TARGET_RELEASE: 2024
       DARWIN_PRIVATE_FRAMEWORKS_TARGET_RELEASE: 2024
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -41,7 +41,7 @@ jobs:
       - name: Build in debug mode on iOS
         run: |
           xcodebuild build \
-            -scheme OpenBox-Package \
+            -scheme OpenRenderBox-Package \
             -configuration Debug \
             -destination "platform=iOS Simulator,OS=${{ matrix.ios-version }},name=${{ matrix.ios-simulator-name }}" \
             -derivedDataPath .build-debug \
@@ -51,7 +51,7 @@ jobs:
       - name: Build and run tests in debug mode with coverage on iOS Simulator
         run: |
           xcodebuild test \
-            -scheme OpenBox-Package \
+            -scheme OpenRenderBox-Package \
             -configuration Debug \
             -destination "platform=iOS Simulator,OS=${{ matrix.ios-version }},name=${{ matrix.ios-simulator-name }}" \
             -enableCodeCoverage=YES \
