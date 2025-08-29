@@ -1,11 +1,11 @@
 //
 //  PathStorage.cpp
-//  OpenBox
+//  OpenRenderBox
 
 #include "PathStorage.hpp"
 #include "../Util/assert.hpp"
 
-namespace OB {
+namespace ORB {
 namespace Path {
 atomic_long Storage::_last_identifier;
 
@@ -50,7 +50,7 @@ Storage::~Storage() {
     }
 }
 
-bool Storage::operator==(const Storage &other) const OB_NOEXCEPT {
+bool Storage::operator==(const Storage &other) const ORB_NOEXCEPT {
     // TODO
     return false;
 }
@@ -60,4 +60,4 @@ void Storage::clear() {
 }
 
 } /* Path */
-} /* OB */
+} /* ORB */

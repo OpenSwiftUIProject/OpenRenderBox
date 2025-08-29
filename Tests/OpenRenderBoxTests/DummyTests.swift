@@ -1,8 +1,8 @@
 //
 //  DummyTests.swift
-//  OpenBoxTests
+//  OpenRenderBoxTests
 
-@testable import OpenBox
+@testable import OpenRenderBox
 import Testing
 
 struct DummyTests {}

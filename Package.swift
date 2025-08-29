@@ -31,9 +31,9 @@ let isSPIBuild = envEnable("SPI_BUILD")
 // MARK: - Env and Config
 
 let isXcodeEnv = Context.environment["__CFBundleIdentifier"] == "com.apple.dt.Xcode"
-let development = envEnable("OPENBOX_DEVELOPMENT")
+let development = envEnable("OPENRENDERBOX_DEVELOPMENT")
 
-let releaseVersion = Context.environment["OPENBOX_TARGET_RELEASE"].flatMap { Int($0) } ?? 2024
+let releaseVersion = Context.environment["OPENRENDERBOX_TARGET_RELEASE"].flatMap { Int($0) } ?? 2024
 
 let swiftBinPath = Context.environment["_"] ?? "/usr/bin/swift"
 let swiftBinURL = URL(fileURLWithPath: swiftBinPath)
@@ -54,37 +54,37 @@ var sharedSwiftSettings: [SwiftSetting] = [
     .swiftLanguageMode(.v5),
 ]
 
-// MARK: - [env] OPENBOX_LIBRARY_EVOLUTION
+// MARK: - [env] OPENRENDERBOX_LIBRARY_EVOLUTION
 
-let libraryEvolutionCondition = envEnable("OPENBOX_LIBRARY_EVOLUTION", default: buildForDarwinPlatform)
+let libraryEvolutionCondition = envEnable("OPENRENDERBOX_LIBRARY_EVOLUTION", default: buildForDarwinPlatform)
 
 if libraryEvolutionCondition {
     // NOTE: -enable-library-evolution will cause module verify failure for `swift build`.
-    // Either set OPENBOX_LIBRARY_EVOLUTION=0 or add `-Xswiftc -no-verify-emitted-module-interface` after `swift build`
+    // Either set OPENRENDERBOX_LIBRARY_EVOLUTION=0 or add `-Xswiftc -no-verify-emitted-module-interface` after `swift build`
     sharedSwiftSettings.append(.unsafeFlags(["-enable-library-evolution", "-no-verify-emitted-module-interface"]))
 }
 
 // MARK: - Targets
 
 let openBoxTarget = Target.target(
-    name: "OpenBox",
+    name: "OpenRenderBox",
     cSettings: sharedCSettings,
     cxxSettings: sharedCxxSettings
 )
 let openBoxShimsTarget = Target.target(
-    name: "OpenBoxShims",
+    name: "OpenRenderBoxShims",
     swiftSettings: sharedSwiftSettings
 )
 let openBoxTestTarget = Target.testTarget(
-    name: "OpenBoxTests",
+    name: "OpenRenderBoxTests",
     dependencies: [
-        "OpenBox",
+        "OpenRenderBox",
     ],
     exclude: ["README.md"],
     swiftSettings: sharedSwiftSettings
 )
 let openBoxCompatibilityTestTarget = Target.testTarget(
-    name: "OpenBoxCompatibilityTests",
+    name: "OpenRenderBoxCompatibilityTests",
     dependencies: [
         .product(name: "RealModule", package: "swift-numerics"),
     ],
@@ -95,7 +95,7 @@ let openBoxCompatibilityTestTarget = Target.testTarget(
 // MARK: - Package
 
 let libraryType: Product.Library.LibraryType?
-switch Context.environment["OPENBOX_LIBRARY_TYPE"] {
+switch Context.environment["OPENRENDERBOX_LIBRARY_TYPE"] {
 case "dynamic":
     libraryType = .dynamic
 case "static":
@@ -105,10 +105,10 @@ default:
 }
 
 let package = Package(
-    name: "OpenBox",
+    name: "OpenRenderBox",
     products: [
-        .library(name: "OpenBox", type: libraryType, targets: ["OpenBox"]),
-        .library(name: "OpenBoxShims", type: libraryType, targets: ["OpenBoxShims"]),
+        .library(name: "OpenRenderBox", type: libraryType, targets: ["OpenRenderBox"]),
+        .library(name: "OpenRenderBoxShims", type: libraryType, targets: ["OpenRenderBoxShims"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2"),
@@ -123,9 +123,9 @@ let package = Package(
     cxxLanguageStandard: .cxx20
 )
 
-let useLocalDeps = envEnable("OPENBOX_USE_LOCAL_DEPS")
+let useLocalDeps = envEnable("OPENRENDERBOX_USE_LOCAL_DEPS")
 
-let renderBoxCondtion = envEnable("OPENBOX_RENDERBOX", default: buildForDarwinPlatform && !isSPIBuild )
+let renderBoxCondtion = envEnable("OPENRENDERBOX_RENDERBOX", default: buildForDarwinPlatform && !isSPIBuild )
 
 if renderBoxCondtion {
     let privateFrameworkRepo: Package.Dependency
@@ -136,7 +136,7 @@ if renderBoxCondtion {
     }
     package.dependencies.append(privateFrameworkRepo)
     var swiftSettings: [SwiftSetting] = (openBoxShimsTarget.swiftSettings ?? [])
-    swiftSettings.append(.define("OPENBOX_RENDERBOX"))
+    swiftSettings.append(.define("OPENRENDERBOX_RENDERBOX"))
     openBoxShimsTarget.swiftSettings = swiftSettings
     openBoxShimsTarget.dependencies.append(
         .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
@@ -149,20 +149,20 @@ if renderBoxCondtion {
         default: nil
     }
 } else {
-    openBoxShimsTarget.dependencies.append("OpenBox")
+    openBoxShimsTarget.dependencies.append("OpenRenderBox")
 }
 
-let compatibilityTestCondition = envEnable("OPENBOX_COMPATIBILITY_TEST")
+let compatibilityTestCondition = envEnable("OPENRENDERBOX_COMPATIBILITY_TEST")
 if compatibilityTestCondition && renderBoxCondtion {
     openBoxCompatibilityTestTarget.dependencies.append(
         .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
     )
     
     var swiftSettings: [SwiftSetting] = (openBoxCompatibilityTestTarget.swiftSettings ?? [])
-    swiftSettings.append(.define("OPENBOX_COMPATIBILITY_TEST"))
+    swiftSettings.append(.define("OPENRENDERBOX_COMPATIBILITY_TEST"))
     openBoxCompatibilityTestTarget.swiftSettings = swiftSettings
 } else {
-    openBoxCompatibilityTestTarget.dependencies.append("OpenBox")
+    openBoxCompatibilityTestTarget.dependencies.append("OpenRenderBox")
 }
 
 extension [Platform] {

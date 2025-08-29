@@ -1,19 +1,19 @@
 //
-//  OBUUID.mm
-//  OpenBox
+//  ORBUUID.mm
+//  OpenRenderBox
 
-#include "OBUUID.h"
+#include "ORBUUID.h"
 
-#if OB_TARGET_OS_DARWIN
-OBUUID OBUUIDInitFromNSUUID(NSUUID *uuid) {
-    OBUUID ob_uuid;
+#if ORB_TARGET_OS_DARWIN
+ORBUUID ORBUUIDInitFromNSUUID(NSUUID *uuid) {
+    ORBUUID ob_uuid;
     [uuid getUUIDBytes:ob_uuid.bytes];
     return ob_uuid;
 }
 #endif
 
-OBUUID OBUUIDInitFromHash(uint64_t words0, uint64_t words1, uint32_t words2) {
-    OBUUID ob_uuid;
+ORBUUID ORBUUIDInitFromHash(uint64_t words0, uint64_t words1, uint32_t words2) {
+    ORBUUID ob_uuid;
     ob_uuid.bytes[0] = words0 & 0xFF;
     ob_uuid.bytes[1] = ((words0 >> 8) & 0x0F) | ((words2 & 0xF) << 0x4);
     ob_uuid.bytes[2] = (words0 >> 16) & 0xFF;
