@@ -1,15 +1,15 @@
 //
 //  assert.hpp
-//  OpenBox
+//  OpenRenderBox
 
 #ifndef assert_hpp
 #define assert_hpp
 
-#include "OBBase.h"
+#include "ORBBase.h"
 
-namespace OB {
+namespace ORB {
 void precondition_failure(const char *format, ...) __cold __dead2;
 void non_fatal_precondition_failure(const char *format, ...);
-} /* OB */
+} /* ORB */
 
 #endif /* assert_hpp */

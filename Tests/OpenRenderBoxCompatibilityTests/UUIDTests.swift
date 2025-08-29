@@ -1,6 +1,6 @@
 //
 //  UUIDTests.swift
-//  OpenBoxCompatibilityTests
+//  OpenRenderBoxCompatibilityTests
 
 import Testing
 import Foundation
@@ -28,7 +28,7 @@ struct UUIDTests {
     ])
     func foundationUUID(uuid: UUID, expectedBytes: [UInt8]) {
         #if canImport(Darwin)
-        let id = OBUUID(uuid: uuid)
+        let id = ORBUUID(uuid: uuid)
         let bytes = id.bytes
         #expect(bytes.0 == expectedBytes[0])
         #expect(bytes.1 == expectedBytes[1])
@@ -83,7 +83,7 @@ struct UUIDTests {
         ),
     ])
     func strongHashUUID(words: (UInt32, UInt32, UInt32, UInt32, UInt32), expectedBytes: [UInt8]) {
-        let id: OBUUID = OBUUID(UInt64(words.0) | UInt64(words.1) &<< 32, UInt64(words.2) | UInt64(words.3) &<< 32, words.4)
+        let id: ORBUUID = ORBUUID(UInt64(words.0) | UInt64(words.1) &<< 32, UInt64(words.2) | UInt64(words.3) &<< 32, words.4)
         let bytes = id.bytes
         #expect(bytes.0 == expectedBytes[0])
         #expect(bytes.1 == expectedBytes[1])
