@@ -1,7 +1,7 @@
-## OPENBOXTests
+## OpenBoxTests
 
-Test internal API of OPENBOX
+Test internal API of OpenBox
 
 ```swift
-@testable import OPENBOX
+@testable import OpenBox
 ```
