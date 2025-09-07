@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.1
 
 import Foundation
 import PackageDescription
@@ -117,7 +117,6 @@ let package = Package(
     targets: [
         openRenderBoxTarget,
         openRenderBoxShimsTarget,
-        
         openRenderBoxCxxTestTarget,
         openRenderBoxCompatibilityTestTarget,
     ],
@@ -142,7 +141,6 @@ if renderBoxCondtion {
     openRenderBoxShimsTarget.dependencies.append(
         .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
     )
-    
     let rbVersion = Context.environment["DARWIN_PRIVATE_FRAMEWORKS_TARGET_RELEASE"].flatMap { Int($0) } ?? 2024
     package.platforms = switch rbVersion {
         case 2024: [.iOS(.v18), .macOS(.v15), .macCatalyst(.v18), .tvOS(.v18), .watchOS(.v10), .visionOS(.v2)]
@@ -158,7 +156,6 @@ if compatibilityTestCondition && renderBoxCondtion {
     openRenderBoxCompatibilityTestTarget.dependencies.append(
         .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
     )
-    
     var swiftSettings: [SwiftSetting] = (openRenderBoxCompatibilityTestTarget.swiftSettings ?? [])
     swiftSettings.append(.define("OPENRENDERBOX_COMPATIBILITY_TEST"))
     openRenderBoxCompatibilityTestTarget.swiftSettings = swiftSettings
