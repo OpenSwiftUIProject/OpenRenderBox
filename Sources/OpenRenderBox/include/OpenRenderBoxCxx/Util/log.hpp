@@ -2,10 +2,9 @@
 //  log.hpp
 //  OpenRenderBox
 
-#ifndef log_hpp
-#define log_hpp
+#pragma once
 
-#include "ORBBase.h"
+#include <OpenRenderBox/ORBBase.h>
 
 #if ORB_TARGET_OS_DARWIN
 
@@ -18,4 +17,3 @@ os_log_t error_log();
 
 #endif /* ORB_TARGET_OS_DARWIN */
 
-#endif /* log_hpp */

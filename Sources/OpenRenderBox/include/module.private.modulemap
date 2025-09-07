@@ -1,0 +1,15 @@
+module OpenRenderBoxCxx_Private {
+    export *
+}
+
+module OpenRenderBoxCxx_Private.Path {
+    requires cplusplus
+    umbrella "OpenRenderBoxCxx/Path"
+    export *
+}
+
+module OpenRenderBoxCxx_Private.Util {
+    requires cplusplus
+    umbrella "OpenRenderBoxCxx/Util"
+    export *
+}

@@ -2,8 +2,7 @@
 //  ORBUUID.hpp
 //  OpenRenderBox
 
-#ifndef ORBUUID_hpp
-#define ORBUUID_hpp
+#pragma once
 
 #include "ORBBase.h"
 
@@ -29,4 +28,3 @@ ORBUUID ORBUUIDInitFromHash(uint64_t words0, uint64_t words1, uint32_t words2) O
 
 ORB_EXTERN_C_END
 
-#endif /* ORBUUID_hpp */

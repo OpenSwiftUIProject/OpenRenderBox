@@ -2,8 +2,7 @@
 //  ORBVersion.h
 //  OpenRenderBox
 
-#ifndef ORBVersion_h
-#define ORBVersion_h
+#pragma once
 
 #define ORB_RELEASE_2024 2024
 
@@ -11,4 +10,3 @@
 #define ORB_TARGET_RELEASE 2024
 #endif
 
-#endif /* ORBVersion_h */

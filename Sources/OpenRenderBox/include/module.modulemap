@@ -1,0 +1,4 @@
+module OpenRenderBox {
+    umbrella header "OpenRenderBox/OpenRenderBox-umbrella.h"
+    export *
+}

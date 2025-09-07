@@ -18,8 +18,7 @@
   
 */
 
-#ifndef __OPENRENDERBOXTARGETCONDITIONALS__
-#define __OPENRENDERBOXTARGETCONDITIONALS__
+#pragma once
 /****************************************************************************************************
 
     TARGET_CPU_*
@@ -274,4 +273,3 @@
 #define ORB_TARGET_RT_64_BIT        0
 #endif
 
-#endif  /* __OPENRENDERBOXTARGETCONDITIONALS__ */

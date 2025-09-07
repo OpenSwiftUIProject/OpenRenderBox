@@ -2,7 +2,7 @@
 //  ORBUUID.mm
 //  OpenRenderBox
 
-#include "ORBUUID.h"
+#include <OpenRenderBox/ORBUUID.h>
 
 #if ORB_TARGET_OS_DARWIN
 ORBUUID ORBUUIDInitFromNSUUID(NSUUID *uuid) {

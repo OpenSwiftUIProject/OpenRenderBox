@@ -2,11 +2,11 @@
 //  PathStorage.hpp
 //  OpenRenderBox
 
-#ifndef PathStorage_hpp
-#define PathStorage_hpp
+#pragma once
 
-#include "ORBBase.h"
-#include "../Util/assert.hpp"
+#include <OpenRenderBox/ORBBase.h>
+#include <OpenRenderBoxCxx/Util/assert.hpp>
+
 #include <stdatomic.h>
 
 ORB_ASSUME_NONNULL_BEGIN
@@ -226,4 +226,3 @@ struct ORBPathStorage {
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* PathStorage_hpp */
