@@ -6,7 +6,7 @@
 
 #include "ORBBase.h"
 
-#if ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN && __OBJC__
 #include <Foundation/Foundation.h>
 #endif
 
@@ -16,7 +16,7 @@ typedef struct ORBUUID {
 
 ORB_EXTERN_C_BEGIN
 
-#if ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN && __OBJC__
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT
 ORBUUID ORBUUIDInitFromNSUUID(NSUUID *uuid) ORB_SWIFT_NAME(ORBUUID.init(uuid:));

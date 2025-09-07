@@ -75,13 +75,14 @@ let openRenderBoxShimsTarget = Target.target(
     name: "OpenRenderBoxShims",
     swiftSettings: sharedSwiftSettings
 )
-let openRenderBoxTestTarget = Target.testTarget(
-    name: "OpenRenderBoxTests",
+let openRenderBoxCxxTestTarget = Target.testTarget(
+    name: "OpenRenderBoxCxxTests",
     dependencies: [
         "OpenRenderBox",
     ],
     exclude: ["README.md"],
-    swiftSettings: sharedSwiftSettings
+    cSettings: sharedCSettings + [.define("SWIFT_TESTING")],
+    swiftSettings: sharedSwiftSettings + [.interoperabilityMode(.Cxx)]
 )
 let openRenderBoxCompatibilityTestTarget = Target.testTarget(
     name: "OpenRenderBoxCompatibilityTests",
@@ -117,7 +118,7 @@ let package = Package(
         openRenderBoxTarget,
         openRenderBoxShimsTarget,
         
-        openRenderBoxTestTarget,
+        openRenderBoxCxxTestTarget,
         openRenderBoxCompatibilityTestTarget,
     ],
     cxxLanguageStandard: .cxx20
