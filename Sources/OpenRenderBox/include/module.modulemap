@@ -1,0 +1,21 @@
+module OpenRenderBox {
+    umbrella header "OpenRenderBox/OpenRenderBox-umbrella.h"
+    export *
+}
+
+module OpenRenderBoxCxx {
+    requires cplusplus
+    export *
+}
+
+module OpenRenderBoxCxx.Path {
+    requires cplusplus
+    umbrella "OpenRenderBoxCxx/Path"
+    export *
+}
+
+module OpenRenderBoxCxx.Util {
+    requires cplusplus
+    umbrella "OpenRenderBoxCxx/Util"
+    export *
+}

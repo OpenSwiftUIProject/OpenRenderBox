@@ -2,8 +2,8 @@
 //  PathStorage.cpp
 //  OpenRenderBox
 
-#include "PathStorage.hpp"
-#include "../Util/assert.hpp"
+#include <OpenRenderBoxCxx/Path/PathStorage.hpp>
+#include <OpenRenderBoxCxx/Util/assert.hpp>
 
 namespace ORB {
 namespace Path {

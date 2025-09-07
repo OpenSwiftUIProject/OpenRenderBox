@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.1
 
 import Foundation
 import PackageDescription
@@ -66,24 +66,25 @@ if libraryEvolutionCondition {
 
 // MARK: - Targets
 
-let openBoxTarget = Target.target(
+let openRenderBoxTarget = Target.target(
     name: "OpenRenderBox",
     cSettings: sharedCSettings,
     cxxSettings: sharedCxxSettings
 )
-let openBoxShimsTarget = Target.target(
+let openRenderBoxShimsTarget = Target.target(
     name: "OpenRenderBoxShims",
     swiftSettings: sharedSwiftSettings
 )
-let openBoxTestTarget = Target.testTarget(
-    name: "OpenRenderBoxTests",
+let openRenderBoxCxxTestTarget = Target.testTarget(
+    name: "OpenRenderBoxCxxTests",
     dependencies: [
         "OpenRenderBox",
     ],
     exclude: ["README.md"],
-    swiftSettings: sharedSwiftSettings
+    cSettings: sharedCSettings + [.define("SWIFT_TESTING")],
+    swiftSettings: sharedSwiftSettings + [.interoperabilityMode(.Cxx)]
 )
-let openBoxCompatibilityTestTarget = Target.testTarget(
+let openRenderBoxCompatibilityTestTarget = Target.testTarget(
     name: "OpenRenderBoxCompatibilityTests",
     dependencies: [
         .product(name: "RealModule", package: "swift-numerics"),
@@ -114,11 +115,10 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2"),
     ],
     targets: [
-        openBoxTarget,
-        openBoxShimsTarget,
-        
-        openBoxTestTarget,
-        openBoxCompatibilityTestTarget,
+        openRenderBoxTarget,
+        openRenderBoxShimsTarget,
+        openRenderBoxCxxTestTarget,
+        openRenderBoxCompatibilityTestTarget,
     ],
     cxxLanguageStandard: .cxx20
 )
@@ -135,13 +135,12 @@ if renderBoxCondtion {
         privateFrameworkRepo = Package.Dependency.package(url: "https://github.com/OpenSwiftUIProject/DarwinPrivateFrameworks.git", branch: "main")
     }
     package.dependencies.append(privateFrameworkRepo)
-    var swiftSettings: [SwiftSetting] = (openBoxShimsTarget.swiftSettings ?? [])
+    var swiftSettings: [SwiftSetting] = (openRenderBoxShimsTarget.swiftSettings ?? [])
     swiftSettings.append(.define("OPENRENDERBOX_RENDERBOX"))
-    openBoxShimsTarget.swiftSettings = swiftSettings
-    openBoxShimsTarget.dependencies.append(
+    openRenderBoxShimsTarget.swiftSettings = swiftSettings
+    openRenderBoxShimsTarget.dependencies.append(
         .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
     )
-    
     let rbVersion = Context.environment["DARWIN_PRIVATE_FRAMEWORKS_TARGET_RELEASE"].flatMap { Int($0) } ?? 2024
     package.platforms = switch rbVersion {
         case 2024: [.iOS(.v18), .macOS(.v15), .macCatalyst(.v18), .tvOS(.v18), .watchOS(.v10), .visionOS(.v2)]
@@ -149,20 +148,19 @@ if renderBoxCondtion {
         default: nil
     }
 } else {
-    openBoxShimsTarget.dependencies.append("OpenRenderBox")
+    openRenderBoxShimsTarget.dependencies.append("OpenRenderBox")
 }
 
 let compatibilityTestCondition = envEnable("OPENRENDERBOX_COMPATIBILITY_TEST")
 if compatibilityTestCondition && renderBoxCondtion {
-    openBoxCompatibilityTestTarget.dependencies.append(
+    openRenderBoxCompatibilityTestTarget.dependencies.append(
         .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
     )
-    
-    var swiftSettings: [SwiftSetting] = (openBoxCompatibilityTestTarget.swiftSettings ?? [])
+    var swiftSettings: [SwiftSetting] = (openRenderBoxCompatibilityTestTarget.swiftSettings ?? [])
     swiftSettings.append(.define("OPENRENDERBOX_COMPATIBILITY_TEST"))
-    openBoxCompatibilityTestTarget.swiftSettings = swiftSettings
+    openRenderBoxCompatibilityTestTarget.swiftSettings = swiftSettings
 } else {
-    openBoxCompatibilityTestTarget.dependencies.append("OpenRenderBox")
+    openRenderBoxCompatibilityTestTarget.dependencies.append("OpenRenderBox")
 }
 
 extension [Platform] {

@@ -2,11 +2,10 @@
 //  ORBPathStorage.h
 //  OpenRenderBox
 
-#ifndef ORBPathStorage_h
-#define ORBPathStorage_h
+#pragma once
 
-#include "ORBBase.h"
-#include "ORBPath.h"
+#include <OpenRenderBox/ORBBase.h>
+#include <OpenRenderBox/ORBPath.h>
 
 #if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CoreGraphics.h>
@@ -62,4 +61,3 @@ ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* ORBPathStorage_h */

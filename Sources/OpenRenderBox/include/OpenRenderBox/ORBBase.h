@@ -2,10 +2,7 @@
 //  ORBBase.h
 //  OpenRenderBox
 
-#ifndef ORBBase_h
-#define ORBBase_h
-
-#include "ORBVersion.h"
+#pragma once
 
 #if DEBUG
 #define ORB_ASSERTION
@@ -63,10 +60,9 @@
 #define ORB_EXPORT CF_EXPORT
 #define ORB_BRIDGED_TYPE CF_BRIDGED_TYPE
 
-#if TARGET_OS_DARWIN && __ORBJC__
+#if ORB_TARGET_OS_DARWIN && __ORBJC__
 #define ORB_ORBJC_FOUNDATION 1
 #else
 #define ORB_ORBJC_FOUNDATION 0
 #endif /* TARGET_OS_DARWIN && __ORBJC__ */
 
-#endif /* ORBBase_h */

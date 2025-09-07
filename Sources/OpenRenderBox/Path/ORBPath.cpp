@@ -5,7 +5,7 @@
 //  Created by Kyle on 2025/3/25.
 //
 
-#include "ORBPath.h"
+#include <OpenRenderBox/ORBPathStorage.h>
 
 void ORBPathRetain(ORBPath path) {
     // TODO

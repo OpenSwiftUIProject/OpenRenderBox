@@ -2,10 +2,9 @@
 //  ORBPath.h
 //  OpenRenderBox
 
-#ifndef ORBPath_h
-#define ORBPath_h
+#pragma once
 
-#include "ORBBase.h"
+#include <OpenRenderBox/ORBBase.h>
 
 ORB_ASSUME_NONNULL_BEGIN
 
@@ -32,4 +31,3 @@ ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* ORBPath_h */

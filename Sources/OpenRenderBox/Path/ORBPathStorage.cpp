@@ -2,9 +2,9 @@
 //  ORBPathStorage.cpp
 //  OpenRenderBox
 
-#include "ORBPathStorage.h"
-#include "PathStorage.hpp"
-#include "../Util/assert.hpp"
+#include <OpenRenderBox/ORBPathStorage.h>
+#include <OpenRenderBoxCxx/Path/PathStorage.hpp>
+#include <OpenRenderBoxCxx/Util/assert.hpp>
 
 using namespace ORB;
 

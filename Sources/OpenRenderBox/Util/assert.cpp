@@ -2,8 +2,8 @@
 //  assert.cpp
 //  OpenRenderBox
 
-#include "assert.hpp"
-#include "log.hpp"
+#include <OpenRenderBoxCxx/Util/assert.hpp>
+#include <OpenRenderBoxCxx/Util/log.hpp>
 
 char* error_message = nullptr;
 

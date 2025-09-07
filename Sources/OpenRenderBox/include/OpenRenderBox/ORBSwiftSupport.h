@@ -2,8 +2,7 @@
 //  ORBSwiftSupport.h
 //  OpenRenderBox
 
-#ifndef ORBSwiftSupport_h
-#define ORBSwiftSupport_h
+#pragma once
 
 #if __has_attribute(swift_name)
 #define ORB_SWIFT_NAME(_name) __attribute__((swift_name(#_name)))
@@ -42,4 +41,3 @@
 #define ORB_SWIFT_INDIRECT_RESULT
 #endif
 
-#endif /* ORBSwiftSupport_h */
