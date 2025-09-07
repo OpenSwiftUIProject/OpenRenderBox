@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "ORBBase.h"
+#include <OpenRenderBox/ORBBase.h>
 
 #if ORB_TARGET_OS_DARWIN && __OBJC__
 #include <Foundation/Foundation.h>

@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "ORBBase.h"
-#include "ORBPath.h"
+#include <OpenRenderBox/ORBBase.h>
+#include <OpenRenderBox/ORBPath.h>
 
 #if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CoreGraphics.h>
