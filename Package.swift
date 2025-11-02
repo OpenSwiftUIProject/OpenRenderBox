@@ -3,65 +3,171 @@
 import Foundation
 import PackageDescription
 
-func envEnable(_ key: String, default defaultValue: Bool = false) -> Bool {
-    guard let value = Context.environment[key] else {
+// MARK: - Env Manager
+
+@MainActor
+final class EnvManager {
+    static let shared = EnvManager()
+
+    private var domains: [String] = []
+
+    func register(domain: String) {
+        domains.append(domain)
+    }
+
+    func withDomain<T>(_ domain: String, perform: () throws -> T) rethrows -> T {
+        domains.append(domain)
+        defer { domains.removeAll { $0 == domain } }
+        return try perform()
+    }
+
+    private func envValue<T>(
+        rawKey: String,
+        default defaultValue: T?,
+        searchInDomain: Bool,
+        parser: (String) -> T?
+    ) -> T? {
+        func parseEnvValue(_ key: String) -> (String, T)? {
+            guard let value = Context.environment[key] else {
+                return nil
+            }
+            guard let result = parser(value) else {
+                return nil
+            }
+            return (value, result)
+        }
+        let keys: [String] = searchInDomain
+            ? domains.map { "\($0.uppercased())_\(rawKey)" }
+            : [rawKey]
+        for key in keys {
+            if let (value, result) = parseEnvValue(key) {
+                print("[Env] \(key)=\(value) -> \(result)")
+                return result
+            }
+        }
+        let primaryKey = keys.first ?? rawKey
+        if let defaultValue {
+            print("[Env] \(primaryKey) not set -> \(defaultValue)(default)")
+        }
         return defaultValue
     }
-    if value == "1" {
-        return true
-    } else if value == "0" {
-        return false
-    } else {
-        return defaultValue
+
+    func envBoolValue(rawKey: String, default defaultValue: Bool? = nil, searchInDomain: Bool) -> Bool? {
+        envValue(rawKey: rawKey, default: defaultValue, searchInDomain: searchInDomain) { value in
+            switch value {
+            case "1": true
+            case "0": false
+            default: nil
+            }
+        }
+    }
+
+    func envIntValue(rawKey: String, default defaultValue: Int? = nil, searchInDomain: Bool) -> Int? {
+        envValue(rawKey: rawKey, default: defaultValue, searchInDomain: searchInDomain) { Int($0) }
+    }
+
+    func envStringValue(rawKey: String, default defaultValue: String? = nil, searchInDomain: Bool) -> String? {
+        envValue(rawKey: rawKey, default: defaultValue, searchInDomain: searchInDomain) { $0 }
     }
 }
+EnvManager.shared.register(domain: "OpenRenderBox")
+EnvManager.shared.register(domain: "OpenSwiftUI")
+
+@MainActor
+func envBoolValue(_ key: String, default defaultValue: Bool = false, searchInDomain: Bool = true) -> Bool {
+    EnvManager.shared.envBoolValue(rawKey: key, default: defaultValue, searchInDomain: searchInDomain)!
+}
+
+@MainActor
+func envIntValue(_ key: String, default defaultValue: Int = 0, searchInDomain: Bool = true) -> Int {
+    EnvManager.shared.envIntValue(rawKey: key, default: defaultValue, searchInDomain: searchInDomain)!
+}
+
+@MainActor
+func envStringValue(_ key: String, default defaultValue: String, searchInDomain: Bool = true) -> String {
+    EnvManager.shared.envStringValue(rawKey: key, default: defaultValue, searchInDomain: searchInDomain)!
+}
+
+@MainActor
+func envStringValue(_ key: String, searchInDomain: Bool = true) -> String? {
+    EnvManager.shared.envStringValue(rawKey: key, searchInDomain: searchInDomain)
+}
+
+// MARK: - Env and config
 
 #if os(macOS)
 // NOTE: #if os(macOS) check is not accurate if we are cross compiling for Linux platform. So we add an env key to specify it.
-let buildForDarwinPlatform = envEnable("OPENSWIFTUI_BUILD_FOR_DARWIN_PLATFORM", default: true)
+let buildForDarwinPlatform = envBoolValue("BUILD_FOR_DARWIN_PLATFORM", default: true)
 #else
-let buildForDarwinPlatform = envEnable("OPENSWIFTUI_BUILD_FOR_DARWIN_PLATFORM")
+let buildForDarwinPlatform = envBoolValue("BUILD_FOR_DARWIN_PLATFORM")
 #endif
 
 // https://github.com/SwiftPackageIndex/SwiftPackageIndex-Server/issues/3061#issuecomment-2118821061
 // By-pass https://github.com/swiftlang/swift-package-manager/issues/7580
-let isSPIDocGenerationBuild = envEnable("SPI_GENERATE_DOCS", default: false)
-let isSPIBuild = envEnable("SPI_BUILD")
+let isSPIDocGenerationBuild = envBoolValue("SPI_GENERATE_DOCS", searchInDomain: false)
+let isSPIBuild = envBoolValue("SPI_BUILD", searchInDomain: false)
 
-// MARK: - Env and Config
+let isXcodeEnv = envStringValue("__CFBundleIdentifier", searchInDomain: false) == "com.apple.dt.Xcode"
+let development = envBoolValue("DEVELOPMENT", default: false)
 
-let isXcodeEnv = Context.environment["__CFBundleIdentifier"] == "com.apple.dt.Xcode"
-let development = envEnable("OPENRENDERBOX_DEVELOPMENT")
+let releaseVersion = envIntValue("TARGET_RELEASE", default: 2024)
 
-let releaseVersion = Context.environment["OPENRENDERBOX_TARGET_RELEASE"].flatMap { Int($0) } ?? 2024
+let libSwiftPath = {
+    // From Swift toolchain being installed or from Swift SDK.
+    guard let libSwiftPath = envStringValue("LIB_SWIFT_PATH") else {
+        // Fallback when LIB_SWIFT_PATH is not set
+        let swiftBinPath = envStringValue("BIN_SWIFT_PATH") ?? envStringValue("_", searchInDomain: false) ?? "/usr/bin/swift"
+        let swiftBinURL = URL(fileURLWithPath: swiftBinPath)
+        let SDKPath = swiftBinURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().path
+        return SDKPath.appending("/usr/lib/swift")
+    }
+    return libSwiftPath
+}()
 
-let swiftBinPath = Context.environment["_"] ?? "/usr/bin/swift"
-let swiftBinURL = URL(fileURLWithPath: swiftBinPath)
-let SDKPath = swiftBinURL.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().path
-let includePath = SDKPath.appending("/usr/lib/swift")
+let libraryEvolutionCondition = envBoolValue("LIBRARY_EVOLUTION", default: buildForDarwinPlatform)
+let compatibilityTestCondition = envBoolValue("COMPATIBILITY_TEST", default: false)
 
-let sharedCSettings: [CSetting] = [
-    .unsafeFlags(["-I", includePath], .when(platforms: .nonDarwinPlatforms)),
+let useLocalDeps = envBoolValue("USE_LOCAL_DEPS")
+let renderBoxCondtion = envBoolValue("RENDERBOX", default: buildForDarwinPlatform && !isSPIBuild)
+
+// MARK: - Shared Settings
+
+var sharedCSettings: [CSetting] = [
+    .unsafeFlags(["-I", libSwiftPath], .when(platforms: .nonDarwinPlatforms)),
     .unsafeFlags(["-fmodules"]),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
 ]
-let sharedCxxSettings: [CXXSetting] = [
-    .unsafeFlags(["-I", includePath], .when(platforms: .nonDarwinPlatforms)),
+var sharedCxxSettings: [CXXSetting] = [
+    .unsafeFlags(["-I", libSwiftPath], .when(platforms: .nonDarwinPlatforms)),
     .unsafeFlags(["-fcxx-modules"]),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
 ]
 var sharedSwiftSettings: [SwiftSetting] = [
     .swiftLanguageMode(.v5),
 ]
-
-// MARK: - [env] OPENRENDERBOX_LIBRARY_EVOLUTION
-
-let libraryEvolutionCondition = envEnable("OPENRENDERBOX_LIBRARY_EVOLUTION", default: buildForDarwinPlatform)
-
 if libraryEvolutionCondition {
     // NOTE: -enable-library-evolution will cause module verify failure for `swift build`.
-    // Either set OPENRENDERBOX_LIBRARY_EVOLUTION=0 or add `-Xswiftc -no-verify-emitted-module-interface` after `swift build`
+    // Either set LIBRARY_EVOLUTION=0 or add `-Xswiftc -no-verify-emitted-module-interface` after `swift build`
     sharedSwiftSettings.append(.unsafeFlags(["-enable-library-evolution", "-no-verify-emitted-module-interface"]))
+}
+
+// MARK: - Extension
+
+extension Target {
+    func addRBSettings() {
+        dependencies.append(
+            .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
+        )
+        var swiftSettings = swiftSettings ?? []
+        swiftSettings.append(.define("OPENRENDERBOX_RENDERBOX"))
+        self.swiftSettings = swiftSettings
+    }
+}
+
+extension [Platform] {
+    static var nonDarwinPlatforms: [Platform] {
+        [.linux, .android, .wasi, .openbsd, .windows]
+    }
 }
 
 // MARK: - Targets
@@ -96,7 +202,7 @@ let openRenderBoxCompatibilityTestTarget = Target.testTarget(
 // MARK: - Package
 
 let libraryType: Product.Library.LibraryType?
-switch Context.environment["OPENRENDERBOX_LIBRARY_TYPE"] {
+switch envStringValue("LIBRARY_TYPE") {
 case "dynamic":
     libraryType = .dynamic
 case "static":
@@ -123,10 +229,6 @@ let package = Package(
     cxxLanguageStandard: .cxx20
 )
 
-let useLocalDeps = envEnable("OPENRENDERBOX_USE_LOCAL_DEPS")
-
-let renderBoxCondtion = envEnable("OPENRENDERBOX_RENDERBOX", default: buildForDarwinPlatform && !isSPIBuild )
-
 if renderBoxCondtion {
     let privateFrameworkRepo: Package.Dependency
     if useLocalDeps {
@@ -135,13 +237,11 @@ if renderBoxCondtion {
         privateFrameworkRepo = Package.Dependency.package(url: "https://github.com/OpenSwiftUIProject/DarwinPrivateFrameworks.git", branch: "main")
     }
     package.dependencies.append(privateFrameworkRepo)
-    var swiftSettings: [SwiftSetting] = (openRenderBoxShimsTarget.swiftSettings ?? [])
-    swiftSettings.append(.define("OPENRENDERBOX_RENDERBOX"))
-    openRenderBoxShimsTarget.swiftSettings = swiftSettings
-    openRenderBoxShimsTarget.dependencies.append(
-        .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
-    )
-    let rbVersion = Context.environment["DARWIN_PRIVATE_FRAMEWORKS_TARGET_RELEASE"].flatMap { Int($0) } ?? 2024
+    openRenderBoxShimsTarget.addRBSettings()
+
+    let rbVersion = EnvManager.shared.withDomain("DARWIN_PRIVATE_FRAMEWORKS") {
+        envIntValue("TARGET_RELEASE", default: 2024)
+    }
     package.platforms = switch rbVersion {
         case 2024: [.iOS(.v18), .macOS(.v15), .macCatalyst(.v18), .tvOS(.v18), .watchOS(.v10), .visionOS(.v2)]
         case 2021: [.iOS(.v15), .macOS(.v12), .macCatalyst(.v15), .tvOS(.v15), .watchOS(.v7)]
@@ -151,20 +251,11 @@ if renderBoxCondtion {
     openRenderBoxShimsTarget.dependencies.append("OpenRenderBox")
 }
 
-let compatibilityTestCondition = envEnable("OPENRENDERBOX_COMPATIBILITY_TEST")
 if compatibilityTestCondition && renderBoxCondtion {
-    openRenderBoxCompatibilityTestTarget.dependencies.append(
-        .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
-    )
+    openRenderBoxCompatibilityTestTarget.addRBSettings()
     var swiftSettings: [SwiftSetting] = (openRenderBoxCompatibilityTestTarget.swiftSettings ?? [])
     swiftSettings.append(.define("OPENRENDERBOX_COMPATIBILITY_TEST"))
     openRenderBoxCompatibilityTestTarget.swiftSettings = swiftSettings
 } else {
     openRenderBoxCompatibilityTestTarget.dependencies.append("OpenRenderBox")
-}
-
-extension [Platform] {
-    static var nonDarwinPlatforms: [Platform] {
-        [.linux, .android, .wasi, .openbsd, .windows]
-    }
 }
