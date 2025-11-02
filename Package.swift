@@ -264,7 +264,7 @@ if renderBoxCondtion {
     package.dependencies.append(privateFrameworkRepo)
     openRenderBoxShimsTarget.addRBSettings()
 
-    let rbVersion = EnvManager.shared.withDomain("DARWIN_PRIVATE_FRAMEWORKS") {
+    let rbVersion = EnvManager.shared.withDomain("DarwinPrivateFrameworks") {
         envIntValue("TARGET_RELEASE", default: 2024)
     }
     package.platforms = switch rbVersion {
