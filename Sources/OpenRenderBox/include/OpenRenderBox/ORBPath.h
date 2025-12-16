@@ -42,17 +42,17 @@ typedef bool (*ORBPathApplyCallback)(void * _Nullable info, ORBPathElement eleme
 /// Callback function pointer types for ORBPathCallbacks
 typedef void (* _Nullable ORBPathRetainCallback)(struct ORBPath path);
 typedef void (* _Nullable ORBPathReleaseCallback)(struct ORBPath path);
-typedef bool (* _Nullable ORBPathApplyFunction)(const void *storage, void * _Nullable info, ORBPathApplyCallback _Nullable callback);
-typedef bool (* _Nullable ORBPathIsEqualCallback)(const void *storage, const void *otherStorage);
-typedef bool (* _Nullable ORBPathIsEmptyCallback)(const void *storage);
-typedef bool (* _Nullable ORBPathIsSingleRectCallback)(const void *storage);
-typedef uint32_t (* _Nullable ORBPathBezierOrderCallback)(const void *storage);
+typedef bool (* _Nullable ORBPathApplyFunction)(ORBPathStorageRef storage, void * _Nullable info, ORBPathApplyCallback _Nullable callback);
+typedef bool (* _Nullable ORBPathIsEqualCallback)(ORBPathStorageRef storage, ORBPathStorageRef otherStorage);
+typedef bool (* _Nullable ORBPathIsEmptyCallback)(ORBPathStorageRef storage);
+typedef bool (* _Nullable ORBPathIsSingleRectCallback)(ORBPathStorageRef storage);
+typedef uint32_t (* _Nullable ORBPathBezierOrderCallback)(ORBPathStorageRef storage);
 #if ORB_TARGET_OS_DARWIN
-typedef CGRect (* _Nullable ORBPathBoundingBoxCallback)(const void *storage);
-typedef CGPathRef _Nullable (* _Nullable ORBPathGetCGPathCallback)(const void *storage);
+typedef CGRect (* _Nullable ORBPathBoundingBoxCallback)(ORBPathStorageRef storage);
+typedef CGPathRef _Nullable (* _Nullable ORBPathGetCGPathCallback)(ORBPathStorageRef storage);
 #else
-typedef void (* _Nullable ORBPathBoundingBoxCallback)(const void *storage);
-typedef void * _Nullable (* _Nullable ORBPathGetCGPathCallback)(const void *storage);
+typedef void (* _Nullable ORBPathBoundingBoxCallback)(ORBPathStorageRef storage);
+typedef void * _Nullable (* _Nullable ORBPathGetCGPathCallback)(ORBPathStorageRef storage);
 #endif
 
 /// Callbacks structure for path operations
