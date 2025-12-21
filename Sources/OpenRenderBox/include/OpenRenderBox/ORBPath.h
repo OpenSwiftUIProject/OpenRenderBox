@@ -27,12 +27,15 @@ struct ORBPathStorage;
 struct ORBPathCallbacks;
 
 /// Path element type for path enumeration
-typedef ORB_ENUM(int32_t, ORBPathElementType) {
+typedef ORB_ENUM(int32_t, ORBPathElement) {
     ORBPathElementMoveToPoint = 0,
     ORBPathElementAddLineToPoint = 1,
     ORBPathElementAddQuadCurveToPoint = 2,
     ORBPathElementAddCurveToPoint = 3,
     ORBPathElementCloseSubpath = 4,
+
+    ORBPathElementFixedRoundedRectCircular = 8,
+    ORBPathElementFixedRoundedRectContinuous = 9,
 };
 
 /// Defines the shape of a rounded rectangle's corners.
@@ -43,16 +46,9 @@ typedef ORB_ENUM(int32_t, ORBRoundedCornerStyle) {
     ORBRoundedCornerStyleContinuous = 1,
 };
 
-/// An element of a path returned by path enumeration
-struct ORBPathElement {
-    ORBPathElementType type;
-    const double * _Nullable points;
-};
-typedef struct ORBPathElement ORBPathElement;
-
 /// Callback type for path element enumeration
 /// Returns true to stop enumeration, false to continue
-typedef bool (*ORBPathApplyCallback)(void * _Nullable info, ORBPathElement element, const void * _Nullable userInfo);
+typedef bool (*ORBPathApplyCallback)(void * _Nullable info, ORBPathElement element, const double *points, const void * _Nullable userInfo);
 
 /// Callback function pointer types for ORBPathCallbacks
 typedef void (* _Nullable ORBPathRetainCallback)(ORBPathRef path);

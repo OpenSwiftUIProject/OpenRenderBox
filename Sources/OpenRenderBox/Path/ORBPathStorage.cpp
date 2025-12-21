@@ -24,6 +24,10 @@ void ORBPathStorageClear(ORBPathStorageRef storage) {
     storage->storage.clear();
 }
 
+void ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, double const * points, const void * userInfo) {
+    precondition_failure("TODO");
+}
+
 void ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
     precondition_failure("TODO");
 }

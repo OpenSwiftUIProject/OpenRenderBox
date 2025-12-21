@@ -72,44 +72,45 @@ const ORBPathCallbacks ORBPathCGPathCallbacks = {
             if (shouldStop) return;
             ORBPathElement orbElement;
             double pointBuffer[6];
+            double *points = nullptr;
             switch (element->type) {
                 case kCGPathElementMoveToPoint:
-                    orbElement.type = ORBPathElementMoveToPoint;
+                    orbElement = ORBPathElementMoveToPoint;
                     pointBuffer[0] = element->points[0].x;
                     pointBuffer[1] = element->points[0].y;
-                    orbElement.points = pointBuffer;
+                    points = pointBuffer;
                     break;
                 case kCGPathElementAddLineToPoint:
-                    orbElement.type = ORBPathElementAddLineToPoint;
+                    orbElement = ORBPathElementAddLineToPoint;
                     pointBuffer[0] = element->points[0].x;
                     pointBuffer[1] = element->points[0].y;
-                    orbElement.points = pointBuffer;
+                    points = pointBuffer;
                     break;
                 case kCGPathElementAddQuadCurveToPoint:
-                    orbElement.type = ORBPathElementAddQuadCurveToPoint;
+                    orbElement = ORBPathElementAddQuadCurveToPoint;
                     pointBuffer[0] = element->points[0].x;
                     pointBuffer[1] = element->points[0].y;
                     pointBuffer[2] = element->points[1].x;
                     pointBuffer[3] = element->points[1].y;
-                    orbElement.points = pointBuffer;
+                    points = pointBuffer;
                     break;
                 case kCGPathElementAddCurveToPoint:
-                    orbElement.type = ORBPathElementAddCurveToPoint;
+                    orbElement = ORBPathElementAddCurveToPoint;
                     pointBuffer[0] = element->points[0].x;
                     pointBuffer[1] = element->points[0].y;
                     pointBuffer[2] = element->points[1].x;
                     pointBuffer[3] = element->points[1].y;
                     pointBuffer[4] = element->points[2].x;
                     pointBuffer[5] = element->points[2].y;
-                    orbElement.points = pointBuffer;
+                    points = pointBuffer;
                     break;
                 case kCGPathElementCloseSubpath:
-                    orbElement.type = ORBPathElementCloseSubpath;
-                    orbElement.points = nullptr;
+                    orbElement = ORBPathElementCloseSubpath;
+                    points = nullptr;
                     break;
             }
             if (callback != nullptr) {
-                shouldStop = callback(info, orbElement, nullptr);
+                shouldStop = callback(info, orbElement, points, nullptr);
             }
         });
         return !shouldStop;
