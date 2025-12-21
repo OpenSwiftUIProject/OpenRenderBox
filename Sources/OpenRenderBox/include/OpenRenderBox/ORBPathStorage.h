@@ -27,9 +27,9 @@ ORB_EXPORT
 ORB_REFINED_FOR_SWIFT
 void ORBPathStorageClear(ORBPathStorageRef storage) ORB_SWIFT_NAME(ORBPathStorageRef.clear(self:));
 
-//ORB_EXPORT
-//ORB_REFINED_FOR_SWIFT
-//void ORBPathStorageAppendPath(ORBPathStorage, ORBPath);
+ORB_EXPORT
+ORB_REFINED_FOR_SWIFT
+void ORBPathStorageAppendPath(ORBPathStorageRef, ORBPath) ORB_SWIFT_NAME(ORBPathStorageRef.append(self:path:));
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT

@@ -24,7 +24,9 @@ void ORBPathStorageClear(ORBPathStorageRef storage) {
     storage->storage.clear();
 }
 
-// ...
+void ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
+    precondition_failure("TODO");
+}
 
 bool ORBPathStorageIsEmpty(ORBPathStorageRef storage) {
     return storage->storage.isEmpty();
