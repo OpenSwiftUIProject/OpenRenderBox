@@ -37,12 +37,12 @@ typedef struct ORBPathCallbacks {
 
 /// Global empty path callbacks (all null)
 ORB_EXPORT
-const ORBPathCallbacks ORBPathEmptyCallbacks;
+const ORBPathCallbacks ORBPathEmptyCallbacks ORB_SWIFT_NAME(ORBPathCallbacks.empty);
 
 #if ORB_TARGET_OS_DARWIN
 /// Global callbacks for CGPath-backed paths
 ORB_EXPORT
-const ORBPathCallbacks ORBPathCGPathCallbacks;
+const ORBPathCallbacks ORBPathCGPathCallbacks ORB_SWIFT_NAME(ORBPathCallbacks.cgPath);
 #endif
 
 ORB_EXTERN_C_END

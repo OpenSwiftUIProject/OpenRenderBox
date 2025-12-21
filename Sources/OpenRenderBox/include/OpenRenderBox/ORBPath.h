@@ -26,12 +26,12 @@ typedef ORB_ENUM(int32_t, ORBPathElement) {
 };
 
 /// Defines the shape of a rounded rectangle's corners.
-typedef ORB_ENUM(int32_t, ORBRoundedCornerStyle) {
+typedef ORB_ENUM(int32_t, ORBPathRoundedCornerStyle) {
     /// Quarter-circle rounded rect corners.
-    ORBRoundedCornerStyleCircular = 0,
+    ORBPathRoundedCornerStyleCircular = 0,
     /// Continuous curvature rounded rect corners.
-    ORBRoundedCornerStyleContinuous = 1,
-};
+    ORBPathRoundedCornerStyleContinuous = 1,
+} ORB_SWIFT_NAME(ORBPath.RoundedCornerStyle);
 
 /// Callback type for path element enumeration
 /// Returns true to stop enumeration, false to continue
@@ -48,11 +48,11 @@ typedef struct ORBPath {
 
 /// Global empty path (storage = null, callbacks = &ORBPathEmptyCallbacks)
 ORB_EXPORT
-const ORBPath ORBPathEmpty;
+const ORBPath ORBPathEmpty ORB_SWIFT_NAME(ORBPath.empty);
 
 /// Global null path (storage = 0x1, callbacks = &ORBPathEmptyCallbacks)
 ORB_EXPORT
-const ORBPath ORBPathNull;
+const ORBPath ORBPathNull ORB_SWIFT_NAME(ORBPath.null);
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT
@@ -76,10 +76,10 @@ ORB_EXPORT
 ORBPath ORBPathMakeEllipse(CGRect rect, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(ellipseIn:transform:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, ORBRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:cornerWidth:cornerHeight:style:transform:));
+ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, ORBPathRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:cornerWidth:cornerHeight:style:transform:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:bottomLeftRadius:bottomRightRadius:topRightRadius:style:transform:));
+ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:bottomLeftRadius:bottomRightRadius:topRightRadius:style:transform:));
 
 // MARK: - CGPath Interoperability
 
