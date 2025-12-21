@@ -55,7 +55,6 @@ struct PathTests {
         #expect(path.contains(point: insidePoint, eoFill: false) == true)
         #expect(path.contains(point: outsidePoint, eoFill: false) == false)
         path.release()
-        
     }
 }
 
