@@ -5,21 +5,6 @@
 #include <OpenRenderBox/ORBPathCallbacks.h>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
-// Empty path callbacks (all null)
-const ORBPathCallbacks ORBPathEmptyCallbacks = {
-    nullptr, // reserved
-    nullptr, // retain
-    nullptr, // release
-    nullptr, // apply
-    nullptr, // isEqual
-    nullptr, // isEmpty
-    nullptr, // isSingleRect
-    nullptr, // bezierOrder
-    nullptr, // boundingBox
-    nullptr, // cgPath
-    nullptr, // reserved2
-};
-
 #if ORB_TARGET_OS_DARWIN
 // FIXME: Not implemented correctly
 const ORBPathCallbacks ORBPathCGPathCallbacks = {

@@ -8,19 +8,31 @@
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
 
-/// Global empty path callbacks (all null)
-ORB_EXPORT const ORBPathCallbacks ORBPathEmptyCallbacks;
+// Empty path callbacks (all null) - C++ internal linkage
+static const ORBPathCallbacks empty_path_callbacks = {
+    nullptr, // reserved
+    nullptr, // retain
+    nullptr, // release
+    nullptr, // apply
+    nullptr, // isEqual
+    nullptr, // isEmpty
+    nullptr, // isSingleRect
+    nullptr, // bezierOrder
+    nullptr, // boundingBox
+    nullptr, // cgPath
+    nullptr, // reserved2
+};
 
 // Empty path (storage = null)
 const ORBPath ORBPathEmpty = {
     nullptr,
-    &ORBPathEmptyCallbacks,
+    &empty_path_callbacks,
 };
 
 // Null path (storage = 0x1)
 const ORBPath ORBPathNull = {
     reinterpret_cast<ORBPathStorage *>(0x1),
-    &ORBPathEmptyCallbacks,
+    &empty_path_callbacks,
 };
 
 void ORBPathRetain(ORBPath path) {

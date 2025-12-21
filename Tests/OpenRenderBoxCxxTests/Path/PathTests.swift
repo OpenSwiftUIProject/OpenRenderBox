@@ -13,7 +13,7 @@ import Testing
 struct PathTests {
     @Test
     func demo() {
-        let storage = ORB.Path.Storage(3)
+        _ = ORB.Path.Storage(96)
     }
 }
 #endif
