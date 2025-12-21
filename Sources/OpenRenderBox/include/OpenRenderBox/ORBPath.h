@@ -71,19 +71,19 @@ void ORBPathRelease(ORBPath path) ORB_SWIFT_NAME(ORBPath.release(self:));
 
 #if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
-ORBPath ORBPathMakeWithCGPath(CGPathRef _Nullable cgPath);
+ORBPath ORBPathMakeWithCGPath(CGPathRef cgPath) ORB_SWIFT_NAME(ORBPath.init(cgPath:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeRect(CGRect rect, const CGAffineTransform * _Nullable transform);
+ORBPath ORBPathMakeRect(CGRect rect, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(rect:transform:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeEllipse(CGRect rect, const CGAffineTransform * _Nullable transform);
+ORBPath ORBPathMakeEllipse(CGRect rect, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(ellipseIn:transform:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, const CGAffineTransform * _Nullable transform);
+ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:cornerWidth:cornerHeight:transform:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, const CGAffineTransform * _Nullable transform);
+ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:bottomLeftRadius:bottomRightRadius:topRightRadius:transform:));
 #endif
 
 ORB_EXTERN_C_END
