@@ -39,7 +39,7 @@ void ORBPathStorageAppendPath(ORBPathStorageRef, ORBPath) ORB_SWIFT_NAME(ORBPath
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT
-void ORBPathStorageApplyElements(ORBPathStorageRef, void *info, ORBPathApplyCallback _Nullable callback) ORB_SWIFT_NAME(ORBPathStorageRef.apply(self:info:callback:));
+bool ORBPathStorageApplyElements(ORBPathStorageRef, void *info, ORBPathApplyCallback _Nullable callback) ORB_SWIFT_NAME(ORBPathStorageRef.apply(self:info:callback:));
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT

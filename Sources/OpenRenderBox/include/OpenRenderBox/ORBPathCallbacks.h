@@ -9,7 +9,6 @@
 
 #include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPath.h>
-#include <CoreFoundation/CoreFoundation.h>
 #if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CoreGraphics.h>
 #endif
