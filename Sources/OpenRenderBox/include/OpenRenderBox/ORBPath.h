@@ -37,7 +37,7 @@ typedef ORB_ENUM(int32_t, ORBPathRoundedCornerStyle) {
 /// Returns true to stop enumeration, false to continue
 typedef bool (*ORBPathApplyCallback)(void * _Nullable info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
 
-struct ORBPathCallbacks;
+typedef struct ORBPathCallbacks ORBPathCallbacks;
 
 typedef struct ORBPathStorage * ORBPathStorageRef ORB_SWIFT_STRUCT ORB_SWIFT_NAME(ORBPath.Storage);
 

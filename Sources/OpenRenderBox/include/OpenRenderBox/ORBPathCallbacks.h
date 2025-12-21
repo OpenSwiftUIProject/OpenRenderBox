@@ -16,7 +16,7 @@ ORB_EXTERN_C_BEGIN
 
 /// Callbacks structure for path operations
 /// This allows different path storage types (CGPath, custom storage, etc.) to provide their own implementations
-typedef struct ORBPathCallbacks {
+typedef struct ORB_SWIFT_NAME(ORBPath.Callbacks) ORBPathCallbacks {
     void * _Nullable reserved;              // 0x00: Reserved for future use
 
     void (* _Nullable retain)(const ORBPath *path);           // 0x08
@@ -33,11 +33,7 @@ typedef struct ORBPathCallbacks {
     void * _Nullable (* _Nullable cgPath)(const ORBPath *path); // 0x48
     #endif
     void * _Nullable reserved2;             // 0x50
-} ORBPathCallbacks ORB_SWIFT_NAME(ORBPath.Callbacks);
-
-/// Global empty path callbacks (all null)
-ORB_EXPORT
-const ORBPathCallbacks ORBPathEmptyCallbacks ORB_SWIFT_NAME(ORBPathCallbacks.empty);
+} ORBPathCallbacks;
 
 #if ORB_TARGET_OS_DARWIN
 /// Global callbacks for CGPath-backed paths

@@ -8,6 +8,9 @@
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
 
+/// Global empty path callbacks (all null)
+ORB_EXPORT const ORBPathCallbacks ORBPathEmptyCallbacks;
+
 // Empty path (storage = null)
 const ORBPath ORBPathEmpty = {
     nullptr,
@@ -69,7 +72,7 @@ ORBPath ORBPathMakeEllipse(CGRect rect, const CGAffineTransform *transform) {
     return path;
 }
 
-ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, ORBRoundedCornerStyle style, const CGAffineTransform *transform) {
+ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, ORBPathRoundedCornerStyle style, const CGAffineTransform *transform) {
     // TODO: Handle ORBRoundedCornerStyleContinuous with custom bezier curves
     CGPathRef cgPath = CGPathCreateWithRoundedRect(rect, cornerWidth, cornerHeight, transform);
     ORBPath path = {
@@ -79,7 +82,7 @@ ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerH
     return path;
 }
 
-ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBRoundedCornerStyle style, const CGAffineTransform *transform) {
+ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform *transform) {
     // TODO: Handle ORBRoundedCornerStyleContinuous with custom bezier curves
     CGMutablePathRef cgPath = CGPathCreateMutable();
 
