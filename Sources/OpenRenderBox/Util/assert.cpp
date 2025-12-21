@@ -19,7 +19,7 @@ void precondition_failure(const char *format, ...) {
         os_log_error(error_log(), "precondition failure: %s", s);
         #endif /* ORB_TARGET_OS_DARWIN */
         if (error_message == nullptr) {
-            asprintf(&error_message, "OpenGraph precondition failure: %s.\n", s);
+            asprintf(&error_message, "OpenRenderBox precondition failure: %s.\n", s);
         }
         free(s);
     }

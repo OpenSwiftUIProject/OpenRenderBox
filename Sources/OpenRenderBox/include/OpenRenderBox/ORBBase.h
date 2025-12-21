@@ -66,3 +66,6 @@
 #define ORB_ORBJC_FOUNDATION 0
 #endif /* TARGET_OS_DARWIN && __ORBJC__ */
 
+#if !ORB_TRRET_OS_DARWIN
+#include "CFCGTypes.h"
+#endif

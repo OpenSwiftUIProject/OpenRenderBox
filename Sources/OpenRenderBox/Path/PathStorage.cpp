@@ -5,9 +5,23 @@
 #include <OpenRenderBoxCxx/Path/PathStorage.hpp>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
+#if ORB_TARGET_OS_DARWIN
+#include <CoreGraphics/CoreGraphics.h>
+#endif
+
 namespace ORB {
 namespace Path {
 atomic_long Storage::_last_identifier;
+
+Storage::Storage(uint32_t capacity) {
+    _unknown = nullptr;
+    if (capacity <= 63) {
+        precondition_failure("invalid capacity");
+    }
+    uint32_t cappedCapacity = fmin(capacity - 16, 4095);
+    _flags = StorageFlags().withCapacity(cappedCapacity);
+    _identifier = get_identifier();
+}
 
 Storage::Storage(uint32_t capacity, const Storage &storage): Storage(capacity) {
     uint32_t originalCapity = flags().capacity();
@@ -44,8 +58,8 @@ Storage::Storage(uint32_t capacity, const Storage &storage): Storage(capacity) {
 }
 
 Storage::~Storage() {
-    if (_unknonw != nullptr) {
-        _unknonw = nullptr;
+    if (_unknown != nullptr) {
+        _unknown = nullptr;
         // TODO
     }
 }
@@ -57,6 +71,17 @@ bool Storage::operator==(const Storage &other) const ORB_NOEXCEPT {
 
 void Storage::clear() {
     // TODO
+}
+
+void * Storage::cgpath() const ORB_NOEXCEPT {
+    if (_flags.isInline()) {
+        return nullptr;
+    }
+    if (_cached_cgPath != nullptr) {
+        return _cached_cgPath;
+    }
+    // TODO: Create CGPath via RBPathCopyCGPath
+    return nullptr;
 }
 
 } /* Path */

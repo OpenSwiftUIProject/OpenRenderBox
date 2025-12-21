@@ -1,5 +1,6 @@
 #include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPath.h>
+#include <OpenRenderBox/ORBPathCallbacks.h>
 #include <OpenRenderBox/ORBPathStorage.h>
 #include <OpenRenderBox/ORBSwiftSupport.h>
 #include <OpenRenderBox/ORBTargetConditionals.h>
