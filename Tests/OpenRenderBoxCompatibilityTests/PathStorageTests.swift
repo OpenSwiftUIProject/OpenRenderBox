@@ -64,12 +64,12 @@ struct PathStorageTests {
         let path2 = ORBPath(rect: rect, transform: nil)
         let storage1 = path1.storage
         let storage2 = path2.storage
-        #expect(storage1.isEqualTo(storage2) == true)
+        #expect(storage1.isEqual(to: storage2) == true)
         storage1.initialize(capacity: 96, source: nil)
         storage1.append(path: path1)
         storage2.initialize(capacity: 96, source: nil)
         storage2.append(path: path2)
-        #expect(storage1.isEqualTo(storage2) == true)
+        #expect(storage1.isEqual(to: storage2) == true)
         storage1.destroy()
         storage2.destroy()
         path1.release()
@@ -82,12 +82,12 @@ struct PathStorageTests {
         let path2 = ORBPath(rect: CGRect(x: 0, y: 0, width: 200, height: 200), transform: nil)
         let storage1 = path1.storage
         let storage2 = path2.storage
-        #expect(storage1.isEqualTo(storage2) == true)
+        #expect(storage1.isEqual(to: storage2) == true)
         storage1.initialize(capacity: 96, source: nil)
         storage1.append(path: path1)
         storage2.initialize(capacity: 96, source: nil)
         storage2.append(path: path2)
-        #expect(storage1.isEqualTo(storage2) == false)
+        #expect(storage1.isEqual(to: storage2) == false)
         storage1.destroy()
         storage2.destroy()
         path1.release()
