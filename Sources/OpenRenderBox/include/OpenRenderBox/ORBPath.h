@@ -47,8 +47,8 @@ typedef struct ORBPathElement ORBPathElement;
 typedef bool (*ORBPathApplyCallback)(void * _Nullable info, ORBPathElement element, const void * _Nullable userInfo);
 
 typedef struct ORBPath {
-    ORBPathStorageRef _Nullable storage;
-    ORBPathCallbacksRef _Nullable callbacks;
+    ORBPathStorageRef storage;
+    ORBPathCallbacksRef callbacks;
 } ORBPath;
 
 /// Global empty path (storage = null, callbacks = &ORBPathEmptyCallbacks)

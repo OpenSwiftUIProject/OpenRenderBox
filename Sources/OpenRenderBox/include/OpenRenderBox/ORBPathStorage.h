@@ -17,7 +17,7 @@ ORB_EXTERN_C_BEGIN
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT
-void ORBPathStorageInit(ORBPathStorageRef dst, uint32_t capacity, ORBPathStorageRef _Nullable source) ORB_SWIFT_NAME(ORBPathStorageRef.init(self:capacity:source:));
+void ORBPathStorageInit(ORBPathStorageRef dst, uint32_t capacity, ORBPathStorageRef _Nullable source) ORB_SWIFT_NAME(ORBPathStorageRef.initialize(self:capacity:source:));
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT

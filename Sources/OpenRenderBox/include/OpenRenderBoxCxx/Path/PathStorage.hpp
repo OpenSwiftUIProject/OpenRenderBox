@@ -134,24 +134,14 @@ public:
 
     ORB_INLINE
     const static uint32_t get_identifier() ORB_NOEXCEPT {
-        _last_identifier++;
-        return _last_identifier;
+        return atomic_fetch_add_explicit(&_last_identifier, 1, memory_order_relaxed);
     }
 
 private:
     static atomic_long _last_identifier;
 
 public:
-    Storage(uint32_t capacity) {
-        _unknonw = nullptr;
-        if (capacity <= 63) {
-            precondition_failure("invalid capacity");
-        }
-        _flags = StorageFlags().withCapacity(capacity - 10);
-        _identifier = get_identifier();
-    }
-
-    
+    Storage(uint32_t capacity);
     Storage(uint32_t capacity, const ORB::Path::Storage &storage);
     ~Storage();
 
@@ -162,10 +152,19 @@ public:
 //    void append_element(RBPathElement, double const*, void const*);
 //    push_values(unsigned char, double const*, unsigned long)
     // update_single_element()
+
+    /// Get cached CGPath, lazily creating if needed (matches RB::Path::Storage::cgpath)
+    void * cgpath() const ORB_NOEXCEPT;
+
 public:
     ORB_INLINE ORB_CONSTEXPR
     void * unknown() const ORB_NOEXCEPT {
-        return _unknonw;
+        return _unknown;
+    }
+
+    ORB_INLINE
+    void * cachedCGPath() const ORB_NOEXCEPT {
+        return _cached_cgPath;
     }
 
     ORB_INLINE ORB_CONSTEXPR
@@ -211,11 +210,15 @@ public:
         return actual_size() == 0;
     }
 private:
-    void * _unknonw;
-    StorageFlags _flags;
-    uint32_t _identifier;
-    Storage* _external_storage;
-    uint64_t _external_size;
+    void * _unknown;                    // 0x00
+    StorageFlags _flags;                // 0x08
+    uint32_t _identifier;               // 0x0C
+    Storage* _external_storage;         // 0x10
+    uint64_t _external_size;            // 0x18
+    void * _reserved1;                  // 0x20
+    void * _reserved2;                  // 0x28
+    void * _reserved3;                  // 0x30
+    mutable void * _cached_cgPath;      // 0x38 - lazily cached CGPath
 };
 } /* Path */
 } /* ORB */
