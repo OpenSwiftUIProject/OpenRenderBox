@@ -231,4 +231,9 @@ ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat
     return path;
 }
 
+CGPathRef ORBPathCopyCGPath(ORBPath path) {
+    // TODO: Return a retained copy of the CGPath
+    return nullptr;
+}
+
 #endif // ORB_TARGET_OS_DARWIN
