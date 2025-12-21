@@ -18,9 +18,7 @@ ORB_EXTERN_C_BEGIN
 
 typedef struct ORB_BRIDGED_TYPE(id) ORBPath * ORBMutablePathRef;
 typedef const struct ORB_BRIDGED_TYPE(id) ORBPath * ORBPathRef;
-
-typedef struct ORB_BRIDGED_TYPE(id) ORBPathStorage * ORBPathStorageRef ORB_SWIFT_NAME(ORBPath.Storage);
-typedef const struct ORB_BRIDGED_TYPE(id) ORBPathCallbacks * ORBPathCallbacksRef ORB_SWIFT_NAME(ORBPath.Callbacks);
+typedef struct ORBPathStorage * ORBPathStorageRef ORB_SWIFT_STRUCT ORB_SWIFT_NAME(ORBPath.Storage);
 
 struct ORBPath;
 struct ORBPathStorage;
@@ -48,7 +46,7 @@ typedef ORB_ENUM(int32_t, ORBRoundedCornerStyle) {
 
 /// Callback type for path element enumeration
 /// Returns true to stop enumeration, false to continue
-typedef bool (*ORBPathApplyCallback)(void * _Nullable info, ORBPathElement element, const double *points, const void * _Nullable userInfo);
+typedef bool (*ORBPathApplyCallback)(void * _Nullable info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
 
 /// Callback function pointer types for ORBPathCallbacks
 typedef void (* _Nullable ORBPathRetainCallback)(ORBPathRef path);
@@ -82,11 +80,6 @@ typedef struct ORBPathCallbacks {
     void * _Nullable reserved2;             // 0x50: Reserved for future use
 } ORBPathCallbacks;
 
-typedef struct ORBPath {
-    ORBPathStorageRef storage;
-    ORBPathCallbacksRef callbacks;
-} ORBPath;
-
 /// Global empty path callbacks (all null)
 ORB_EXPORT
 const ORBPathCallbacks ORBPathEmptyCallbacks;
@@ -96,6 +89,11 @@ const ORBPathCallbacks ORBPathEmptyCallbacks;
 ORB_EXPORT
 const ORBPathCallbacks ORBPathCGPathCallbacks;
 #endif
+
+typedef struct ORBPath {
+    ORBPathStorageRef storage;
+    const ORBPathCallbacks * callbacks;
+} ORBPath;
 
 /// Global empty path (storage = null, callbacks = &ORBPathEmptyCallbacks)
 ORB_EXPORT
@@ -113,9 +111,10 @@ ORB_EXPORT
 ORB_REFINED_FOR_SWIFT
 void ORBPathRelease(ORBPath path) ORB_SWIFT_NAME(ORBPath.release(self:));
 
+#if ORB_TARGET_OS_DARWIN
+
 // MARK: - Path Creation
 
-#if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
 ORBPath ORBPathMakeWithCGPath(CGPathRef cgPath) ORB_SWIFT_NAME(ORBPath.init(cgPath:));
 
@@ -131,8 +130,12 @@ ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerH
 ORB_EXPORT
 ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:bottomLeftRadius:bottomRightRadius:topRightRadius:style:transform:));
 
+// MARK: - CGPath Interoperability
+
 ORB_EXPORT
 CGPathRef ORBPathCopyCGPath(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.cgPath(self:));
+
+// MARK: - Point Containment
 
 ORB_EXPORT
 bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) ORB_SWIFT_NAME(ORBPath.contains(self:point:eoFill:));
