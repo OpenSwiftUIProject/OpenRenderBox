@@ -16,8 +16,8 @@ ORB_IMPLICIT_BRIDGING_ENABLED
 
 ORB_EXTERN_C_BEGIN
 
-typedef struct ORB_BRIDGED_TYPE(id) ORBPath * ORBMutablePathRef ORB_SWIFT_NAME(ORBPath);
-typedef const struct ORB_BRIDGED_TYPE(id) ORBPath * ORBPathRef ORB_SWIFT_NAME(ORBPath);
+typedef struct ORB_BRIDGED_TYPE(id) ORBPath * ORBMutablePathRef;
+typedef const struct ORB_BRIDGED_TYPE(id) ORBPath * ORBPathRef;
 
 typedef struct ORB_BRIDGED_TYPE(id) ORBPathStorage * ORBPathStorageRef ORB_SWIFT_NAME(ORBPath.Storage);
 typedef const struct ORB_BRIDGED_TYPE(id) ORBPathCallbacks * ORBPathCallbacksRef ORB_SWIFT_NAME(ORBPath.Callbacks);
