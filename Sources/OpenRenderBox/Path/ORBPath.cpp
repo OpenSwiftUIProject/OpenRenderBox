@@ -19,6 +19,7 @@ const ORBPathCallbacks ORBPathEmptyCallbacks = {
     nullptr, // bezierOrder
     nullptr, // boundingBox
     nullptr, // cgPath
+    nullptr, // reserved2
 };
 
 // Empty path (storage = null)
@@ -54,7 +55,7 @@ void ORBPathRelease(ORBPath path) {
 
 // FIXME: Not implemented correctly
 const ORBPathCallbacks ORBPathCGPathCallbacks = {
-    nullptr,
+    nullptr, // reserved
     // retain
     +[](ORBPathRef path) -> void {
         CFRetain(path->storage);
@@ -147,6 +148,7 @@ const ORBPathCallbacks ORBPathCGPathCallbacks = {
     +[](ORBPathRef path) -> CGPathRef {
         return reinterpret_cast<CGPathRef>(path->storage);
     },
+    nullptr, // reserved2
 };
 
 // MARK: - Path Creation

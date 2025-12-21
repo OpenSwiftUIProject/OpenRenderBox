@@ -75,6 +75,7 @@ typedef struct ORBPathCallbacks {
     ORBPathBezierOrderCallback bezierOrder; // 0x38: Get bezier order (1=linear, 2=quad, 3=cubic)
     ORBPathBoundingBoxCallback boundingBox; // 0x40: Get bounding box
     ORBPathGetCGPathCallback cgPath;        // 0x48: Get CGPath representation
+    void * _Nullable reserved2;             // 0x50: Reserved for future use
 } ORBPathCallbacks;
 
 typedef struct ORBPath {
