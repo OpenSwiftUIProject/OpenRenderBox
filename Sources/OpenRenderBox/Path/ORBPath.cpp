@@ -10,14 +10,14 @@
 void ORBPathRetain(ORBPath path) {
     ORBPathRetainCallback retain = path.callbacks->retain;
     if (retain != nullptr) {
-        retain(path);
+        retain(&path);
     }
 }
 
 void ORBPathRelease(ORBPath path) {
     ORBPathReleaseCallback release = path.callbacks->release;
     if (release != nullptr) {
-        release(path);
+        release(&path);
     }
 }
 
@@ -29,13 +29,17 @@ void ORBPathRelease(ORBPath path) {
 // FIXME: Not implemented correctly
 const ORBPathCallbacks ORBPathCGPathCallbacks = {
     nullptr,
-    // retain - use CFRetain directly
-    reinterpret_cast<ORBPathRetainCallback>(CFRetain),
-    // release - use CFRelease directly
-    reinterpret_cast<ORBPathReleaseCallback>(CFRelease),
+    // retain
+    +[](ORBPathRef path) -> void {
+        CFRetain(path->storage);
+    },
+    // release
+    +[](ORBPathRef path) -> void {
+        CFRelease(path->storage);
+    },
     // apply
-    +[](ORBPathStorageRef storage, void *info, ORBPathApplyCallback callback) -> bool {
-        CGPathRef cgPath = reinterpret_cast<CGPathRef>(storage);
+    +[](ORBPathRef path, void *info, ORBPathApplyCallback callback) -> bool {
+        CGPathRef cgPath = reinterpret_cast<CGPathRef>(path->storage);
         __block bool shouldStop = false;
         CGPathApplyWithBlock(cgPath, ^(const CGPathElement *element) {
             if (shouldStop) return;
@@ -84,20 +88,20 @@ const ORBPathCallbacks ORBPathCGPathCallbacks = {
         return !shouldStop;
     },
     // isEqual
-    +[](ORBPathStorageRef storage, ORBPathStorageRef otherStorage) -> bool {
-        return CGPathEqualToPath(reinterpret_cast<CGPathRef>(storage), reinterpret_cast<CGPathRef>(otherStorage));
+    +[](ORBPathRef path, ORBPathRef otherPath) -> bool {
+        return CGPathEqualToPath(reinterpret_cast<CGPathRef>(path->storage), reinterpret_cast<CGPathRef>(otherPath->storage));
     },
     // isEmpty
-    +[](ORBPathStorageRef storage) -> bool {
-        return CGPathIsEmpty(reinterpret_cast<CGPathRef>(storage));
+    +[](ORBPathRef path) -> bool {
+        return CGPathIsEmpty(reinterpret_cast<CGPathRef>(path->storage));
     },
     // isSingleRect - CGPath doesn't have this, always return false
-    +[](ORBPathStorageRef storage) -> bool {
+    +[](ORBPathRef path) -> bool {
         return false;
     },
     // bezierOrder
-    +[](ORBPathStorageRef storage) -> uint32_t {
-        CGPathRef cgPath = reinterpret_cast<CGPathRef>(storage);
+    +[](ORBPathRef path) -> uint32_t {
+        CGPathRef cgPath = reinterpret_cast<CGPathRef>(path->storage);
         __block uint32_t order = 1;
         CGPathApply(cgPath, &order, [](void *info, const CGPathElement *element) {
             uint32_t *orderPtr = static_cast<uint32_t*>(info);
@@ -110,12 +114,12 @@ const ORBPathCallbacks ORBPathCGPathCallbacks = {
         return order;
     },
     // boundingBox
-    +[](ORBPathStorageRef storage) -> CGRect {
-        return CGPathGetPathBoundingBox(reinterpret_cast<CGPathRef>(storage));
+    +[](ORBPathRef path) -> CGRect {
+        return CGPathGetPathBoundingBox(reinterpret_cast<CGPathRef>(path->storage));
     },
     // cgPath - return the CGPath itself
-    +[](ORBPathStorageRef storage) -> CGPathRef {
-        return reinterpret_cast<CGPathRef>(storage);
+    +[](ORBPathRef path) -> CGPathRef {
+        return reinterpret_cast<CGPathRef>(path->storage);
     },
 };
 

@@ -14,10 +14,11 @@ ORB_ASSUME_NONNULL_BEGIN
 
 ORB_EXTERN_C_BEGIN
 
+typedef struct ORB_BRIDGED_TYPE(id) ORBPath * ORBPathRef ORB_SWIFT_NAME(ORBPath);
 typedef struct ORB_BRIDGED_TYPE(id) ORBPathStorage * ORBPathStorageRef ORB_SWIFT_NAME(ORBPath.Storage);
 
-struct ORBPathStorage;
 struct ORBPath;
+struct ORBPathStorage;
 
 /// Path element type for path enumeration
 typedef ORB_ENUM(int32_t, ORBPathElementType) {
@@ -40,19 +41,19 @@ typedef struct ORBPathElement ORBPathElement;
 typedef bool (*ORBPathApplyCallback)(void * _Nullable info, ORBPathElement element, const void * _Nullable userInfo);
 
 /// Callback function pointer types for ORBPathCallbacks
-typedef void (* _Nullable ORBPathRetainCallback)(struct ORBPath path);
-typedef void (* _Nullable ORBPathReleaseCallback)(struct ORBPath path);
-typedef bool (* _Nullable ORBPathApplyFunction)(ORBPathStorageRef storage, void * _Nullable info, ORBPathApplyCallback _Nullable callback);
-typedef bool (* _Nullable ORBPathIsEqualCallback)(ORBPathStorageRef storage, ORBPathStorageRef otherStorage);
-typedef bool (* _Nullable ORBPathIsEmptyCallback)(ORBPathStorageRef storage);
-typedef bool (* _Nullable ORBPathIsSingleRectCallback)(ORBPathStorageRef storage);
-typedef uint32_t (* _Nullable ORBPathBezierOrderCallback)(ORBPathStorageRef storage);
+typedef void (* _Nullable ORBPathRetainCallback)(ORBPathRef path);
+typedef void (* _Nullable ORBPathReleaseCallback)(ORBPathRef path);
+typedef bool (* _Nullable ORBPathApplyFunction)(ORBPathRef path, void * _Nullable info, ORBPathApplyCallback _Nullable callback);
+typedef bool (* _Nullable ORBPathIsEqualCallback)(ORBPathRef path, ORBPathRef otherPath);
+typedef bool (* _Nullable ORBPathIsEmptyCallback)(ORBPathRef path);
+typedef bool (* _Nullable ORBPathIsSingleRectCallback)(ORBPathRef path);
+typedef uint32_t (* _Nullable ORBPathBezierOrderCallback)(ORBPathRef path);
 #if ORB_TARGET_OS_DARWIN
-typedef CGRect (* _Nullable ORBPathBoundingBoxCallback)(ORBPathStorageRef storage);
-typedef CGPathRef _Nullable (* _Nullable ORBPathGetCGPathCallback)(ORBPathStorageRef storage);
+typedef CGRect (* _Nullable ORBPathBoundingBoxCallback)(ORBPathRef path);
+typedef CGPathRef _Nullable (* _Nullable ORBPathGetCGPathCallback)(ORBPathRef path);
 #else
-typedef void (* _Nullable ORBPathBoundingBoxCallback)(ORBPathStorageRef storage);
-typedef void * _Nullable (* _Nullable ORBPathGetCGPathCallback)(ORBPathStorageRef storage);
+typedef void (* _Nullable ORBPathBoundingBoxCallback)(ORBPathRef path);
+typedef void * _Nullable (* _Nullable ORBPathGetCGPathCallback)(ORBPathRef path);
 #endif
 
 /// Callbacks structure for path operations
