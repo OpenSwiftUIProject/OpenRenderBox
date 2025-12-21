@@ -5,7 +5,7 @@
 //  Created by Kyle on 2025/3/25.
 //
 
-#include "ORBPathPrivate.h"
+#include <OpenRenderBox/ORBPath.h>
 
 // Empty path callbacks (all null)
 const ORBPathCallbacks ORBPathEmptyCallbacks = {
