@@ -237,4 +237,13 @@ CGPathRef ORBPathCopyCGPath(ORBPath path) {
     return nullptr;
 }
 
+bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) {
+    return ORBPathContainsPoints(path, 1, &point, eoFill, nullptr);
+}
+
+bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform *transform) {
+    // TODO: Implement point containment testing with winding rule
+    return false;
+}
+
 #endif // ORB_TARGET_OS_DARWIN

@@ -159,12 +159,12 @@ let renderBoxCondtion = envBoolValue("RENDERBOX", default: buildForDarwinPlatfor
 
 var sharedCSettings: [CSetting] = [
     .unsafeFlags(["-I", libSwiftPath], .when(platforms: .nonDarwinPlatforms)),
-    .unsafeFlags(["-fmodules"]),
+    // .unsafeFlags(["-fmodules"]),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
 ]
 var sharedCxxSettings: [CXXSetting] = [
     .unsafeFlags(["-I", libSwiftPath], .when(platforms: .nonDarwinPlatforms)),
-    .unsafeFlags(["-fcxx-modules"]),
+    // .unsafeFlags(["-fcxx-modules"]),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
 ]
 var sharedSwiftSettings: [SwiftSetting] = [
