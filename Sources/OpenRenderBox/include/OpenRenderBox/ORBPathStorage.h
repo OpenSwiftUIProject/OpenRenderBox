@@ -1,6 +1,9 @@
 //
 //  ORBPathStorage.h
 //  OpenRenderBox
+//
+//  Audited for 6.5.1
+//  Status: Complete
 
 #pragma once
 
@@ -36,11 +39,15 @@ void ORBPathStorageAppendPath(ORBPathStorageRef, ORBPath) ORB_SWIFT_NAME(ORBPath
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT
+void ORBPathStorageApplyElements(ORBPathStorageRef, void *info, ORBPathApplyCallback callback) ORB_SWIFT_NAME(ORBPathStorageRef.applyElements(self:info:callback:));
+
+ORB_EXPORT
+ORB_REFINED_FOR_SWIFT
 bool ORBPathStorageIsEmpty(ORBPathStorageRef storage) ORB_SWIFT_NAME(getter:ORBPathStorageRef.isEmpty(self:));
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT
-bool ORBPathStorageEqualToStorage(ORBPathStorageRef lhs, ORBPathStorageRef rhs) ORB_SWIFT_NAME(ORBPathStorageRef.isEqualTo(self:_:));
+bool ORBPathStorageEqualToStorage(ORBPathStorageRef lhs, ORBPathStorageRef rhs) ORB_SWIFT_NAME(ORBPathStorageRef.isEqual(self:to:));
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT

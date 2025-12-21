@@ -32,6 +32,10 @@ void ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
     precondition_failure("TODO");
 }
 
+void ORBPathStorageApplyElements(ORBPathStorageRef, void *info, ORBPathApplyCallback callback) {
+    precondition_failure("TODO");
+}
+
 bool ORBPathStorageIsEmpty(ORBPathStorageRef storage) {
     return storage->storage.isEmpty();
 }
