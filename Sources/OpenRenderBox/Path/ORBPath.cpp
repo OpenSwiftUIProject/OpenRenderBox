@@ -184,7 +184,8 @@ ORBPath ORBPathMakeEllipse(CGRect rect, const CGAffineTransform *transform) {
     return path;
 }
 
-ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, const CGAffineTransform *transform) {
+ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, ORBRoundedCornerStyle style, const CGAffineTransform *transform) {
+    // TODO: Handle ORBRoundedCornerStyleContinuous with custom bezier curves
     CGPathRef cgPath = CGPathCreateWithRoundedRect(rect, cornerWidth, cornerHeight, transform);
     ORBPath path = {
         reinterpret_cast<ORBPathStorage *>(const_cast<CGPath *>(cgPath)),
@@ -193,7 +194,8 @@ ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerH
     return path;
 }
 
-ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, const CGAffineTransform *transform) {
+ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBRoundedCornerStyle style, const CGAffineTransform *transform) {
+    // TODO: Handle ORBRoundedCornerStyleContinuous with custom bezier curves
     CGMutablePathRef cgPath = CGPathCreateMutable();
 
     CGFloat minX = CGRectGetMinX(rect);

@@ -35,6 +35,14 @@ typedef ORB_ENUM(int32_t, ORBPathElementType) {
     ORBPathElementCloseSubpath = 4,
 };
 
+/// Defines the shape of a rounded rectangle's corners.
+typedef ORB_ENUM(int32_t, ORBRoundedCornerStyle) {
+    /// Quarter-circle rounded rect corners.
+    ORBRoundedCornerStyleCircular = 0,
+    /// Continuous curvature rounded rect corners.
+    ORBRoundedCornerStyleContinuous = 1,
+};
+
 /// An element of a path returned by path enumeration
 struct ORBPathElement {
     ORBPathElementType type;
@@ -122,10 +130,10 @@ ORB_EXPORT
 ORBPath ORBPathMakeEllipse(CGRect rect, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(ellipseIn:transform:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:cornerWidth:cornerHeight:transform:));
+ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, ORBRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:cornerWidth:cornerHeight:style:transform:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:bottomLeftRadius:bottomRightRadius:topRightRadius:transform:));
+ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:bottomLeftRadius:bottomRightRadius:topRightRadius:style:transform:));
 #endif
 
 ORB_EXTERN_C_END
