@@ -28,7 +28,7 @@ typedef struct ORB_SWIFT_NAME(ORBPath.Callbacks) ORBPathCallbacks {
     bool (* _Nullable isEmpty)(const void *object); // 0x28
     bool (* _Nullable isSingleElement)(const void *object); // 0x30
     uint32_t (* _Nullable bezierOrder)(const void *object); // 0x38
-    CGRect (* _Nullable boundingBox)(const void *object); // 0x40
+    CGRect (* _Nullable boundingRect)(const void *object); // 0x40
     #if ORB_TARGET_OS_DARWIN
     CGPathRef _Nullable (* _Nullable cgPath)(const void *object); // 0x48
     #else

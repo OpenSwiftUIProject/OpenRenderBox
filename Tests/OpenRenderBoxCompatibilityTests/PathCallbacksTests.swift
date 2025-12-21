@@ -12,17 +12,17 @@ struct PathCallbacksTests {
     @Test
     func cgPathCallbacks() {
         let callbacks = ORBPath.Callbacks.cgPath
-        #expect(callbacks.reserved == nil)
+        #expect(callbacks.unknown1 == nil)
         #expect(callbacks.retain != nil)
         #expect(callbacks.release != nil)
         #expect(callbacks.apply != nil)
         #expect(callbacks.isEqual != nil)
         #expect(callbacks.isEmpty != nil)
-        #expect(callbacks.isSingleRect != nil)
+        #expect(callbacks.isSingleElement != nil)
         #expect(callbacks.bezierOrder != nil)
-        #expect(callbacks.boundingBox != nil)
+        #expect(callbacks.boundingRect != nil)
         #expect(callbacks.cgPath != nil)
-        #expect(callbacks.reserved2 == nil)
+        #expect(callbacks.unknown2 == nil)
     }
 
     @Test
