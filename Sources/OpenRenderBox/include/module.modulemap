@@ -1,5 +1,5 @@
 module OpenRenderBox {
-    umbrella header "OpenRenderBox/OpenRenderBox-umbrella.h"
+    umbrella header "OpenRenderBox/OpenRenderBox.h"
     export *
 }
 
