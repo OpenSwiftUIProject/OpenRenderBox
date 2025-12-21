@@ -1,108 +1,75 @@
 //
 //  ORBPathCallbacks.cpp
 //  OpenRenderBox
+//
+//  Audited for 6.5.1
+//  Status: Complete
 
 #include <OpenRenderBox/ORBPathCallbacks.h>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
 #if ORB_TARGET_OS_DARWIN
-// FIXME: Not implemented correctly
-const ORBPathCallbacks ORBPathCGPathCallbacks = {
-    nullptr, // reserved
-    // retain
-    +[](const ORBPath *path) -> void {
-        CFRetain(path->storage);
-    },
-    // release
-    +[](const ORBPath *path) -> void {
-        CFRelease(path->storage);
-    },
-    // apply
-    +[](const ORBPath *path, void *info, ORBPathApplyCallback callback) -> bool {
-        CGPathRef cgPath = reinterpret_cast<CGPathRef>(path->storage);
-        __block bool shouldStop = false;
-        CGPathApplyWithBlock(cgPath, ^(const CGPathElement *element) {
-            if (shouldStop) return;
-            ORBPathElement orbElement;
-            double pointBuffer[6];
-            double *points = nullptr;
-            switch (element->type) {
-                case kCGPathElementMoveToPoint:
-                    orbElement = ORBPathElementMoveToPoint;
-                    pointBuffer[0] = element->points[0].x;
-                    pointBuffer[1] = element->points[0].y;
-                    points = pointBuffer;
-                    break;
-                case kCGPathElementAddLineToPoint:
-                    orbElement = ORBPathElementAddLineToPoint;
-                    pointBuffer[0] = element->points[0].x;
-                    pointBuffer[1] = element->points[0].y;
-                    points = pointBuffer;
-                    break;
-                case kCGPathElementAddQuadCurveToPoint:
-                    orbElement = ORBPathElementAddQuadCurveToPoint;
-                    pointBuffer[0] = element->points[0].x;
-                    pointBuffer[1] = element->points[0].y;
-                    pointBuffer[2] = element->points[1].x;
-                    pointBuffer[3] = element->points[1].y;
-                    points = pointBuffer;
-                    break;
-                case kCGPathElementAddCurveToPoint:
-                    orbElement = ORBPathElementAddCurveToPoint;
-                    pointBuffer[0] = element->points[0].x;
-                    pointBuffer[1] = element->points[0].y;
-                    pointBuffer[2] = element->points[1].x;
-                    pointBuffer[3] = element->points[1].y;
-                    pointBuffer[4] = element->points[2].x;
-                    pointBuffer[5] = element->points[2].y;
-                    points = pointBuffer;
-                    break;
-                case kCGPathElementCloseSubpath:
-                    orbElement = ORBPathElementCloseSubpath;
-                    points = nullptr;
-                    break;
+
+CG_EXTERN size_t CGPathGetNumberOfPoints(CGPathRef cg_nullable path);
+CG_EXTERN size_t CGPathGetNumberOfElements(CGPathRef cg_nullable path);
+typedef void (^CGPathApplyBlock2)(const CGPathElement * element, bool *stop);
+CG_EXTERN void CGPathApplyWithBlock2(CGPathRef path, CGPathApplyBlock2 CF_NOESCAPE block);
+
+namespace {
+    uint32_t cgpath_bezier_order(CGPathRef cgPath) {
+        size_t pointsCount = CGPathGetNumberOfPoints(cgPath);
+        size_t elementsCount = CGPathGetNumberOfElements(cgPath);
+        if (pointsCount > elementsCount) { return 3; }
+        if (pointsCount != 3 || elementsCount != 3) { return 1; }
+        bool hasCurve = false;
+        CGPathApply(cgPath, &hasCurve, [](void *info, const CGPathElement *element) {
+            if (element->type == kCGPathElementAddQuadCurveToPoint
+                || element->type == kCGPathElementAddCurveToPoint) {
+                *static_cast<bool*>(info) = true;
             }
-            if (callback != nullptr) {
-                shouldStop = callback(info, orbElement, points, nullptr);
+        });
+        return hasCurve ? 3 : 1;
+    }
+}
+
+const ORBPathCallbacks ORBPathCGPathCallbacks = {
+    nullptr,
+    CFRetain,
+    CFRelease,
+    +[](const void *object, void *info, ORBPathApplyCallback callback) -> bool {
+        CGPathRef cgPath = reinterpret_cast<CGPathRef>(object);
+        __block bool shouldStop = false;
+        CGPathApplyWithBlock2(cgPath, ^(const CGPathElement *element, bool *stop) {
+            bool result = callback(info,
+                                   (ORBPathElement)element->type,
+                                   (CGFloat *)element->points,
+                                   nullptr);
+            if (!result) {
+                *stop = true;
+                shouldStop = true;
             }
         });
         return !shouldStop;
     },
-    // isEqual
-    +[](const ORBPath *path, const ORBPath *otherPath) -> bool {
-        return CGPathEqualToPath(reinterpret_cast<CGPathRef>(path->storage), reinterpret_cast<CGPathRef>(otherPath->storage));
+    +[](const void *object, const void *otherObject) -> bool {
+        return CGPathEqualToPath(static_cast<CGPathRef>(object), static_cast<CGPathRef>(otherObject));
     },
-    // isEmpty
-    +[](const ORBPath *path) -> bool {
-        return CGPathIsEmpty(reinterpret_cast<CGPathRef>(path->storage));
+    +[](const void *object) -> bool {
+        return CGPathIsEmpty(static_cast<CGPathRef>(object));
     },
-    // isSingleRect - CGPath doesn't have this, always return false
-    +[](const ORBPath *path) -> bool {
+    +[](const void *object) -> bool {
         return false;
     },
-    // bezierOrder
-    +[](const ORBPath *path) -> uint32_t {
-        CGPathRef cgPath = reinterpret_cast<CGPathRef>(path->storage);
-        __block uint32_t order = 1;
-        CGPathApply(cgPath, &order, [](void *info, const CGPathElement *element) {
-            uint32_t *orderPtr = static_cast<uint32_t*>(info);
-            if (element->type == kCGPathElementAddCurveToPoint) {
-                *orderPtr = 3;
-            } else if (element->type == kCGPathElementAddQuadCurveToPoint && *orderPtr < 3) {
-                *orderPtr = 2;
-            }
-        });
-        return order;
+    +[](const void *object) -> uint32_t {
+        return cgpath_bezier_order(static_cast<CGPathRef>(object));
     },
-    // boundingBox
-    +[](const ORBPath *path) -> CGRect {
-        return CGPathGetPathBoundingBox(reinterpret_cast<CGPathRef>(path->storage));
+    +[](const void *object) -> CGRect {
+        return CGPathGetPathBoundingBox(static_cast<CGPathRef>(object));
     },
-    // cgPath - return the CGPath itself
-    +[](const ORBPath *path) -> CGPathRef {
-        return reinterpret_cast<CGPathRef>(path->storage);
+    +[](const void *object) -> CGPathRef {
+        return static_cast<CGPathRef>(object);
     },
-    nullptr, // reserved2
+    nullptr,
 };
 
 #endif /* ORB_TARGET_OS_DARWIN */

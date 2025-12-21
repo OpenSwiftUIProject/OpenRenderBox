@@ -35,7 +35,7 @@ typedef ORB_ENUM(int32_t, ORBPathRoundedCornerStyle) {
 
 /// Callback type for path element enumeration
 /// Returns true to stop enumeration, false to continue
-typedef bool (*ORBPathApplyCallback)(void * _Nullable info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
+typedef bool (*ORBPathApplyCallback)(void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
 
 typedef struct ORBPathCallbacks ORBPathCallbacks;
 
