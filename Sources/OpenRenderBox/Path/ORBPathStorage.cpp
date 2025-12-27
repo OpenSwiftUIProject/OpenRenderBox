@@ -8,6 +8,17 @@
 
 using namespace ORB;
 
+namespace ORB {
+namespace Path {
+namespace {
+bool append_element_callback(void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo) {
+    reinterpret_cast<Storage *>(info)->append_element(element, points, userInfo);
+    return true;
+}
+} /* anonymous namespace */
+} /* Path */
+} /* ORB */
+
 void ORBPathStorageInit(ORBPathStorageRef dst, uint32_t capacity, ORBPathStorageRef source) {
     if (source != nullptr) {
         dst->storage = ORB::Path::Storage(capacity, source->storage);
@@ -28,8 +39,8 @@ bool ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement eleme
     precondition_failure("TODO");
 }
 
-void ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
-    precondition_failure("TODO");
+bool ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
+    return ORBPathApplyElements(path, storage, ORB::Path::append_element_callback);
 }
 
 bool ORBPathStorageApplyElements(ORBPathStorageRef, void *info, ORBPathApplyCallback callback) {

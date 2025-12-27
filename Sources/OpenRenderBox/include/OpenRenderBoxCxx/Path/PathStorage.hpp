@@ -152,12 +152,18 @@ public:
 
     void clear();
 
-//    void append_element(RBPathElement, double const*, void const*);
+    void append_element(ORBPathElement element, const double *points, const void *info);
 //    push_values(unsigned char, double const*, unsigned long)
     // update_single_element()
 
-    /// Apply callback to each path element
+    /// Apply callback to each path element (with fast-path checks)
     bool apply_elements(void *info, ORBPathApplyCallback callback) const ORB_NOEXCEPT;
+
+private:
+    /// Core element iteration (no fast-path checks)
+    bool apply_elements_(void *info, ORBPathApplyCallback callback) const ORB_NOEXCEPT;
+
+public:
 
     #if ORB_TARGET_OS_DARWIN
     /// Get cached CGPath, lazily creating if needed (thread-safe with casal)

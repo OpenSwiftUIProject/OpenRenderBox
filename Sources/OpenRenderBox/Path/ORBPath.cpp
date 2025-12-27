@@ -147,7 +147,19 @@ bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, 
 }
 
 bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callback) {
-    ORB::precondition_failure("TODO");
+    auto apply = path.callbacks->apply;
+    bool flag = false; // TODO: calllbacks's flag to indicate whether it supports extra features
+    if (flag) {
+        if (callback == nullptr) {
+            return true;
+        }
+        apply(path.storage, info, callback/*, path.callbacks*/);
+    } else {
+        if (callback == nullptr) {
+            return true;
+        }
+        apply(path.storage, info, callback);
+    }
 }
 
 #endif /* ORB_TARGET_OS_DARWIN */

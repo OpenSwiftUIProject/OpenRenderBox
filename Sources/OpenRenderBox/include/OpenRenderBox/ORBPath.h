@@ -98,8 +98,7 @@ bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, 
 // MARK: - Apply Callback
 
 ORB_EXPORT
-
-bool ORBPathApplyElements(ORBPath path, void * info, ORBPathApplyCallback callback) ;
+bool ORBPathApplyElements(ORBPath path, void * info, _Nullable ORBPathApplyCallback callback) ORB_SWIFT_NAME(ORBPath.apply(self:info:callback:));
 
 ORB_EXTERN_C_END
 

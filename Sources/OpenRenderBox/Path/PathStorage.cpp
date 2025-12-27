@@ -75,8 +75,25 @@ void Storage::clear() {
     // TODO
 }
 
+void Storage::append_element(ORBPathElement element, const CGFloat *points, const void *info) {
+    if (element >= ORBPathElementInvalid) {
+        precondition_failure("invalid path element: %d", element);
+    }
+    // TODO: Implement element appending
+    precondition_failure("TODO");
+}
+
 bool Storage::apply_elements(void *info, ORBPathApplyCallback callback) const ORB_NOEXCEPT {
-    // TODO: Implement element iteration
+    // TODO: Add fast-path checks for special callbacks:
+    // - append_element_callback → append_storage(info, this)
+    // - NestedCallbacks::apply_elements_callback → apply_elements_fast
+    // - NestedCallbacks::single_element_callback → single_element_fast
+    // - Mapper::apply_callback with flags check → MapCache::apply
+    return apply_elements_(info, callback);
+}
+
+bool Storage::apply_elements_(void *info, ORBPathApplyCallback callback) const ORB_NOEXCEPT {
+    // TODO: Implement actual element iteration over storage
     return true;
 }
 
