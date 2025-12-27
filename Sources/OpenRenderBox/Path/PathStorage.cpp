@@ -67,11 +67,13 @@ Storage::~Storage() {
     }
     // TODO: MapCache
     if (flags().isExternal()) {
+        #if ORB_TARGET_OS_DARWIN
         if (cachedCGPath() != nullptr) {
             auto oldCache = cachedCGPath();
             _cached_cgPath = nullptr;
             CFRelease(oldCache);
         }
+        #endif
         free((void *)external_storage());
     }
 }
@@ -107,6 +109,7 @@ bool Storage::apply_elements_(void *info, ORBPathApplyCallback callback) const O
     return true;
 }
 
+#if ORB_TARGET_OS_DARWIN
 CGPathRef Storage::cgpath() const ORB_NOEXCEPT {
     if (flags().isInline()) {
         return nullptr;
@@ -145,6 +148,7 @@ CGPathRef Storage::cgpath() const ORB_NOEXCEPT {
         return expected;
     }
 }
+#endif
 
 } /* Path */
 } /* ORB */

@@ -25,21 +25,6 @@ static const ORBPathCallbacks empty_path_callbacks = {
     nullptr,
 };
 
-namespace {
-ORBPath make_rect(CGRect rect, const CGAffineTransform *transform, ORBPathElement element) {
-    if (CGRectIsNull(rect)) {
-        return ORBPathNull;
-    }
-    if (transform == nullptr || CGAffineTransformIsIdentity(*transform)) {
-        // TODO
-        return ORBPathNull;
-    } else {
-        // TODO
-        return ORBPathNull;
-    }
-}
-} /* anonymous namespace */
-
 // Empty path (storage = null)
 const ORBPath ORBPathEmpty = {
     nullptr,
@@ -69,6 +54,21 @@ void ORBPathRelease(ORBPath path) {
 #if ORB_TARGET_OS_DARWIN
 
 // MARK: - Path Creation
+
+namespace {
+ORBPath make_rect(CGRect rect, const CGAffineTransform *transform, ORBPathElement element) {
+    if (CGRectIsNull(rect)) {
+        return ORBPathNull;
+    }
+    if (transform == nullptr || CGAffineTransformIsIdentity(*transform)) {
+        // TODO
+        return ORBPathNull;
+    } else {
+        // TODO
+        return ORBPathNull;
+    }
+}
+} /* anonymous namespace */
 
 // TODO: TO be implemented natively
 
@@ -157,6 +157,8 @@ bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, 
     return false;
 }
 
+#endif /* ORB_TARGET_OS_DARWIN */
+
 bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callback) {
     auto apply = path.callbacks->apply;
     bool flag = false; // TODO: calllbacks's flag to indicate whether it supports extra features
@@ -172,5 +174,3 @@ bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callbac
         return apply(path.storage, info, callback);
     }
 }
-
-#endif /* ORB_TARGET_OS_DARWIN */
