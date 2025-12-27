@@ -75,7 +75,7 @@ void Storage::clear() {
     // TODO
 }
 
-void Storage::append_element(ORBPathElement element, const CGFloat *points, const void *info) {
+bool Storage::append_element(ORBPathElement element, const CGFloat *points, const void *info) {
     if (element >= ORBPathElementInvalid) {
         precondition_failure("invalid path element: %d", element);
     }

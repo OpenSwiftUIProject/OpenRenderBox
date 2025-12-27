@@ -152,7 +152,7 @@ public:
 
     void clear();
 
-    void append_element(ORBPathElement element, const double *points, const void *info);
+    bool append_element(ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
 //    push_values(unsigned char, double const*, unsigned long)
     // update_single_element()
 

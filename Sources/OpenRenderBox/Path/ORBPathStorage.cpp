@@ -35,16 +35,16 @@ void ORBPathStorageClear(ORBPathStorageRef storage) {
     storage->storage.clear();
 }
 
-bool ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, double const * points, const void * userInfo) {
-    precondition_failure("TODO");
+bool ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, const CGFloat * points, const void * userInfo) {
+    return storage->storage.append_element(element, points, userInfo);
 }
 
 bool ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
     return ORBPathApplyElements(path, storage, ORB::Path::append_element_callback);
 }
 
-bool ORBPathStorageApplyElements(ORBPathStorageRef, void *info, ORBPathApplyCallback callback) {
-    precondition_failure("TODO");
+bool ORBPathStorageApplyElements(ORBPathStorageRef storage, void *info, ORBPathApplyCallback callback) {
+    return storage->storage.apply_elements(info, callback);
 }
 
 bool ORBPathStorageIsEmpty(ORBPathStorageRef storage) {
