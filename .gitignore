@@ -9,3 +9,4 @@ DerivedData/
 .claude/
 .rb_template/
 .augment/
+/.build-debug
