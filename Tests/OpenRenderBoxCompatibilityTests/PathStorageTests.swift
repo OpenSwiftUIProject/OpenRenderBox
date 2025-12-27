@@ -93,6 +93,29 @@ struct PathStorageTests {
         path1.release()
         path2.release()
     }
+
+    @Test("Verify no crash or memleak of ORBPathStorageGetCGPath call")
+    func storageGetCGPath() {
+        let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
+        let path = ORBPath(rect: rect, transform: nil)
+        let storage = path.storage
+        storage.initialize(capacity: 64, source: nil)
+        storage.append(path: path)
+        for _ in 1 ... 7 {
+            storage.append(element: .moveToPoint, points: [50, 50], userInfo: nil)
+            storage.append(element: .addLineToPoint, points: [100, 50], userInfo: nil)
+            storage.append(element: .closeSubpath, points: [], userInfo: nil)
+        }
+        func test(_ s: ORBPath.Storage) {
+            if let p = s.cgPath {
+                _ = p.isEmpty
+                _ = p.boundingBox
+            }
+        }
+        for i in 1 ... 20 {
+            test(storage)
+        }
+    }
 }
 
 #endif
