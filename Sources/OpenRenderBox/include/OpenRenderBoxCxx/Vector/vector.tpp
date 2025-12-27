@@ -1,23 +1,23 @@
 //
 //  vector.tpp
-//  OpenAttributeGraphCxx
+//  OpenRenderBoxCxx
 //
 //  Status: Complete
 //  Modified based Compute code
 
-#include <OpenAttributeGraphCxx/Vector/vector.hpp>
-#include <OpenAttributeGraphCxx/Misc/assert.hpp>
+#include <OpenRenderBoxCxx/Vector/vector.hpp>
+#include <OpenRenderBoxCxx/Util/assert.hpp>
 
 #include <algorithm>
-#if OAG_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 #include <malloc/malloc.h>
 #else
 #include <malloc.h>
-#endif /* OAG_TARGET_OS_DARWIN */
+#endif /* ORB_TARGET_OS_DARWIN */
 #include <memory>
 #include <cassert>
 
-namespace OAG {
+namespace ORB {
 
 #pragma mark - Base implementation
 
@@ -37,7 +37,7 @@ void *realloc_vector(void *buffer, void *stack_buffer, size_type stack_size, siz
         return nullptr;
     }
 
-    #if OAG_TARGET_OS_DARWIN
+    #if ORB_TARGET_OS_DARWIN
     size_t new_size_bytes = malloc_good_size(preferred_new_size * element_size_bytes);
     #else
     size_t new_size_bytes = malloc_good_size(preferred_new_size * element_size_bytes);
@@ -179,7 +179,7 @@ void *realloc_vector(void *buffer, size_type *size, size_type preferred_new_size
         return nullptr;
     }
 
-    #if OAG_TARGET_OS_DARWIN
+    #if ORB_TARGET_OS_DARWIN
     size_t new_size_bytes = malloc_good_size(preferred_new_size * element_size);
     #else
     size_t new_size_bytes = preferred_new_size * element_size;
@@ -360,7 +360,7 @@ void vector<std::unique_ptr<T>, 0, size_type>::reserve(size_type new_cap) {
 
 template <typename T, typename size_type>
     requires std::unsigned_integral<size_type>
-OAG_INLINE void vector<std::unique_ptr<T>, 0, size_type>::push_back(std::unique_ptr<T> &&value) {
+ORB_INLINE void vector<std::unique_ptr<T>, 0, size_type>::push_back(std::unique_ptr<T> &&value) {
     reserve(_size + 1);
     new (&_buffer[_size]) std::unique_ptr<T>(std::move(value));
     ++_size;
@@ -368,7 +368,7 @@ OAG_INLINE void vector<std::unique_ptr<T>, 0, size_type>::push_back(std::unique_
 
 template <typename T, typename size_type>
     requires std::unsigned_integral<size_type>
-OAG_INLINE void vector<std::unique_ptr<T>, 0, size_type>::pop_back() {
+ORB_INLINE void vector<std::unique_ptr<T>, 0, size_type>::pop_back() {
     assert(_size > 0);
     _buffer[_size - 1].reset();
     _buffer[_size - 1].~unique_ptr();
@@ -392,4 +392,4 @@ void vector<std::unique_ptr<T>, 0, size_type>::resize(size_type count) {
     _size = count;
 }
 
-} /* OAG */
+} /* ORB */

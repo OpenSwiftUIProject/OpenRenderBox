@@ -1,6 +1,6 @@
 //
 //  vector.hpp
-//  OpenAttributeGraphCxx
+//  OpenRenderBoxCxx
 //
 //  Status: Complete
 //  Modified based Compute code
@@ -8,14 +8,14 @@
 #ifndef vector_hpp
 #define vector_hpp
 
-#include <OpenAttributeGraph/OAGBase.h>
+#include <OpenRenderBox/ORBBase.h>
 #include <concepts>
 #include <iterator>
 #include <memory>
 
-OAG_ASSUME_NONNULL_BEGIN
+ORB_ASSUME_NONNULL_BEGIN
 
-namespace OAG {
+namespace ORB {
 
 template <typename T, unsigned int _stack_size = 0, typename size_type = std::size_t>
     requires std::unsigned_integral<size_type>
@@ -224,16 +224,16 @@ class vector<std::unique_ptr<T>, 0, size_type> {
     void clear();
 
     void push_back(const std::unique_ptr<T> &value) = delete;
-    OAG_INLINE void push_back(std::unique_ptr<T> &&value);
-    OAG_INLINE void pop_back();
+    ORB_INLINE void push_back(std::unique_ptr<T> &&value);
+    ORB_INLINE void pop_back();
 
     void resize(size_type count);
     void resize(size_type count, const value_type &value);
 };
 
-} /* OAG */
+} /* ORB */
 
-OAG_ASSUME_NONNULL_END
+ORB_ASSUME_NONNULL_END
 
 #include "vector.tpp"
 
