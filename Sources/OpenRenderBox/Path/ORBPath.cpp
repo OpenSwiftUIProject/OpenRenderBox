@@ -7,6 +7,7 @@
 
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
+#include <OpenRenderBoxCxx/Util/assert.hpp>
 
 // Empty path callbacks (all null) - C++ internal linkage
 static const ORBPathCallbacks empty_path_callbacks = {
@@ -143,6 +144,10 @@ bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) {
 bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform *transform) {
     // TODO: Implement point containment testing with winding rule
     return false;
+}
+
+bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callback) {
+    ORB::precondition_failure("TODO");
 }
 
 #endif /* ORB_TARGET_OS_DARWIN */
