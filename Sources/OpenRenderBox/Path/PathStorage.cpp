@@ -61,8 +61,18 @@ Storage::Storage(uint32_t capacity, const Storage &storage): Storage(capacity) {
 
 Storage::~Storage() {
     if (_unknown != nullptr) {
+        auto oldValue = _unknown;
         _unknown = nullptr;
         // TODO
+    }
+    // TODO: MapCache
+    if (flags().isExternal()) {
+        if (cachedCGPath() != nullptr) {
+            auto oldCache = cachedCGPath();
+            _cached_cgPath = nullptr;
+            CFRelease(oldCache);
+        }
+        free((void *)external_storage());
     }
 }
 
