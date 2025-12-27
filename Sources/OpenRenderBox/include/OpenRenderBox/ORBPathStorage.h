@@ -64,7 +64,7 @@ CGRect ORBPathStorageGetBoundingRect(ORBPathStorageRef storage) ORB_SWIFT_NAME(g
 
 ORB_EXPORT
 ORB_REFINED_FOR_SWIFT
-CGPathRef RBPathStorageGetCGPath(ORBPathStorageRef storage) ORB_SWIFT_NAME(getter:ORBPathStorageRef.cgPath(self:));
+__nullable CGPathRef ORBPathStorageGetCGPath(ORBPathStorageRef storage) ORB_SWIFT_NAME(getter:ORBPathStorageRef.cgPath(self:));
 #endif
 
 ORB_EXTERN_C_END

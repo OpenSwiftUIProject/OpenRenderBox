@@ -2,6 +2,8 @@
 //  PathStorage.cpp
 //  OpenRenderBox
 
+#include <OpenRenderBox/ORBPath.h>
+#include <OpenRenderBox/ORBPathCallbacks.h>
 #include <OpenRenderBoxCxx/Path/PathStorage.hpp>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
@@ -11,7 +13,7 @@
 
 namespace ORB {
 namespace Path {
-atomic_long Storage::_last_identifier;
+atomic_uint Storage::_last_identifier;
 
 Storage::Storage(uint32_t capacity) {
     _unknown = nullptr;
@@ -73,15 +75,48 @@ void Storage::clear() {
     // TODO
 }
 
-void * Storage::cgpath() const ORB_NOEXCEPT {
-    if (_flags.isInline()) {
+bool Storage::apply_elements(void *info, ORBPathApplyCallback callback) const ORB_NOEXCEPT {
+    // TODO: Implement element iteration
+    return true;
+}
+
+CGPathRef Storage::cgpath() const ORB_NOEXCEPT {
+    if (flags().isInline()) {
         return nullptr;
     }
-    if (_cached_cgPath != nullptr) {
-        return _cached_cgPath;
+    CGPathRef cached = __atomic_load_n(&_cached_cgPath, __ATOMIC_SEQ_CST);
+    if (cached != nullptr) {
+        return cached;
     }
-    // TODO: Create CGPath via RBPathCopyCGPath
-    return nullptr;
+    static const ORBPathCallbacks callbacks = {
+        nullptr,
+        nullptr,
+        nullptr,
+        +[](const void *object, void *info, ORBPathApplyCallback callback) -> bool {
+            auto storage = reinterpret_cast<const ORB::Path::Storage *>(object);
+            return storage->apply_elements(info, callback);
+        },
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
+    };
+    ORBPath path = {
+        const_cast<ORBPathStorage *>(reinterpret_cast<const ORBPathStorage *>(this)),
+        &callbacks
+    };
+    CGPathRef new_path = ORBPathCopyCGPath(path);
+    CGPathRef expected = nullptr;
+    if (__atomic_compare_exchange_n(&_cached_cgPath, &expected, new_path,
+                                     false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)) {
+        return new_path;
+    } else {
+        CGPathRelease(new_path);
+        return expected;
+    }
 }
 
 } /* Path */

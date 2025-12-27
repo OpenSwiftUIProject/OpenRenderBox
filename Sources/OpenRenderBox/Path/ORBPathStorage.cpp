@@ -59,6 +59,7 @@ CGRect ORBPathStorageGetBoundingRect(ORBPathStorageRef storage) {
 }
 
 CGPathRef ORBPathStorageGetCGPath(ORBPathStorageRef storage) {
-    precondition_failure("TODO");
+    // FIXME
+    return storage->storage.cgpath();
 }
 #endif

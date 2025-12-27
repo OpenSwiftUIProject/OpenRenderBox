@@ -5,9 +5,12 @@
 #pragma once
 
 #include <OpenRenderBox/ORBBase.h>
+#include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
-
 #include <stdatomic.h>
+#if ORB_TARGET_OS_DARWIN
+#include <CoreGraphics/CoreGraphics.h>
+#endif
 
 ORB_ASSUME_NONNULL_BEGIN
 
@@ -128,7 +131,7 @@ public:
 class Storage {
 public:
     ORB_INLINE ORB_CONSTEXPR
-    const static atomic_long& last_identifier() ORB_NOEXCEPT {
+    const static atomic_uint& last_identifier() ORB_NOEXCEPT {
         return _last_identifier;
     }
 
@@ -138,7 +141,7 @@ public:
     }
 
 private:
-    static atomic_long _last_identifier;
+    static atomic_uint _last_identifier;
 
 public:
     Storage(uint32_t capacity);
@@ -153,18 +156,17 @@ public:
 //    push_values(unsigned char, double const*, unsigned long)
     // update_single_element()
 
-    /// Get cached CGPath, lazily creating if needed (matches RB::Path::Storage::cgpath)
-    void * cgpath() const ORB_NOEXCEPT;
+    /// Apply callback to each path element
+    bool apply_elements(void *info, ORBPathApplyCallback callback) const ORB_NOEXCEPT;
 
+    #if ORB_TARGET_OS_DARWIN
+    /// Get cached CGPath, lazily creating if needed (thread-safe with casal)
+    CGPathRef _Nullable cgpath() const ORB_NOEXCEPT;
+    #endif
 public:
     ORB_INLINE ORB_CONSTEXPR
     void * unknown() const ORB_NOEXCEPT {
         return _unknown;
-    }
-
-    ORB_INLINE
-    void * cachedCGPath() const ORB_NOEXCEPT {
-        return _cached_cgPath;
     }
 
     ORB_INLINE ORB_CONSTEXPR
@@ -209,6 +211,13 @@ public:
     bool isEmpty() const ORB_NOEXCEPT {
         return actual_size() == 0;
     }
+
+    #if ORB_TARGET_OS_DARWIN
+    ORB_INLINE
+    CGPathRef cachedCGPath() const ORB_NOEXCEPT {
+        return _cached_cgPath;
+    }
+    #endif
 private:
     void * _unknown;                    // 0x00
     StorageFlags _flags;                // 0x08
@@ -218,7 +227,9 @@ private:
     void * _reserved1;                  // 0x20
     void * _reserved2;                  // 0x28
     void * _reserved3;                  // 0x30
-    mutable void * _cached_cgPath;      // 0x38 - lazily cached CGPath
+    #if ORB_TARGET_OS_DARWIN
+    mutable CGPathRef _cached_cgPath;      // 0x38 - lazily cached CGPath
+    #endif
 };
 } /* Path */
 } /* ORB */
