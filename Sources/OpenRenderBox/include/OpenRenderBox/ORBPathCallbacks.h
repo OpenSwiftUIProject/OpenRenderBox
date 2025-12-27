@@ -22,7 +22,7 @@ ORB_EXTERN_C_BEGIN
 typedef struct ORBPathCallbacksFlags {
     uint8_t unknown0;
     uint8_t unknown1;
-    uint8_t isExtended;
+    bool isExtended;
     uint8_t padding[5];
 } ORBPathCallbacksFlags;
 
