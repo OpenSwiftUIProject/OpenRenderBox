@@ -207,6 +207,20 @@ bool ORBPathEqualToPath(ORBPath lhs, ORBPath rhs) {
         if (lhs.storage == rhs.storage) {
             return true;
         }
+        auto callbacks = lhs.callbacks;
+        if (callbacks->flags.isExtended) {
+            auto extended = reinterpret_cast<const ORBPathCallbacksExtended*>(callbacks);
+            auto isEqualCallback = extended->isEqual;
+            if (isEqualCallback) {
+                return isEqualCallback(lhs.storage, rhs.storage, extended);
+            }
+        } else {
+            auto isEqualCallback = callbacks->isEqual;
+            if (isEqualCallback) {
+                return isEqualCallback(lhs.storage, rhs.storage);
+            }
+        }
+        // auto storage = ORB::Path::Storage(1088);
         // TODO
         return false;
     } else {
