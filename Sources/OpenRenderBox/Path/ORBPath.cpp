@@ -12,7 +12,7 @@
 
 // Empty path callbacks (all null) - C++ internal linkage
 static const ORBPathCallbacks empty_path_callbacks = {
-    nullptr,
+    {},
     nullptr,
     nullptr,
     nullptr,

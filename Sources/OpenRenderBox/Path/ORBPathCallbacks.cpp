@@ -33,10 +33,10 @@ namespace {
 }
 
 const ORBPathCallbacks ORBPathCGPathCallbacks = {
-    nullptr,
-    CFRetain,
-    CFRelease,
-    +[](const void *object, void *info, ORBPathApplyCallback callback) -> bool {
+    .flags = {},
+    .retain = CFRetain,
+    .release = CFRelease,
+    .apply = +[](const void *object, void *info, ORBPathApplyCallback callback) -> bool {
         CGPathRef cgPath = reinterpret_cast<CGPathRef>(object);
         __block bool shouldStop = false;
         CGPathApplyWithBlock2(cgPath, ^(const CGPathElement *element, bool *stop) {
@@ -51,25 +51,25 @@ const ORBPathCallbacks ORBPathCGPathCallbacks = {
         });
         return !shouldStop;
     },
-    +[](const void *object, const void *otherObject) -> bool {
+    .isEqual = +[](const void *object, const void *otherObject) -> bool {
         return CGPathEqualToPath(static_cast<CGPathRef>(object), static_cast<CGPathRef>(otherObject));
     },
-    +[](const void *object) -> bool {
+    .isEmpty = +[](const void *object) -> bool {
         return CGPathIsEmpty(static_cast<CGPathRef>(object));
     },
-    +[](const void *object) -> bool {
+    .isSingleElement = +[](const void *object) -> bool {
         return false;
     },
-    +[](const void *object) -> uint32_t {
+    .bezierOrder = +[](const void *object) -> uint32_t {
         return cgpath_bezier_order(static_cast<CGPathRef>(object));
     },
-    +[](const void *object) -> CGRect {
+    .boundingRect = +[](const void *object) -> CGRect {
         return CGPathGetPathBoundingBox(static_cast<CGPathRef>(object));
     },
-    +[](const void *object) -> CGPathRef {
+    .cgPath = +[](const void *object) -> CGPathRef {
         return static_cast<CGPathRef>(object);
     },
-    nullptr,
+    .next = nullptr,
 };
 
 #endif /* ORB_TARGET_OS_DARWIN */
