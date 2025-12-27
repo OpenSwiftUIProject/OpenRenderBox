@@ -7,7 +7,7 @@
 
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
-#include <OpenRenderBoxCxx/Path/PathStorage.hpp>
+#include <OpenRenderBoxCxx/Path/Storage.hpp>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
 // Empty path callbacks (all null) - C++ internal linkage

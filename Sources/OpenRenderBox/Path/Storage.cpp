@@ -1,10 +1,10 @@
 //
-//  PathStorage.cpp
+//  Storage.cpp
 //  OpenRenderBox
 
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
-#include <OpenRenderBoxCxx/Path/PathStorage.hpp>
+#include <OpenRenderBoxCxx/Path/Storage.hpp>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
 #if ORB_TARGET_OS_DARWIN

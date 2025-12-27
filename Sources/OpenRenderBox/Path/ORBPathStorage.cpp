@@ -3,7 +3,7 @@
 //  OpenRenderBox
 
 #include <OpenRenderBox/ORBPathStorage.h>
-#include <OpenRenderBoxCxx/Path/PathStorage.hpp>
+#include <OpenRenderBoxCxx/Path/Storage.hpp>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
 using namespace ORB;

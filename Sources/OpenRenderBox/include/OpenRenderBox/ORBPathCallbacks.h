@@ -42,7 +42,7 @@ typedef struct ORB_SWIFT_NAME(ORBPath.Callbacks) ORBPathCallbacks {
     #else
     void * _Nullable (* _Nullable cgPath)(const void *object); // 0x48
     #endif
-    const struct ORBPathCallbacks * _Nullable next; // 0x50
+    const struct ORBPathCallbacks * _Nullable (* _Nullable next)(const void *object); // 0x50
 } ORBPathCallbacks;
 
 /// Extended callbacks structure with additional extended callbacks argument
@@ -61,7 +61,7 @@ typedef struct ORB_SWIFT_NAME(ORBPath.CallbacksExtended) ORBPathCallbacksExtende
     #else
     void * _Nullable (* _Nullable cgPath)(const void *object, const struct ORBPathCallbacksExtended *extended); // 0x48
     #endif
-    const struct ORBPathCallbacks * _Nullable next; // 0x50
+    const struct ORBPathCallbacksExtended * _Nullable (* _Nullable next)(const void *object, const struct ORBPathCallbacksExtended *extended); // 0x50
 } ORBPathCallbacksExtended;
 
 #if ORB_TARGET_OS_DARWIN
