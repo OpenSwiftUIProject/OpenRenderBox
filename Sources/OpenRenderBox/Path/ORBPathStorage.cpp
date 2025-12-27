@@ -8,6 +8,17 @@
 
 using namespace ORB;
 
+namespace ORB {
+namespace Path {
+namespace {
+bool append_element_callback(void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo) {
+    reinterpret_cast<Storage *>(info)->append_element(element, points, userInfo);
+    return true;
+}
+} /* anonymous namespace */
+} /* Path */
+} /* ORB */
+
 void ORBPathStorageInit(ORBPathStorageRef dst, uint32_t capacity, ORBPathStorageRef source) {
     if (source != nullptr) {
         dst->storage = ORB::Path::Storage(capacity, source->storage);
@@ -24,16 +35,16 @@ void ORBPathStorageClear(ORBPathStorageRef storage) {
     storage->storage.clear();
 }
 
-bool ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, double const * points, const void * userInfo) {
-    precondition_failure("TODO");
+bool ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, const CGFloat * points, const void * userInfo) {
+    return storage->storage.append_element(element, points, userInfo);
 }
 
-void ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
-    precondition_failure("TODO");
+bool ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
+    return ORBPathApplyElements(path, storage, ORB::Path::append_element_callback);
 }
 
-bool ORBPathStorageApplyElements(ORBPathStorageRef, void *info, ORBPathApplyCallback callback) {
-    precondition_failure("TODO");
+bool ORBPathStorageApplyElements(ORBPathStorageRef storage, void *info, ORBPathApplyCallback callback) {
+    return storage->storage.apply_elements(info, callback);
 }
 
 bool ORBPathStorageIsEmpty(ORBPathStorageRef storage) {
@@ -59,6 +70,7 @@ CGRect ORBPathStorageGetBoundingRect(ORBPathStorageRef storage) {
 }
 
 CGPathRef ORBPathStorageGetCGPath(ORBPathStorageRef storage) {
-    precondition_failure("TODO");
+    // FIXME
+    return storage->storage.cgpath();
 }
 #endif

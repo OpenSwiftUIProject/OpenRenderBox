@@ -8,3 +8,4 @@ DerivedData/
 .netrc
 .claude/
 .rb_template/
+.augment/

@@ -20,10 +20,13 @@ typedef ORB_ENUM(int32_t, ORBPathElement) {
     ORBPathElementAddQuadCurveToPoint = 2,
     ORBPathElementAddCurveToPoint = 3,
     ORBPathElementCloseSubpath = 4,
-
+    ORBPathElementRect = 5,
+    ORBPathElementRoundedRect = 6,
     ORBPathElementFixedRoundedRectCircular = 8,
     ORBPathElementFixedRoundedRectContinuous = 9,
-};
+
+    ORBPathElementInvalid = 25,
+} ORB_SWIFT_NAME(ORBPath.Element);
 
 /// Defines the shape of a rounded rectangle's corners.
 typedef ORB_ENUM(int32_t, ORBPathRoundedCornerStyle) {
@@ -37,7 +40,7 @@ typedef ORB_ENUM(int32_t, ORBPathRoundedCornerStyle) {
 /// Returns true to stop enumeration, false to continue
 typedef bool (*ORBPathApplyCallback)(void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
 
-typedef struct ORBPathCallbacks ORBPathCallbacks;
+typedef struct ORBPathCallbacks ORBPathCallbacks ORB_SWIFT_NAME(ORBPath.ApplyCallback);
 
 typedef struct ORBPathStorage * ORBPathStorageRef ORB_SWIFT_STRUCT ORB_SWIFT_NAME(ORBPath.Storage);
 
@@ -55,11 +58,9 @@ ORB_EXPORT
 const ORBPath ORBPathNull ORB_SWIFT_NAME(ORBPath.null);
 
 ORB_EXPORT
-ORB_REFINED_FOR_SWIFT
 void ORBPathRetain(ORBPath path) ORB_SWIFT_NAME(ORBPath.retain(self:));
 
 ORB_EXPORT
-ORB_REFINED_FOR_SWIFT
 void ORBPathRelease(ORBPath path) ORB_SWIFT_NAME(ORBPath.release(self:));
 
 #if ORB_TARGET_OS_DARWIN
@@ -94,6 +95,11 @@ bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) ORB_SWIFT_NA
 ORB_EXPORT
 bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.containsPoints(self:count:points:eoFill:transform:));
 #endif
+
+// MARK: - Apply Callback
+
+ORB_EXPORT
+bool ORBPathApplyElements(ORBPath path, void * info, _Nullable ORBPathApplyCallback callback) ORB_SWIFT_NAME(ORBPath.apply(self:info:callback:));
 
 ORB_EXTERN_C_END
 
