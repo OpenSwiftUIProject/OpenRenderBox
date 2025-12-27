@@ -1,10 +1,10 @@
 //
-//  PathStorage.cpp
+//  Storage.cpp
 //  OpenRenderBox
 
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
-#include <OpenRenderBoxCxx/Path/PathStorage.hpp>
+#include <OpenRenderBoxCxx/Path/Storage.hpp>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
 #if ORB_TARGET_OS_DARWIN
@@ -119,10 +119,10 @@ CGPathRef Storage::cgpath() const ORB_NOEXCEPT {
         return cached;
     }
     static const ORBPathCallbacks callbacks = {
+        {},
         nullptr,
         nullptr,
-        nullptr,
-        +[](const void *object, void *info, ORBPathApplyCallback callback) -> bool {
+        .apply = +[](const void *object, void *info, ORBPathApplyCallback callback) -> bool {
             auto storage = reinterpret_cast<const ORB::Path::Storage *>(object);
             return storage->apply_elements(info, callback);
         },

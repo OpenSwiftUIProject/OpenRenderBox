@@ -32,7 +32,7 @@ struct PathStorageTests {
         storage.destroy()
         path.release()
     }
-    
+
     @Test
     func storageBezierOrder() {
         let path = ORBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
@@ -40,7 +40,7 @@ struct PathStorageTests {
         #expect(order == 1)
         path.release()
     }
-    
+
     @Test
     func storageBoundingRect() {
         let rect = CGRect(x: 10, y: 20, width: 100, height: 50)
@@ -56,66 +56,48 @@ struct PathStorageTests {
         storage.destroy()
         path.release()
     }
-    
-    @Test
-    func storageEqualToStorage() {
-        let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
-        let path1 = ORBPath(rect: rect, transform: nil)
-        let path2 = ORBPath(rect: rect, transform: nil)
+
+    @Test(arguments: [
+        (CGRect(x: 0, y: 0, width: 100, height: 100), CGRect(x: 0, y: 0, width: 100, height: 100), true),
+        (CGRect(x: 0, y: 0, width: 100, height: 100), CGRect(x: 0, y: 0, width: 200, height: 200), false),
+        (CGRect(x: 10, y: 20, width: 50, height: 50), CGRect(x: 10, y: 20, width: 50, height: 50), true),
+    ])
+    func storageEquality(rect1: CGRect, rect2: CGRect, expectedEqual: Bool) {
+        let path1 = ORBPath(rect: rect1, transform: nil)
+        let path2 = ORBPath(rect: rect2, transform: nil)
         let storage1 = path1.storage
         let storage2 = path2.storage
-        #expect(storage1.isEqual(to: storage2) == true)
         storage1.initialize(capacity: 96, source: nil)
         storage1.append(path: path1)
         storage2.initialize(capacity: 96, source: nil)
         storage2.append(path: path2)
-        #expect(storage1.isEqual(to: storage2) == true)
-        storage1.destroy()
-        storage2.destroy()
-        path1.release()
-        path2.release()
-    }
-    
-    @Test
-    func storageNotEqual() {
-        let path1 = ORBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
-        let path2 = ORBPath(rect: CGRect(x: 0, y: 0, width: 200, height: 200), transform: nil)
-        let storage1 = path1.storage
-        let storage2 = path2.storage
-        #expect(storage1.isEqual(to: storage2) == true)
-        storage1.initialize(capacity: 96, source: nil)
-        storage1.append(path: path1)
-        storage2.initialize(capacity: 96, source: nil)
-        storage2.append(path: path2)
-        #expect(storage1.isEqual(to: storage2) == false)
+        #expect(storage1.isEqual(to: storage2) == expectedEqual)
         storage1.destroy()
         storage2.destroy()
         path1.release()
         path2.release()
     }
 
-    @Test("Verify no crash or memleak of ORBPathStorageGetCGPath call")
-    func storageGetCGPath() {
+    @Test("Verify no crash or memleak of ORBPathStorageGetCGPath call", arguments: 1...20)
+    func storageGetCGPath(iteration: Int) {
         let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
         let path = ORBPath(rect: rect, transform: nil)
         let storage = path.storage
         storage.initialize(capacity: 64, source: nil)
         storage.append(path: path)
-        for _ in 1 ... 7 {
+        for _ in 1...7 {
             storage.append(element: .moveToPoint, points: [50, 50], userInfo: nil)
             storage.append(element: .addLineToPoint, points: [100, 50], userInfo: nil)
             storage.append(element: .closeSubpath, points: [], userInfo: nil)
         }
-        func test(_ s: ORBPath.Storage) {
-            if let p = s.cgPath {
-                _ = p.isEmpty
-                _ = p.boundingBox
-            }
+        if let p = storage.cgPath {
+            _ = p.isEmpty
+            _ = p.boundingBox
         }
-        for i in 1 ... 20 {
-            test(storage)
-        }
+        storage.destroy()
+        path.release()
     }
+
 }
 
 #endif

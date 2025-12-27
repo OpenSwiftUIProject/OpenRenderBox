@@ -1,5 +1,5 @@
 //
-//  PathStorage.hpp
+//  Storage.hpp
 //  OpenRenderBox
 
 #pragma once
