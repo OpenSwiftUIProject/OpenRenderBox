@@ -142,22 +142,24 @@ ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat
     };
     return path;
 }
-
-CGPathRef ORBPathCopyCGPath(ORBPath path) {
-    // TODO: Return a retained copy of the CGPath
-    return nullptr;
-}
-
-bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) {
-    return ORBPathContainsPoints(path, 1, &point, eoFill, nullptr);
-}
-
-bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform *transform) {
-    // TODO: Implement point containment testing with winding rule
-    return false;
-}
-
 #endif /* ORB_TARGET_OS_DARWIN */
+
+bool ORBPathIsEmpty(ORBPath path) {
+    if (path.callbacks == &empty_path_callbacks) {
+        return true;
+    } else {
+        auto isEmptyCallback = path.callbacks->isEmpty;
+        if (isEmptyCallback) {
+            return isEmptyCallback(path.storage);
+        } else {
+            bool isEmpty = true;
+            return ORBPathApplyElements(path, &isEmpty, +[](void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo) -> bool {
+                *((bool *)info) = false;
+                return false;
+            });
+        }
+    }
+}
 
 bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callback) {
     auto apply = path.callbacks->apply;
@@ -174,3 +176,43 @@ bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callbac
         return apply(path.storage, info, callback);
     }
 }
+
+bool ORBPathEqualToPath(ORBPath lhs, ORBPath rhs) {
+    if (lhs.callbacks == rhs.callbacks) {
+        if (lhs.storage == rhs.storage) {
+            return true;
+        }
+        // TODO
+        return false;
+    } else {
+        if (lhs.callbacks == &empty_path_callbacks) {
+            if (lhs.storage == ORBPathNull.storage) {
+                return rhs.callbacks == &empty_path_callbacks && rhs.storage == ORBPathNull.storage;
+            } else {
+                return ORBPathIsEmpty(rhs);
+            }
+        } else if (rhs.callbacks == &empty_path_callbacks) {
+            if (rhs.storage == ORBPathNull.storage) {
+                return false;
+            } else {
+                return ORBPathIsEmpty(lhs);
+            }
+        }
+    }
+}
+
+#if ORB_TARGET_OS_DARWIN
+CGPathRef ORBPathCopyCGPath(ORBPath path) {
+    // TODO: Return a retained copy of the CGPath
+    return nullptr;
+}
+
+bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) {
+    return ORBPathContainsPoints(path, 1, &point, eoFill, nullptr);
+}
+
+bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform *transform) {
+    // TODO: Implement point containment testing with winding rule
+    return false;
+}
+#endif /* ORB_TARGET_OS_DARWIN */

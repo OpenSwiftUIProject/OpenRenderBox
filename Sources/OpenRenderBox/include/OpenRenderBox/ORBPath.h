@@ -63,10 +63,9 @@ void ORBPathRetain(ORBPath path) ORB_SWIFT_NAME(ORBPath.retain(self:));
 ORB_EXPORT
 void ORBPathRelease(ORBPath path) ORB_SWIFT_NAME(ORBPath.release(self:));
 
-#if ORB_TARGET_OS_DARWIN
-
 // MARK: - Path Creation
 
+#if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
 ORBPath ORBPathMakeWithCGPath(CGPathRef cgPath) ORB_SWIFT_NAME(ORBPath.init(cgPath:));
 
@@ -81,25 +80,34 @@ ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerH
 
 ORB_EXPORT
 ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:bottomLeftRadius:bottomRightRadius:topRightRadius:style:transform:));
+#endif
+
+// MARK: - Path Operation
+
+ORB_EXPORT
+bool ORBPathIsEmpty(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.isEmpty(self:));
+
+ORB_EXPORT
+bool ORBPathApplyElements(ORBPath path, void * info, _Nullable ORBPathApplyCallback callback) ORB_SWIFT_NAME(ORBPath.apply(self:info:callback:));
+
+ORB_EXPORT
+bool ORBPathEqualToPath(ORBPath lhs, ORBPath rhs) ORB_SWIFT_NAME(ORBPath.isEqual(self:to:));
 
 // MARK: - CGPath Interoperability
 
+#if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
 CGPathRef ORBPathCopyCGPath(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.cgPath(self:));
+#endif
 
 // MARK: - Point Containment
-
+#if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
 bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) ORB_SWIFT_NAME(ORBPath.contains(self:point:eoFill:));
 
 ORB_EXPORT
 bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.containsPoints(self:count:points:eoFill:transform:));
 #endif
-
-// MARK: - Apply Callback
-
-ORB_EXPORT
-bool ORBPathApplyElements(ORBPath path, void * info, _Nullable ORBPathApplyCallback callback) ORB_SWIFT_NAME(ORBPath.apply(self:info:callback:));
 
 ORB_EXTERN_C_END
 
