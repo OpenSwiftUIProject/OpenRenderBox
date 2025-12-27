@@ -147,33 +147,58 @@ ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat
 bool ORBPathIsEmpty(ORBPath path) {
     if (path.callbacks == &empty_path_callbacks) {
         return true;
+    }
+    if (path.callbacks->flags.isExtended) {
+        auto extended = reinterpret_cast<const ORBPathCallbacksExtended*>(path.callbacks);
+        auto isEmptyCallback = extended->isEmpty;
+        if (isEmptyCallback) {
+            return isEmptyCallback(path.storage, extended);
+        } else {
+            bool isEmpty = true;
+            auto applyCallback = extended->apply;
+            if (applyCallback) {
+                applyCallback(path.storage, &isEmpty, +[](void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo) -> bool {
+                    *((bool *)info) = false;
+                    return false;
+                }, extended);
+            }
+            return isEmpty;
+        }
     } else {
         auto isEmptyCallback = path.callbacks->isEmpty;
         if (isEmptyCallback) {
             return isEmptyCallback(path.storage);
         } else {
             bool isEmpty = true;
-            return ORBPathApplyElements(path, &isEmpty, +[](void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo) -> bool {
-                *((bool *)info) = false;
-                return false;
-            });
+            auto applyCallback = path.callbacks->apply;
+            if (applyCallback) {
+                applyCallback(path.storage, &isEmpty, +[](void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo) -> bool {
+                    *((bool *)info) = false;
+                    return false;
+                });
+            }
+            return isEmpty;
         }
     }
 }
 
 bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callback) {
-    auto apply = path.callbacks->apply;
-    bool flag = false; // TODO: calllbacks's flag to indicate whether it supports extra features
-    if (flag) {
-        if (callback == nullptr) {
-            return true;
+    if (callback == nullptr) {
+        return true;
+    }
+    if (path.callbacks->flags.isExtended) {
+        auto extended = reinterpret_cast<const ORBPathCallbacksExtended*>(path.callbacks);
+        auto applyCallback = extended->apply;
+        if (applyCallback) {
+            return applyCallback(path.storage, info, callback, extended);
         }
-        return apply(path.storage, info, callback/*, path.callbacks*/);
+        return true;
     } else {
-        if (callback == nullptr) {
-            return true;
+        auto applyCallback = path.callbacks->apply;
+        if (applyCallback) {
+            return applyCallback(path.storage, info, callback);
         }
-        return apply(path.storage, info, callback);
+        return true;
     }
 }
 
