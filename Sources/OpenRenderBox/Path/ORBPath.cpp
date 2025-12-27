@@ -7,6 +7,7 @@
 
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
+#include <OpenRenderBoxCxx/Path/PathStorage.hpp>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
 // Empty path callbacks (all null) - C++ internal linkage
@@ -23,6 +24,21 @@ static const ORBPathCallbacks empty_path_callbacks = {
     nullptr,
     nullptr,
 };
+
+namespace {
+ORBPath make_rect(CGRect rect, const CGAffineTransform *transform, ORBPathElement element) {
+    if (CGRectIsNull(rect)) {
+        return ORBPathNull;
+    }
+    if (transform == nullptr || CGAffineTransformIsIdentity(*transform)) {
+        // TODO
+        return ORBPathNull;
+    } else {
+        // TODO
+        return ORBPathNull;
+    }
+}
+} /* anonymous namespace */
 
 // Empty path (storage = null)
 const ORBPath ORBPathEmpty = {
@@ -68,12 +84,7 @@ ORBPath ORBPathMakeWithCGPath(CGPathRef cgPath) {
 }
 
 ORBPath ORBPathMakeRect(CGRect rect, const CGAffineTransform *transform) {
-    CGPathRef cgPath = CGPathCreateWithRect(rect, transform);
-    ORBPath path = {
-        reinterpret_cast<ORBPathStorage *>(const_cast<CGPath *>(cgPath)),
-        &ORBPathCGPathCallbacks,
-    };
-    return path;
+    return make_rect(rect, transform, ORBPathElementRect);
 }
 
 ORBPath ORBPathMakeEllipse(CGRect rect, const CGAffineTransform *transform) {
@@ -153,12 +164,12 @@ bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callbac
         if (callback == nullptr) {
             return true;
         }
-        apply(path.storage, info, callback/*, path.callbacks*/);
+        return apply(path.storage, info, callback/*, path.callbacks*/);
     } else {
         if (callback == nullptr) {
             return true;
         }
-        apply(path.storage, info, callback);
+        return apply(path.storage, info, callback);
     }
 }
 

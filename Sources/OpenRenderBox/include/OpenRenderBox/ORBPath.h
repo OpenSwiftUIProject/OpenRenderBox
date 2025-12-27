@@ -20,7 +20,8 @@ typedef ORB_ENUM(int32_t, ORBPathElement) {
     ORBPathElementAddQuadCurveToPoint = 2,
     ORBPathElementAddCurveToPoint = 3,
     ORBPathElementCloseSubpath = 4,
-
+    ORBPathElementRect = 5,
+    ORBPathElementRoundedRect = 6,
     ORBPathElementFixedRoundedRectCircular = 8,
     ORBPathElementFixedRoundedRectContinuous = 9,
 
