@@ -2,7 +2,7 @@
 //  ORBPathStorage.swift
 //  OpenRenderBox
 
-#if !OPENRENDERBOX_CF_CGTYPE
+#if !OPENRENDERBOX_CF_CGTYPES
 public import OpenCoreGraphicsShims
 
 extension ORBPath.Storage {

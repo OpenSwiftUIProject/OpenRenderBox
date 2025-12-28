@@ -4,7 +4,7 @@
 
 #pragma once
 
-#if OPENRENDERBOX_CF_CGTYPE
+#if OPENRENDERBOX_CF_CGTYPES
 
 #include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPath.h>
@@ -248,4 +248,4 @@ struct ORBPathStorage {
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* OPENRENDERBOX_CF_CGTYPE */
+#endif /* OPENRENDERBOX_CF_CGTYPES */

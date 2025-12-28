@@ -4,7 +4,7 @@
 
 #pragma once
 
-#if OPENRENDERBOX_CF_CGTYPE
+#if OPENRENDERBOX_CF_CGTYPES
 
 #include <OpenRenderBox/ORBBase.h>
 
@@ -116,4 +116,4 @@ ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* OPENRENDERBOX_CF_CGTYPE */
+#endif /* OPENRENDERBOX_CF_CGTYPES */

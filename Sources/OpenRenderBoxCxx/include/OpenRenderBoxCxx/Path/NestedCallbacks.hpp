@@ -4,7 +4,7 @@
 
 #pragma once
 
-#if OPENRENDERBOX_CF_CGTYPE
+#if OPENRENDERBOX_CF_CGTYPES
 
 #include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
@@ -54,4 +54,4 @@ static_assert(offsetof(NestedCallbacks, nestedIndex) == 0x60, "nestedIndex offse
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* OPENRENDERBOX_CF_CGTYPE */
+#endif /* OPENRENDERBOX_CF_CGTYPES */

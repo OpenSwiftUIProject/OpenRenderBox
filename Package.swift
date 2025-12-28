@@ -160,7 +160,7 @@ let renderBoxCondtion = envBoolValue("RENDERBOX", default: buildForDarwinPlatfor
 /// macOS: false -> use Swift implementation with OpenCoreGraphics Swift CGPath
 /// Linux: true + No CGPathRef support in ORBPath -> confilict with Foundation def
 /// Linux: false -> use Swift implementation with OpenCoreGraphics Swift CGPath
-let cfCGType = envBoolValue("CF_CGTYPES", default: buildForDarwinPlatform)
+let cfCGTypes = envBoolValue("CF_CGTYPES", default: buildForDarwinPlatform)
 
 // MARK: - Shared Settings
 
@@ -183,10 +183,10 @@ if libraryEvolutionCondition {
     sharedSwiftSettings.append(.unsafeFlags(["-enable-library-evolution", "-no-verify-emitted-module-interface"]))
 }
 
-if cfCGType {
-    sharedCSettings.append(.define("OPENRENDERBOX_CF_CGTYPE"))
-    sharedCxxSettings.append(.define("OPENRENDERBOX_CF_CGTYPE"))
-    sharedSwiftSettings.append(.define("OPENRENDERBOX_CF_CGTYPE"))
+if cfCGTypes {
+    sharedCSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
+    sharedCxxSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
+    sharedSwiftSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
 }
 
 // MARK: - Extension

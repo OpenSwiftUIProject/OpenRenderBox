@@ -5,7 +5,7 @@
 //  Created by Kyle on 2025/3/25.
 //
 
-#if OPENRENDERBOX_CF_CGTYPE
+#if OPENRENDERBOX_CF_CGTYPES
 
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
@@ -258,4 +258,4 @@ bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, 
 }
 #endif /* ORB_TARGET_OS_DARWIN */
 
-#endif /* OPENRENDERBOX_CF_CGTYPE */
+#endif /* OPENRENDERBOX_CF_CGTYPES */
