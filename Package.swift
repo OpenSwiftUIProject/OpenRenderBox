@@ -155,6 +155,13 @@ let compatibilityTestCondition = envBoolValue("COMPATIBILITY_TEST", default: fal
 let useLocalDeps = envBoolValue("USE_LOCAL_DEPS")
 let renderBoxCondtion = envBoolValue("RENDERBOX", default: buildForDarwinPlatform && !isSPIBuild)
 
+/// CGFloat and CGRect def in CFCGTypes.h will conflict with Foundation's CGSize/CGRect def on Linux.
+/// macOS: true -> no issue
+/// macOS: false -> use Swift implementation with OpenCoreGraphics Swift CGPath
+/// Linux: true + No CGPathRef support in ORBPath -> confilict with Foundation def
+/// Linux: false -> use Swift implementation with OpenCoreGraphics Swift CGPath
+let cfCGType = envBoolValue("CF_CGTYPES", default: buildForDarwinPlatform)
+
 // MARK: - Shared Settings
 
 var sharedCSettings: [CSetting] = [
@@ -174,6 +181,12 @@ if libraryEvolutionCondition {
     // NOTE: -enable-library-evolution will cause module verify failure for `swift build`.
     // Either set LIBRARY_EVOLUTION=0 or add `-Xswiftc -no-verify-emitted-module-interface` after `swift build`
     sharedSwiftSettings.append(.unsafeFlags(["-enable-library-evolution", "-no-verify-emitted-module-interface"]))
+}
+
+if cfCGType {
+    sharedCSettings.append(.define("OPENRENDERBOX_CF_CGTYPE"))
+    sharedCxxSettings.append(.define("OPENRENDERBOX_CF_CGTYPE"))
+    sharedSwiftSettings.append(.define("OPENRENDERBOX_CF_CGTYPE"))
 }
 
 // MARK: - Extension

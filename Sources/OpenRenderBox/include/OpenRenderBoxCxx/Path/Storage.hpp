@@ -4,6 +4,8 @@
 
 #pragma once
 
+#if OPENRENDERBOX_CF_CGTYPE
+
 #include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
@@ -246,3 +248,4 @@ struct ORBPathStorage {
 
 ORB_ASSUME_NONNULL_END
 
+#endif /* OPENRENDERBOX_CF_CGTYPE */

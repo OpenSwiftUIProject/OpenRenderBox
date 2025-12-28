@@ -7,6 +7,8 @@
 
 #pragma once
 
+#if OPENRENDERBOX_CF_CGTYPE
+
 #include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPath.h>
 #if ORB_TARGET_OS_DARWIN
@@ -60,3 +62,4 @@ ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
 
+#endif /* OPENRENDERBOX_CF_CGTYPE */

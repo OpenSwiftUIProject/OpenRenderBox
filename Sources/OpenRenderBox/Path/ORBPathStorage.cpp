@@ -2,6 +2,8 @@
 //  ORBPathStorage.cpp
 //  OpenRenderBox
 
+#if OPENRENDERBOX_CF_CGTYPE
+
 #include <OpenRenderBox/ORBPathStorage.h>
 #include <OpenRenderBoxCxx/Path/Storage.hpp>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
@@ -74,3 +76,5 @@ CGPathRef ORBPathStorageGetCGPath(ORBPathStorageRef storage) {
     return storage->storage.cgpath();
 }
 #endif
+
+#endif /* OPENRENDERBOX_CF_CGTYPE */

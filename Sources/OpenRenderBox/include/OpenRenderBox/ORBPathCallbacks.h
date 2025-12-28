@@ -7,6 +7,8 @@
 
 #pragma once
 
+#if OPENRENDERBOX_CF_CGTYPE
+
 #include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPath.h>
 #include <stddef.h>
@@ -106,3 +108,5 @@ const ORBPathCallbacks ORBPathCGPathCallbacks ORB_SWIFT_NAME(ORBPathCallbacks.cg
 ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
+
+#endif /* OPENRENDERBOX_CF_CGTYPE */
