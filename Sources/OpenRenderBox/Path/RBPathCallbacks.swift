@@ -3,7 +3,7 @@
 //  OpenRenderBox
 
 #if !OPENRENDERBOX_CF_CGTYPE
-import OpenCoreGraphics
+public import OpenCoreGraphicsShims
 
 /// Flags for path callbacks
 public struct RBPathCallbacksFlags {
@@ -34,16 +34,16 @@ extension RBPath {
     /// This allows different path storage types (CGPath, custom storage, etc.) to provide their own implementations
     public struct Callbacks {
         public var flags: RBPathCallbacksFlags
-        public var retain: (@convention(c) (UnsafeRawPointer) -> UnsafeRawPointer)?
-        public var release: (@convention(c) (UnsafeRawPointer) -> Void)?
-        public var apply: (@convention(c) (UnsafeRawPointer, UnsafeMutableRawPointer, RBPathApplyCallback?) -> Bool)?
-        public var isEqual: (@convention(c) (UnsafeRawPointer, UnsafeRawPointer) -> Bool)?
-        public var isEmpty: (@convention(c) (UnsafeRawPointer) -> Bool)?
-        public var isSingleElement: (@convention(c) (UnsafeRawPointer) -> Bool)?
-        public var bezierOrder: (@convention(c) (UnsafeRawPointer) -> UInt32)?
-        public var boundingRect: (@convention(c) (UnsafeRawPointer) -> CGRect)?
-        public var cgPath: (@convention(c) (UnsafeRawPointer) -> Unmanaged<CGPath>?)?
-        public var next: (@convention(c) (UnsafeRawPointer) -> UnsafePointer<RBPath.Callbacks>?)?
+        public var retain: ((UnsafeRawPointer) -> UnsafeRawPointer)?
+        public var release: ((UnsafeRawPointer) -> Void)?
+        public var apply: ((UnsafeRawPointer, UnsafeMutableRawPointer, RBPathApplyCallback?) -> Bool)?
+        public var isEqual: ((UnsafeRawPointer, UnsafeRawPointer) -> Bool)?
+        public var isEmpty: ((UnsafeRawPointer) -> Bool)?
+        public var isSingleElement: ((UnsafeRawPointer) -> Bool)?
+        public var bezierOrder: ((UnsafeRawPointer) -> UInt32)?
+        public var boundingRect: ((UnsafeRawPointer) -> CGRect)?
+        public var cgPath: ((UnsafeRawPointer) -> Unmanaged<CGPath>?)?
+        public var next: ((UnsafeRawPointer) -> UnsafePointer<RBPath.Callbacks>?)?
         
         public init() {
             self.flags = RBPathCallbacksFlags()
@@ -61,16 +61,16 @@ extension RBPath {
         
         public init(
             flags: RBPathCallbacksFlags,
-            retain: (@convention(c) (UnsafeRawPointer) -> UnsafeRawPointer)?,
-            release: (@convention(c) (UnsafeRawPointer) -> Void)?,
-            apply: (@convention(c) (UnsafeRawPointer, UnsafeMutableRawPointer, RBPathApplyCallback?) -> Bool)?,
-            isEqual: (@convention(c) (UnsafeRawPointer, UnsafeRawPointer) -> Bool)?,
-            isEmpty: (@convention(c) (UnsafeRawPointer) -> Bool)?,
-            isSingleElement: (@convention(c) (UnsafeRawPointer) -> Bool)?,
-            bezierOrder: (@convention(c) (UnsafeRawPointer) -> UInt32)?,
-            boundingRect: (@convention(c) (UnsafeRawPointer) -> CGRect)?,
-            cgPath: (@convention(c) (UnsafeRawPointer) -> Unmanaged<CGPath>?)?,
-            next: (@convention(c) (UnsafeRawPointer) -> UnsafePointer<RBPath.Callbacks>?)?
+            retain: ((UnsafeRawPointer) -> UnsafeRawPointer)?,
+            release: ((UnsafeRawPointer) -> Void)?,
+            apply: ((UnsafeRawPointer, UnsafeMutableRawPointer, RBPathApplyCallback?) -> Bool)?,
+            isEqual: ((UnsafeRawPointer, UnsafeRawPointer) -> Bool)?,
+            isEmpty: ((UnsafeRawPointer) -> Bool)?,
+            isSingleElement: ((UnsafeRawPointer) -> Bool)?,
+            bezierOrder: ((UnsafeRawPointer) -> UInt32)?,
+            boundingRect: ((UnsafeRawPointer) -> CGRect)?,
+            cgPath: ((UnsafeRawPointer) -> Unmanaged<CGPath>?)?,
+            next: ((UnsafeRawPointer) -> UnsafePointer<RBPath.Callbacks>?)?
         ) {
             self.flags = flags
             self.retain = retain
@@ -102,16 +102,16 @@ extension RBPath {
     /// Extended callbacks structure with additional extended callbacks argument
     public struct CallbacksExtended {
         public var flags: RBPathCallbacksFlags
-        public var retain: (@convention(c) (UnsafeRawPointer) -> UnsafeRawPointer)?
-        public var release: (@convention(c) (UnsafeRawPointer) -> Void)?
-        public var apply: (@convention(c) (UnsafeRawPointer, UnsafeMutableRawPointer, RBPathApplyCallback?, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?
-        public var isEqual: (@convention(c) (UnsafeRawPointer, UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?
-        public var isEmpty: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?
-        public var isSingleElement: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?
-        public var bezierOrder: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> UInt32)?
-        public var boundingRect: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> CGRect)?
-        public var cgPath: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Unmanaged<CGPath>?)?
-        public var next: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> UnsafePointer<RBPath.CallbacksExtended>?)?
+        public var retain: ((UnsafeRawPointer) -> UnsafeRawPointer)?
+        public var release: ((UnsafeRawPointer) -> Void)?
+        public var apply: ((UnsafeRawPointer, UnsafeMutableRawPointer, RBPathApplyCallback?, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?
+        public var isEqual: ((UnsafeRawPointer, UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?
+        public var isEmpty: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?
+        public var isSingleElement: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?
+        public var bezierOrder: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> UInt32)?
+        public var boundingRect: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> CGRect)?
+        public var cgPath: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Unmanaged<CGPath>?)?
+        public var next: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> UnsafePointer<RBPath.CallbacksExtended>?)?
         
         public init() {
             self.flags = RBPathCallbacksFlags()
@@ -129,16 +129,16 @@ extension RBPath {
 
         public init(
             flags: RBPathCallbacksFlags,
-            retain: (@convention(c) (UnsafeRawPointer) -> UnsafeRawPointer)?,
-            release: (@convention(c) (UnsafeRawPointer) -> Void)?,
-            apply: (@convention(c) (UnsafeRawPointer, UnsafeMutableRawPointer, RBPathApplyCallback?, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?,
-            isEqual: (@convention(c) (UnsafeRawPointer, UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?,
-            isEmpty: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?,
-            isSingleElement: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?,
-            bezierOrder: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> UInt32)?,
-            boundingRect: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> CGRect)?,
-            cgPath: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Unmanaged<CGPath>?)?,
-            next: (@convention(c) (UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> UnsafePointer<RBPath.CallbacksExtended>?)?
+            retain: ((UnsafeRawPointer) -> UnsafeRawPointer)?,
+            release: ((UnsafeRawPointer) -> Void)?,
+            apply: ((UnsafeRawPointer, UnsafeMutableRawPointer, RBPathApplyCallback?, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?,
+            isEqual: ((UnsafeRawPointer, UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?,
+            isEmpty: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?,
+            isSingleElement: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Bool)?,
+            bezierOrder: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> UInt32)?,
+            boundingRect: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> CGRect)?,
+            cgPath: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> Unmanaged<CGPath>?)?,
+            next: ((UnsafeRawPointer, UnsafePointer<RBPath.CallbacksExtended>) -> UnsafePointer<RBPath.CallbacksExtended>?)?
         ) {
             self.flags = flags
             self.retain = retain

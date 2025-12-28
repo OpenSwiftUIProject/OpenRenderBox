@@ -214,7 +214,7 @@ let openRenderBoxTarget = Target.target(
     name: "OpenRenderBox",
     dependencies: [
         "OpenRenderBoxCxx",
-        .product(name: "OpenCoreGraphics", package: "OpenCoreGraphics"),
+        .product(name: "OpenCoreGraphicsShims", package: "OpenCoreGraphics"),
     ],
     cSettings: sharedCSettings,
     cxxSettings: sharedCxxSettings,

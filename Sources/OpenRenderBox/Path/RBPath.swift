@@ -3,9 +3,9 @@
 //  OpenRenderBox
 
 #if !OPENRENDERBOX_CF_CGTYPE
-import OpenCoreGraphics
+public import OpenCoreGraphicsShims
 
-public typealias RBPathApplyCallback = @convention(c) (UnsafeMutableRawPointer, RBPath.Element, UnsafePointer<CGFloat>, UnsafeRawPointer?) -> Bool
+public typealias RBPathApplyCallback = (UnsafeMutableRawPointer, RBPath.Element, UnsafePointer<CGFloat>, UnsafeRawPointer?) -> Bool
 
 public struct RBPath {
     public var storage: RBPath.Storage
@@ -95,19 +95,19 @@ extension RBPath {
     public init(cgPath: CGPath) {
         _openRenderBoxUnimplementedFailure()
     }
-    
+
     public init(rect: CGRect, transform: UnsafePointer<CGAffineTransform>?) {
         _openRenderBoxUnimplementedFailure()
     }
-    
+
     public init(ellipseIn rect: CGRect, transform: UnsafePointer<CGAffineTransform>?) {
         _openRenderBoxUnimplementedFailure()
     }
-    
+
     public init(roundedRect rect: CGRect, cornerWidth: CGFloat, cornerHeight: CGFloat, style: RBPath.RoundedCornerStyle, transform: UnsafePointer<CGAffineTransform>?) {
         _openRenderBoxUnimplementedFailure()
     }
-    
+
     public init(roundedRect rect: CGRect, topLeftRadius: CGFloat, bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat, topRightRadius: CGFloat, style: RBPath.RoundedCornerStyle, transform: UnsafePointer<CGAffineTransform>?) {
         _openRenderBoxUnimplementedFailure()
     }

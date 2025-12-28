@@ -3,7 +3,7 @@
 //  OpenRenderBox
 
 #if !OPENRENDERBOX_CF_CGTYPE
-import OpenCoreGraphics
+public import OpenCoreGraphicsShims
 
 extension RBPath.Storage {
     public func initialize(capacity: UInt32, source: RBPath.Storage?) {
