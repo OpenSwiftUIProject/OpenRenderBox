@@ -1,5 +1,5 @@
 {
-  "originHash" : "c75a990a7c0a9789116d0b405f497d506981512b30017bb1410c22e2f310cff9",
+  "originHash" : "612ee23044edcafffa374eb027f9ee9f823a69beafe4e2b02cbc888a5b7f9390",
   "pins" : [
     {
       "identity" : "darwinprivateframeworks",
@@ -8,6 +8,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "db8c67d76c1c95d70389e6aa8d1a26ec6720adda"
+      }
+    },
+    {
+      "identity" : "opencoregraphics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/OpenSwiftUIProject/OpenCoreGraphics",
+      "state" : {
+        "branch" : "main",
+        "revision" : "cd89c292c4ed4c25d9468a12d9490cc18304ff37"
       }
     },
     {

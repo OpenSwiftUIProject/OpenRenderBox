@@ -212,7 +212,10 @@ extension [Platform] {
 
 let openRenderBoxTarget = Target.target(
     name: "OpenRenderBox",
-    dependencies: ["OpenRenderBoxCxx"],
+    dependencies: [
+        "OpenRenderBoxCxx",
+        .product(name: "OpenCoreGraphics", package: "OpenCoreGraphics"),
+    ],
     swiftSettings: sharedSwiftSettings
 )
 // FIXME: Merge into one target
@@ -268,6 +271,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.1.1"),
+        .package(url: "https://github.com/OpenSwiftUIProject/OpenCoreGraphics", branch: "main"),
     ],
     targets: [
         openRenderBoxTarget,
