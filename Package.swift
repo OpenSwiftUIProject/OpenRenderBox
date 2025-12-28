@@ -216,6 +216,8 @@ let openRenderBoxTarget = Target.target(
         "OpenRenderBoxCxx",
         .product(name: "OpenCoreGraphics", package: "OpenCoreGraphics"),
     ],
+    cSettings: sharedCSettings,
+    cxxSettings: sharedCxxSettings,
     swiftSettings: sharedSwiftSettings
 )
 // FIXME: Merge into one target
@@ -271,7 +273,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.1.1"),
-        .package(url: "https://github.com/OpenSwiftUIProject/OpenCoreGraphics", branch: "main"),
     ],
     targets: [
         openRenderBoxTarget,
@@ -284,25 +285,38 @@ let package = Package(
 )
 
 if renderBoxCondtion {
-    let privateFrameworkRepo: Package.Dependency
-    if useLocalDeps {
-        privateFrameworkRepo = Package.Dependency.package(path: "../DarwinPrivateFrameworks")
-    } else {
-        privateFrameworkRepo = Package.Dependency.package(url: "https://github.com/OpenSwiftUIProject/DarwinPrivateFrameworks.git", branch: "main")
-    }
-    package.dependencies.append(privateFrameworkRepo)
     openRenderBoxShimsTarget.addRBSettings()
+}
 
-    let rbVersion = EnvManager.shared.withDomain("DarwinPrivateFrameworks") {
+if renderBoxCondtion {
+    let release = EnvManager.shared.withDomain("DarwinPrivateFrameworks") {
         envIntValue("TARGET_RELEASE", default: 2024)
     }
-    package.platforms = switch rbVersion {
+    package.platforms = switch release {
         case 2024: [.iOS(.v18), .macOS(.v15), .macCatalyst(.v18), .tvOS(.v18), .watchOS(.v10), .visionOS(.v2)]
         case 2021: [.iOS(.v15), .macOS(.v12), .macCatalyst(.v15), .tvOS(.v15), .watchOS(.v7)]
         default: nil
     }
 } else {
     openRenderBoxShimsTarget.dependencies.append("OpenRenderBox")
+}
+
+if useLocalDeps {
+    var dependencies: [Package.Dependency] = [
+        .package(path: "../OpenCoreGraphics"),
+    ]
+    if renderBoxCondtion {
+        dependencies.append(.package(path: "../DarwinPrivateFrameworks"))
+    }
+    package.dependencies += dependencies
+} else {
+    var dependencies: [Package.Dependency] = [
+        .package(url: "https://github.com/OpenSwiftUIProject/OpenCoreGraphics", branch: "main"),
+    ]
+    if renderBoxCondtion {
+        dependencies.append(.package(url: "https://github.com/OpenSwiftUIProject/DarwinPrivateFrameworks.git", branch: "main"))
+    }
+    package.dependencies += dependencies
 }
 
 if compatibilityTestCondition && renderBoxCondtion {

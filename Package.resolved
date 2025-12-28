@@ -1,5 +1,5 @@
 {
-  "originHash" : "612ee23044edcafffa374eb027f9ee9f823a69beafe4e2b02cbc888a5b7f9390",
+  "originHash" : "9b69631cc841c3300fc55dd1432eb69d5d8b848c2daa4f17329fecb836499020",
   "pins" : [
     {
       "identity" : "darwinprivateframeworks",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/OpenSwiftUIProject/OpenCoreGraphics",
       "state" : {
         "branch" : "main",
-        "revision" : "cd89c292c4ed4c25d9468a12d9490cc18304ff37"
+        "revision" : "e33ce7ccaaf8426350cc5715fc1dd4b9f36fcf91"
       }
     },
     {
