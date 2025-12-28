@@ -1,10 +1,9 @@
-module OpenRenderBox {
-    umbrella header "OpenRenderBox/OpenRenderBox.h"
+module OpenRenderBoxCxx {
     export *
 }
 
-module OpenRenderBoxCxx {
-    requires cplusplus
+module OpenRenderBoxCxx.C {
+    umbrella header "OpenRenderBox/OpenRenderBox.h"
     export *
 }
 

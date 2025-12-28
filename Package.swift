@@ -212,6 +212,14 @@ extension [Platform] {
 
 let openRenderBoxTarget = Target.target(
     name: "OpenRenderBox",
+    dependencies: ["OpenRenderBoxCxx"],
+    swiftSettings: sharedSwiftSettings
+)
+// FIXME: Merge into one target
+// OpenRenderBox is a C++ & Swift mix target.
+// The SwiftPM support for such usage is still in progress.
+let openRenderBoxCxxTarget = Target.target(
+    name: "OpenRenderBoxCxx",
     cSettings: sharedCSettings,
     cxxSettings: sharedCxxSettings
 )
@@ -219,13 +227,14 @@ let openRenderBoxShimsTarget = Target.target(
     name: "OpenRenderBoxShims",
     swiftSettings: sharedSwiftSettings
 )
-let openRenderBoxCxxTestTarget = Target.testTarget(
-    name: "OpenRenderBoxCxxTests",
+let openRenderBoxTestsTarget = Target.testTarget(
+    name: "OpenRenderBoxTests",
     dependencies: [
         "OpenRenderBox",
     ],
     exclude: ["README.md"],
     cSettings: sharedCSettings + [.define("SWIFT_TESTING")],
+    cxxSettings: sharedCxxSettings + [.define("SWIFT_TESTING")],
     swiftSettings: sharedSwiftSettings + [.interoperabilityMode(.Cxx)]
 )
 let openRenderBoxCompatibilityTestTarget = Target.testTarget(
@@ -234,6 +243,8 @@ let openRenderBoxCompatibilityTestTarget = Target.testTarget(
         .product(name: "RealModule", package: "swift-numerics"),
     ],
     exclude: ["README.md"],
+    cSettings: sharedCSettings + [.define("SWIFT_TESTING")],
+    cxxSettings: sharedCxxSettings + [.define("SWIFT_TESTING")],
     swiftSettings: sharedSwiftSettings
 )
 
@@ -252,16 +263,17 @@ default:
 let package = Package(
     name: "OpenRenderBox",
     products: [
-        .library(name: "OpenRenderBox", type: libraryType, targets: ["OpenRenderBox"]),
+        .library(name: "OpenRenderBox", type: libraryType, targets: ["OpenRenderBox", "OpenRenderBoxCxx"]),
         .library(name: "OpenRenderBoxShims", type: libraryType, targets: ["OpenRenderBoxShims"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2"),
+        .package(url: "https://github.com/apple/swift-numerics", from: "1.1.1"),
     ],
     targets: [
         openRenderBoxTarget,
+        openRenderBoxCxxTarget,
         openRenderBoxShimsTarget,
-        openRenderBoxCxxTestTarget,
+        openRenderBoxTestsTarget,
         openRenderBoxCompatibilityTestTarget,
     ],
     cxxLanguageStandard: .cxx20
