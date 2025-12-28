@@ -21,7 +21,7 @@ ORB_ASSUME_NONNULL_BEGIN
 ORB_EXTERN_C_BEGIN
 
 /// Flags for path callbacks
-typedef struct ORBPathCallbacksFlags {
+typedef struct ORB_SWIFT_NAME(ORBPath.Callbacks.Flags) ORBPathCallbacksFlags {
     uint8_t unknown0;
     uint8_t unknown1;
     bool isExtended;

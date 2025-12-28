@@ -1,12 +1,12 @@
 //
-//  RBPathStorage.swift
+//  ORBPathStorage.swift
 //  OpenRenderBox
 
 #if !OPENRENDERBOX_CF_CGTYPE
 public import OpenCoreGraphicsShims
 
-extension RBPath.Storage {
-    public func initialize(capacity: UInt32, source: RBPath.Storage?) {
+extension ORBPath.Storage {
+    public func initialize(capacity: UInt32, source: ORBPath.Storage?) {
         _openRenderBoxUnimplementedFailure()
     }
     
@@ -18,15 +18,15 @@ extension RBPath.Storage {
         _openRenderBoxUnimplementedFailure()
     }
     
-    public func append(element: RBPath.Element, points: UnsafePointer<CGFloat>, userInfo: UnsafeRawPointer?) -> Bool {
+    public func append(element: ORBPath.Element, points: UnsafePointer<CGFloat>, userInfo: UnsafeRawPointer?) -> Bool {
         _openRenderBoxUnimplementedFailure()
     }
     
-    public func append(path: RBPath) -> Bool {
+    public func append(path: ORBPath) -> Bool {
         _openRenderBoxUnimplementedFailure()
     }
     
-    public func apply(info: UnsafeMutableRawPointer, callback: RBPathApplyCallback?) -> Bool {
+    public func apply(info: UnsafeMutableRawPointer, callback: ORBPathApplyCallback?) -> Bool {
         _openRenderBoxUnimplementedFailure()
     }
     
@@ -34,7 +34,7 @@ extension RBPath.Storage {
         _openRenderBoxUnimplementedFailure()
     }
     
-    public func isEqual(to rhs: RBPath.Storage) -> Bool {
+    public func isEqual(to rhs: ORBPath.Storage) -> Bool {
         _openRenderBoxUnimplementedFailure()
     }
     

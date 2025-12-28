@@ -1,17 +1,17 @@
 //
-//  RBPath.swift
+//  ORBPath.swift
 //  OpenRenderBox
 
 #if !OPENRENDERBOX_CF_CGTYPE
 public import OpenCoreGraphicsShims
 
-public typealias RBPathApplyCallback = (UnsafeMutableRawPointer, RBPath.Element, UnsafePointer<CGFloat>, UnsafeRawPointer?) -> Bool
+public typealias ORBPathApplyCallback = (UnsafeMutableRawPointer, ORBPath.Element, UnsafePointer<CGFloat>, UnsafeRawPointer?) -> Bool
 
-public struct RBPath {
-    public var storage: RBPath.Storage
-    public var callbacks: UnsafePointer<RBPath.Callbacks>
+public struct ORBPath {
+    public var storage: ORBPath.Storage
+    public var callbacks: UnsafePointer<ORBPath.Callbacks>
     
-    public init(storage: RBPath.Storage, callbacks: UnsafePointer<RBPath.Callbacks>) {
+    public init(storage: ORBPath.Storage, callbacks: UnsafePointer<ORBPath.Callbacks>) {
         self.storage = storage
         self.callbacks = callbacks
     }
@@ -19,7 +19,7 @@ public struct RBPath {
 
 // MARK: - Element
 
-extension RBPath {
+extension ORBPath {
     /// Path element type for path enumeration
     public enum Element: Int32, @unchecked Sendable {
         case moveToPoint = 0
@@ -37,7 +37,7 @@ extension RBPath {
 
 // MARK: - RoundedCornerStyle
 
-extension RBPath {
+extension ORBPath {
     /// Defines the shape of a rounded rectangle's corners.
     public enum RoundedCornerStyle: Int32, @unchecked Sendable {
         /// Quarter-circle rounded rect corners.
@@ -49,7 +49,7 @@ extension RBPath {
 
 // MARK: - Storage
 
-extension RBPath {
+extension ORBPath {
     public struct Storage: Hashable, Equatable, RawRepresentable, @unchecked Sendable {
         public var rawValue: OpaquePointer
         
@@ -65,21 +65,21 @@ extension RBPath {
 
 // MARK: - Static Properties
 
-extension RBPath {
-    /// Global empty path (storage = null, callbacks = &RBPathEmptyCallbacks)
-    public static var empty: RBPath {
+extension ORBPath {
+    /// Global empty path (storage = null, callbacks = &ORBPathEmptyCallbacks)
+    public static var empty: ORBPath {
         _openRenderBoxUnimplementedFailure()
     }
     
-    /// Global null path (storage = 0x1, callbacks = &RBPathEmptyCallbacks)
-    public static var null: RBPath {
+    /// Global null path (storage = 0x1, callbacks = &ORBPathEmptyCallbacks)
+    public static var null: ORBPath {
         _openRenderBoxUnimplementedFailure()
     }
 }
 
 // MARK: - Memory Management
 
-extension RBPath {
+extension ORBPath {
     public func retain() {
         _openRenderBoxUnimplementedFailure()
     }
@@ -91,7 +91,7 @@ extension RBPath {
 
 // MARK: - Initializers
 
-extension RBPath {
+extension ORBPath {
     public init(cgPath: CGPath) {
         _openRenderBoxUnimplementedFailure()
     }
@@ -104,18 +104,18 @@ extension RBPath {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public init(roundedRect rect: CGRect, cornerWidth: CGFloat, cornerHeight: CGFloat, style: RBPath.RoundedCornerStyle, transform: UnsafePointer<CGAffineTransform>?) {
+    public init(roundedRect rect: CGRect, cornerWidth: CGFloat, cornerHeight: CGFloat, style: ORBPath.RoundedCornerStyle, transform: UnsafePointer<CGAffineTransform>?) {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public init(roundedRect rect: CGRect, topLeftRadius: CGFloat, bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat, topRightRadius: CGFloat, style: RBPath.RoundedCornerStyle, transform: UnsafePointer<CGAffineTransform>?) {
+    public init(roundedRect rect: CGRect, topLeftRadius: CGFloat, bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat, topRightRadius: CGFloat, style: ORBPath.RoundedCornerStyle, transform: UnsafePointer<CGAffineTransform>?) {
         _openRenderBoxUnimplementedFailure()
     }
 }
 
 // MARK: - Properties
 
-extension RBPath {
+extension ORBPath {
     public var isEmpty: Bool {
         _openRenderBoxUnimplementedFailure()
     }
@@ -127,12 +127,12 @@ extension RBPath {
 
 // MARK: - Methods
 
-extension RBPath {
-    public func apply(info: UnsafeMutableRawPointer, callback: RBPathApplyCallback?) -> Bool {
+extension ORBPath {
+    public func apply(info: UnsafeMutableRawPointer, callback: ORBPathApplyCallback?) -> Bool {
         _openRenderBoxUnimplementedFailure()
     }
     
-    public func isEqual(to rhs: RBPath) -> Bool {
+    public func isEqual(to rhs: ORBPath) -> Bool {
         _openRenderBoxUnimplementedFailure()
     }
     
