@@ -8,4 +8,5 @@ filepath() {
 REPO_ROOT="$(dirname $(dirname $(dirname $(filepath $0))))"
 cd $REPO_ROOT
 
+Scripts/CI/opencoregraphics_setup.sh
 Scripts/CI/rb_setup.sh

@@ -2,6 +2,8 @@
 //  Storage.cpp
 //  OpenRenderBox
 
+#if OPENRENDERBOX_CF_CGTYPES
+
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
 #include <OpenRenderBoxCxx/Path/Storage.hpp>
@@ -152,3 +154,5 @@ CGPathRef Storage::cgpath() const ORB_NOEXCEPT {
 
 } /* Path */
 } /* ORB */
+
+#endif /* OPENRENDERBOX_CF_CGTYPES */

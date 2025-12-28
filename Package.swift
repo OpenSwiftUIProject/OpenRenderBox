@@ -155,6 +155,13 @@ let compatibilityTestCondition = envBoolValue("COMPATIBILITY_TEST", default: fal
 let useLocalDeps = envBoolValue("USE_LOCAL_DEPS")
 let renderBoxCondtion = envBoolValue("RENDERBOX", default: buildForDarwinPlatform && !isSPIBuild)
 
+/// CGFloat and CGRect def in CFCGTypes.h will conflict with Foundation's CGSize/CGRect def on Linux.
+/// macOS: true -> no issue
+/// macOS: false -> use Swift implementation with OpenCoreGraphics Swift CGPath
+/// Linux: true + No CGPathRef support in ORBPath -> confilict with Foundation def
+/// Linux: false -> use Swift implementation with OpenCoreGraphics Swift CGPath
+let cfCGTypes = envBoolValue("CF_CGTYPES", default: buildForDarwinPlatform)
+
 // MARK: - Shared Settings
 
 var sharedCSettings: [CSetting] = [
@@ -174,6 +181,12 @@ if libraryEvolutionCondition {
     // NOTE: -enable-library-evolution will cause module verify failure for `swift build`.
     // Either set LIBRARY_EVOLUTION=0 or add `-Xswiftc -no-verify-emitted-module-interface` after `swift build`
     sharedSwiftSettings.append(.unsafeFlags(["-enable-library-evolution", "-no-verify-emitted-module-interface"]))
+}
+
+if cfCGTypes {
+    sharedCSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
+    sharedCxxSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
+    sharedSwiftSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
 }
 
 // MARK: - Extension
@@ -199,6 +212,19 @@ extension [Platform] {
 
 let openRenderBoxTarget = Target.target(
     name: "OpenRenderBox",
+    dependencies: [
+        "OpenRenderBoxCxx",
+        .product(name: "OpenCoreGraphicsShims", package: "OpenCoreGraphics"),
+    ],
+    cSettings: sharedCSettings,
+    cxxSettings: sharedCxxSettings,
+    swiftSettings: sharedSwiftSettings
+)
+// FIXME: Merge into one target
+// OpenRenderBox is a C++ & Swift mix target.
+// The SwiftPM support for such usage is still in progress.
+let openRenderBoxCxxTarget = Target.target(
+    name: "OpenRenderBoxCxx",
     cSettings: sharedCSettings,
     cxxSettings: sharedCxxSettings
 )
@@ -206,13 +232,14 @@ let openRenderBoxShimsTarget = Target.target(
     name: "OpenRenderBoxShims",
     swiftSettings: sharedSwiftSettings
 )
-let openRenderBoxCxxTestTarget = Target.testTarget(
-    name: "OpenRenderBoxCxxTests",
+let openRenderBoxTestsTarget = Target.testTarget(
+    name: "OpenRenderBoxTests",
     dependencies: [
         "OpenRenderBox",
     ],
     exclude: ["README.md"],
     cSettings: sharedCSettings + [.define("SWIFT_TESTING")],
+    cxxSettings: sharedCxxSettings + [.define("SWIFT_TESTING")],
     swiftSettings: sharedSwiftSettings + [.interoperabilityMode(.Cxx)]
 )
 let openRenderBoxCompatibilityTestTarget = Target.testTarget(
@@ -221,6 +248,8 @@ let openRenderBoxCompatibilityTestTarget = Target.testTarget(
         .product(name: "RealModule", package: "swift-numerics"),
     ],
     exclude: ["README.md"],
+    cSettings: sharedCSettings + [.define("SWIFT_TESTING")],
+    cxxSettings: sharedCxxSettings + [.define("SWIFT_TESTING")],
     swiftSettings: sharedSwiftSettings
 )
 
@@ -239,41 +268,55 @@ default:
 let package = Package(
     name: "OpenRenderBox",
     products: [
-        .library(name: "OpenRenderBox", type: libraryType, targets: ["OpenRenderBox"]),
+        .library(name: "OpenRenderBox", type: libraryType, targets: ["OpenRenderBox", "OpenRenderBoxCxx"]),
         .library(name: "OpenRenderBoxShims", type: libraryType, targets: ["OpenRenderBoxShims"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-numerics", from: "1.0.2"),
+        .package(url: "https://github.com/apple/swift-numerics", from: "1.1.1"),
     ],
     targets: [
         openRenderBoxTarget,
+        openRenderBoxCxxTarget,
         openRenderBoxShimsTarget,
-        openRenderBoxCxxTestTarget,
+        openRenderBoxTestsTarget,
         openRenderBoxCompatibilityTestTarget,
     ],
     cxxLanguageStandard: .cxx20
 )
 
 if renderBoxCondtion {
-    let privateFrameworkRepo: Package.Dependency
-    if useLocalDeps {
-        privateFrameworkRepo = Package.Dependency.package(path: "../DarwinPrivateFrameworks")
-    } else {
-        privateFrameworkRepo = Package.Dependency.package(url: "https://github.com/OpenSwiftUIProject/DarwinPrivateFrameworks.git", branch: "main")
-    }
-    package.dependencies.append(privateFrameworkRepo)
     openRenderBoxShimsTarget.addRBSettings()
+}
 
-    let rbVersion = EnvManager.shared.withDomain("DarwinPrivateFrameworks") {
+if renderBoxCondtion {
+    let release = EnvManager.shared.withDomain("DarwinPrivateFrameworks") {
         envIntValue("TARGET_RELEASE", default: 2024)
     }
-    package.platforms = switch rbVersion {
+    package.platforms = switch release {
         case 2024: [.iOS(.v18), .macOS(.v15), .macCatalyst(.v18), .tvOS(.v18), .watchOS(.v10), .visionOS(.v2)]
         case 2021: [.iOS(.v15), .macOS(.v12), .macCatalyst(.v15), .tvOS(.v15), .watchOS(.v7)]
         default: nil
     }
 } else {
     openRenderBoxShimsTarget.dependencies.append("OpenRenderBox")
+}
+
+if useLocalDeps {
+    var dependencies: [Package.Dependency] = [
+        .package(path: "../OpenCoreGraphics"),
+    ]
+    if renderBoxCondtion {
+        dependencies.append(.package(path: "../DarwinPrivateFrameworks"))
+    }
+    package.dependencies += dependencies
+} else {
+    var dependencies: [Package.Dependency] = [
+        .package(url: "https://github.com/OpenSwiftUIProject/OpenCoreGraphics", branch: "main"),
+    ]
+    if renderBoxCondtion {
+        dependencies.append(.package(url: "https://github.com/OpenSwiftUIProject/DarwinPrivateFrameworks.git", branch: "main"))
+    }
+    package.dependencies += dependencies
 }
 
 if compatibilityTestCondition && renderBoxCondtion {

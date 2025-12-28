@@ -38,7 +38,7 @@ jobs:
       - name: Set up build environment
         run: Scripts/CI/darwin_setup_build.sh
         shell: bash
-      - name: Build in debug mode on iOS
+      - name: Build in debug mode on iOS Simulator
         run: |
           xcodebuild build \
             -scheme OpenRenderBox-Package \
@@ -46,8 +46,8 @@ jobs:
             -destination "platform=iOS Simulator,OS=${{ matrix.ios-version }},name=${{ matrix.ios-simulator-name }}" \
             -derivedDataPath .build-debug \
             -skipMacroValidation \
-            -skipPackagePluginValidation \
-            OTHER_SWIFT_FLAGS="-warnings-as-errors"
+            -skipPackagePluginValidation
+            # OTHER_SWIFT_FLAGS="-warnings-as-errors" Conflicting options '-warnings-as-errors' and '-suppress-warnings'
       - name: Build and run tests in debug mode with coverage on iOS Simulator
         run: |
           xcodebuild test \

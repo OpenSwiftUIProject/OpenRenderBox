@@ -1,3 +1,5 @@
+#if OPENRENDERBOX_CF_CGTYPES
+
 /*	CFCGTypes.h
 	Copyright (c) 1998-2021, Apple Inc. and the Swift project authors
 
@@ -122,3 +124,5 @@ struct CGAffineTransformComponents {
 };
 
 #endif /* ! __COREFOUNDATION_CFCGTYPES__ */
+
+#endif /* OPENRENDERBOX_CF_CGTYPES */

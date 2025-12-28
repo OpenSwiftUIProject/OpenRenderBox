@@ -4,7 +4,10 @@
 
 #pragma once
 
+#if OPENRENDERBOX_CF_CGTYPES
+
 #include <OpenRenderBox/ORBBase.h>
+
 #if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CoreGraphics.h>
 #endif
@@ -112,3 +115,5 @@ bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, 
 ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
+
+#endif /* OPENRENDERBOX_CF_CGTYPES */

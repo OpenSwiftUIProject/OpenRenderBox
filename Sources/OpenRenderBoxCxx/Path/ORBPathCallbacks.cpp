@@ -5,6 +5,8 @@
 //  Audited for 6.5.1
 //  Status: Complete
 
+#if OPENRENDERBOX_CF_CGTYPES
+
 #include <OpenRenderBox/ORBPathCallbacks.h>
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 
@@ -73,3 +75,5 @@ const ORBPathCallbacks ORBPathCGPathCallbacks = {
 };
 
 #endif /* ORB_TARGET_OS_DARWIN */
+
+#endif /* OPENRENDERBOX_CF_CGTYPES */

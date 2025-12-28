@@ -4,6 +4,8 @@
 
 // TODO: Implement NestedCallbacks
 
+#if OPENRENDERBOX_CF_CGTYPES
+
 #include <OpenRenderBoxCxx/Path/NestedCallbacks.hpp>
 #include <mutex>
 #if ORB_TARGET_OS_DARWIN
@@ -303,3 +305,4 @@ bool NestedCallbacks::first_element(const Storage& storage, void* iterator, size
 } /* namespace Path */
 } /* namespace ORB */
 
+#endif /* OPENRENDERBOX_CF_CGTYPES */

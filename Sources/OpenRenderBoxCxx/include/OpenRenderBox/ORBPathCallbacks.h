@@ -7,6 +7,8 @@
 
 #pragma once
 
+#if OPENRENDERBOX_CF_CGTYPES
+
 #include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPath.h>
 #include <stddef.h>
@@ -19,7 +21,7 @@ ORB_ASSUME_NONNULL_BEGIN
 ORB_EXTERN_C_BEGIN
 
 /// Flags for path callbacks
-typedef struct ORBPathCallbacksFlags {
+typedef struct ORB_SWIFT_NAME(ORBPath.Callbacks.Flags) ORBPathCallbacksFlags {
     uint8_t unknown0;
     uint8_t unknown1;
     bool isExtended;
@@ -106,3 +108,5 @@ const ORBPathCallbacks ORBPathCGPathCallbacks ORB_SWIFT_NAME(ORBPathCallbacks.cg
 ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
+
+#endif /* OPENRENDERBOX_CF_CGTYPES */

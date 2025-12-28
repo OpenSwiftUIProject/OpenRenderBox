@@ -9,5 +9,6 @@ public typealias ORBPath = RBPath
 public let compatibilityTestEnabled = true
 #else
 @_exported import OpenRenderBox
+@_exported import OpenRenderBoxCxx
 public let compatibilityTestEnabled = false
 #endif
