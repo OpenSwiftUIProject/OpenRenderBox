@@ -7,6 +7,12 @@ module OpenRenderBoxCxx.C {
     export *
 }
 
+module OpenRenderBoxCxx.Color {
+    requires cplusplus
+    umbrella "OpenRenderBoxCxx/Color"
+    export *
+}
+
 module OpenRenderBoxCxx.Path {
     requires cplusplus
     umbrella "OpenRenderBoxCxx/Path"
