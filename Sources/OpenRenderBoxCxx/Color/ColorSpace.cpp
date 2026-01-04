@@ -10,29 +10,29 @@
 
 namespace ORB {
 
-ColorSpaceResult color_space_from_cg_name(CFStringRef name) {
+std::optional<ColorSpace> color_space_from_cg_name(CFStringRef name) {
     if (name == nullptr) {
-        return { ColorSpace::LinearSRGB, false };
+        return std::nullopt;
     } else if (CFEqual(name, kCGColorSpaceSRGB) ||
         CFEqual(name, kCGColorSpaceExtendedSRGB)) {
-        return { ColorSpace::SRGB, true };
+        return ColorSpace::SRGB;
     } else if (CFEqual(name, kCGColorSpaceLinearSRGB) ||
         CFEqual(name, kCGColorSpaceExtendedLinearSRGB)) {
-        return { ColorSpace::LinearSRGB, true };
+        return ColorSpace::LinearSRGB;
     } else if (CFEqual(name, kCGColorSpaceDisplayP3) ||
         CFEqual(name, kCGColorSpaceExtendedDisplayP3)) {
-        return { ColorSpace::DisplayP3, true };
+        return ColorSpace::DisplayP3;
     } else if (CFEqual(name, kCGColorSpaceLinearDisplayP3) ||
         CFEqual(name, kCGColorSpaceExtendedLinearDisplayP3)) {
-        return { ColorSpace::LinearDisplayP3, true };
+        return ColorSpace::LinearDisplayP3;
     } else {
-        return { ColorSpace::LinearSRGB, false };
+        return std::nullopt;
     }
 }
 
-ColorSpaceResult color_space_from_cg(CGColorSpaceRef colorSpace) {
+std::optional<ColorSpace> color_space_from_cg(CGColorSpaceRef colorSpace) {
     if (colorSpace == nullptr) {
-        return { ColorSpace::LinearSRGB, false };
+        return std::nullopt;
     }
     CFStringRef name = CGColorSpaceGetName(colorSpace);
     return color_space_from_cg_name(name);
@@ -50,7 +50,7 @@ CGColorSpaceRef cg_color_space(ColorSpace colorSpace, bool extended) {
             return extended ? extended_display_p3_colorspace() : display_p3_colorspace();
         case ColorSpace::PQ:
             return pq_colorspace();
-        case ColorSpace::Invalid:
+        case ColorSpace::Unknown:
             abort();
     }
 }
@@ -107,15 +107,42 @@ CGColorSpaceRef gray_colorspace() {
 
 } /* namespace ORB */
 
-ORB::ColorSpace orb_color_space(ORBColorSpace orbColorSpace) {
-    return ORB::ColorSpace::LinearSRGB;
-}
-
-ORB::ColorSpace orb_color_space(std::optional<ORBColorSpace> orbColorSpace) {
-    if (!orbColorSpace.has_value()) {
-        return ORB::ColorSpace::LinearSRGB;
+std::optional<ORB::ColorSpace> orb_color_space(ORBColorSpace orbColorSpace) {
+    switch (orbColorSpace) {
+        case ORBColorSpaceDefault:
+            return std::nullopt;
+        case ORBColorSpaceSRGB:
+            return ORB::ColorSpace::SRGB;
+        case ORBColorSpaceLinearSRGB:
+            return ORB::ColorSpace::LinearSRGB;
+        case ORBColorSpaceDisplayP3:
+            return ORB::ColorSpace::DisplayP3;
+        case ORBColorSpaceLinearDisplayP3:
+            return ORB::ColorSpace::LinearDisplayP3;
+        default:
+            return std::nullopt;
     }
-    return ORB::ColorSpace::LinearSRGB;
 }
-#endif /* ORB_TARGET_OS_DARWIN */
 
+ORBColorSpace orb_color_space(std::optional<ORB::ColorSpace> colorSpace) {
+    if (!colorSpace.has_value()) {
+        return ORBColorSpaceDefault;
+    }
+    switch (colorSpace.value()) {
+        case ORB::ColorSpace::LinearSRGB:
+            return ORBColorSpaceLinearSRGB;
+        case ORB::ColorSpace::SRGB:
+            return ORBColorSpaceSRGB;
+        case ORB::ColorSpace::LinearDisplayP3:
+            return ORBColorSpaceLinearDisplayP3;
+        case ORB::ColorSpace::DisplayP3:
+            return ORBColorSpaceDisplayP3;
+        case ORB::ColorSpace::Unknown:
+        case ORB::ColorSpace::PQ:
+            return ORBColorSpaceDefault;
+        default:
+            return ORBColorSpaceLinearSRGB;
+    }
+}
+
+#endif /* ORB_TARGET_OS_DARWIN */

@@ -11,9 +11,11 @@ ORB_ASSUME_NONNULL_BEGIN
 ORB_EXTERN_C_BEGIN
 
 typedef ORB_ENUM(uint32_t, ORBColorSpace) {
-    ORBColorSpaceInvalid = 0,
+    ORBColorSpaceDefault = 0,
     ORBColorSpaceSRGB = 1,
-    ORBColorSpaceExtendedLinear = 2,
+    ORBColorSpaceLinearSRGB = 2,
+    ORBColorSpaceDisplayP3 = 3,
+    ORBColorSpaceLinearDisplayP3 = 4,
 } ORB_SWIFT_NAME(ORBColor.Space);
 
 typedef ORB_ENUM(uint32_t, ORBColorMode) {

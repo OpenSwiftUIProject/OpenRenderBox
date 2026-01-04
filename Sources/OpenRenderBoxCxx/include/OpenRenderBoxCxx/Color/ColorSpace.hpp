@@ -19,26 +19,19 @@ enum class ColorSpace : uint32_t {
     SRGB = 1,
     LinearDisplayP3 = 2,
     DisplayP3 = 3,
-    Invalid = 4,
+    Unknown = 4,
     PQ = 5,
-};
-
-/// Result of color_space_from_cg_name / color_space_from_cg
-/// Packed as: bits 0-7 = ColorSpace enum, bits 8 = valid flag
-struct ColorSpaceResult {
-    ColorSpace colorSpace;
-    bool valid;
 };
 
 /// Converts a CGColorSpace name (CFStringRef) to internal ColorSpace enum.
 /// @param name The color space name from CGColorSpaceGetName.
-/// @return ColorSpaceResult with colorSpace and valid flag.
-ColorSpaceResult color_space_from_cg_name(CFStringRef name);
+/// @return The ColorSpace if recognized, or std::nullopt if not.
+std::optional<ColorSpace> color_space_from_cg_name(CFStringRef name);
 
 /// Converts a CGColorSpaceRef to internal ColorSpace enum.
 /// @param colorSpace The CGColorSpace to convert.
-/// @return ColorSpaceResult with colorSpace and valid flag.
-ColorSpaceResult color_space_from_cg(CGColorSpaceRef colorSpace);
+/// @return The ColorSpace if recognized, or std::nullopt if not.
+std::optional<ColorSpace> color_space_from_cg(CGColorSpaceRef colorSpace);
 
 /// Returns a CGColorSpaceRef for the given internal color space.
 /// @param colorSpace The internal color space enum value.
@@ -78,9 +71,9 @@ CGColorSpaceRef gray_colorspace();
 
 } /* namespace ORB */
 
-ORB::ColorSpace orb_color_space(ORBColorSpace orbColorSpace);
+std::optional<ORB::ColorSpace> orb_color_space(ORBColorSpace orbColorSpace);
 
-ORB::ColorSpace orb_color_space(std::optional<ORBColorSpace> orbColorSpace);
+ORBColorSpace orb_color_space(std::optional<ORB::ColorSpace> colorSpace);
 
 #endif /* ORB_TARGET_OS_DARWIN */
 

@@ -133,7 +133,7 @@ CGColorRef ORBColorCopyCGColor(ORBColor color, ORBColorSpace orbColorSpace) {
     bool isRedOutOfRange = (color.red < 0.0f || color.red > 1.0f);
     bool isGreenOutOfRange = (color.green < 0.0f || color.green > 1.0f);
     bool isBlueOutOfRange = (color.blue < 0.0f || color.blue > 1.0f);
-    ORB::ColorSpace colorSpace = orb_color_space(orbColorSpace);
+    ORB::ColorSpace colorSpace = orb_color_space(orbColorSpace).value_or(ORB::ColorSpace::LinearSRGB);
     bool extended = isRedOutOfRange || isGreenOutOfRange || isBlueOutOfRange;
     CGColorSpaceRef cgColorSpace = ORB::cg_color_space(colorSpace, extended);
     CGColorRef cgColor = CGColorCreate(cgColorSpace, components);
