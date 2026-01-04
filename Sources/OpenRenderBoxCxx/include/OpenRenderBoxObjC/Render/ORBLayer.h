@@ -36,7 +36,7 @@ ORB_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSInteger maxDrawableCount;
 @property (nonatomic) BOOL allowsPackedDrawable;
 @property (nonatomic) BOOL allowsBottomLeftOrigin;
-@property (readonly, nonatomic) BOOL drawableAvailable;
+@property (readonly, nonatomic, getter=isDrawableAvailable) BOOL drawableAvailable;
 @property (nonatomic) BOOL needsSynchronousUpdate;
 @property (readonly) NSUInteger hash;
 @property (readonly) Class superclass;

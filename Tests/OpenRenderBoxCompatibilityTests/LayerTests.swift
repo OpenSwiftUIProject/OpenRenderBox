@@ -64,10 +64,7 @@ struct LayerTests {
         layer.needsSynchronousUpdate = false
         #expect(layer.needsSynchronousUpdate == false)
 
-        // drawableAvailable - just check it doesn't crash
-        _ = layer.drawableAvailable
-
-        // statistics - just check it doesn't crash, may be nil
+        _ = layer.isDrawableAvailable
         _ = layer.statistics
     }
 }
