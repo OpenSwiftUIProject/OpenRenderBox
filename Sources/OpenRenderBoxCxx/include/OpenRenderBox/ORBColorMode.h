@@ -11,6 +11,7 @@ ORB_ASSUME_NONNULL_BEGIN
 
 ORB_EXTERN_C_BEGIN
 
+// TODO: Review those names later
 typedef ORB_ENUM(uint32_t, ORBColorMode) {
     ORBColorMode0 = 0,
     ORBColorMode1 = 1,
