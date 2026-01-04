@@ -20,4 +20,3 @@ os_log_t error_log();
 ORB_ASSUME_NONNULL_END
 
 #endif /* ORB_TARGET_OS_DARWIN */
-

@@ -18,3 +18,9 @@ module OpenRenderBoxCxx.Util {
     umbrella "OpenRenderBoxCxx/Util"
     export *
 }
+
+module OpenRenderBoxCxx.ObjC {
+    requires objc
+    umbrella "OpenRenderBoxObjC"
+    export *
+}
