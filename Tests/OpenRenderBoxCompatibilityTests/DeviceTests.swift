@@ -11,7 +11,7 @@ import Testing
 struct ORBDeviceTests {
     @Test
     func classMethods() {
-        let device = ORBDevice.sharedDefaultDevice()
+        let device = ORBDevice.sharedDefault()
         #expect(device != nil)
 
         let devices = ORBDevice.allDevices()

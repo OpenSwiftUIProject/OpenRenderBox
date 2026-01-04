@@ -27,15 +27,15 @@
 @property (nonatomic) BOOL rendersAsynchronously;
 @property (nonatomic) int colorMode;
 @property (nonatomic) BOOL promotesFramebuffer;
-@property (nonatomic) unsigned long long pixelFormat;
+@property (nonatomic) NSUInteger pixelFormat;
 @property (nonatomic) BOOL clearsBackground;
 @property (nonatomic) ORBColor clearColor;
-@property (nonatomic) long long maxDrawableCount;
+@property (nonatomic) NSInteger maxDrawableCount;
 @property (nonatomic) BOOL allowsPackedDrawable;
 @property (nonatomic) BOOL allowsBottomLeftOrigin;
 @property (readonly, nonatomic) BOOL drawableAvailable;
 @property (nonatomic) BOOL needsSynchronousUpdate;
-@property (readonly) unsigned long long hash;
+@property (readonly) NSUInteger hash;
 @property (readonly) Class superclass;
 @property (readonly, copy) NSString *description;
 @property (readonly, copy) NSString *debugDescription;
@@ -47,14 +47,14 @@
 
 /* instance methods */
 - (void)dealloc;
-- (id)init;
-- (id)initWithCoder:(id)coder;
+- (instancetype)init;
+- (instancetype)initWithCoder:(NSCoder *)coder;
 - (void)display;
 - (void)layoutSublayers;
 - (void)displayIfNeeded;
 - (void)_renderForegroundInContext:(CGContextRef)context;
-- (id)actionForKey:(id)key;
-- (id)initWithLayer:(id)layer;
+- (id)actionForKey:(NSString *)key;
+- (instancetype)initWithLayer:(id)layer;
 - (BOOL)isDrawableAvailable;
 - (void)layerDidBecomeVisible:(BOOL)visible;
 - (void)renderInContext:(CGContextRef)context;
@@ -66,7 +66,7 @@
 - (void)copyImageInRect:(CGRect)rect options:(id)options completionQueue:(id)queue handler:(id /* block */)handler;
 - (BOOL)displayWithBounds:(CGRect)bounds callback:(id /* block */)callback;
 - (void)drawInDisplayList:(id)list;
-- (void)resetStatistics:(unsigned long long)statistics alpha:(double)alpha;
+- (void)resetStatistics:(NSUInteger)statistics alpha:(double)alpha;
 - (void)waitUntilAsyncRenderingCompleted;
 
 @end

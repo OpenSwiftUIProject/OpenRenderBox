@@ -20,22 +20,22 @@
 @property (readonly, nonatomic) id <MTLDevice> device;
 @property (readonly, nonatomic) NSObject<OS_dispatch_queue> *queue;
 @property (readonly, nonatomic) id <MTLCaptureScope> captureScope;
-@property uint64_t GPUPriority;
-@property uint64_t backgroundGPUPriority;
+@property NSUInteger GPUPriority;
+@property NSUInteger backgroundGPUPriority;
 
 ///* class methods */
-+ (id)sharedDefaultDevice;
-+ (id)allDevices;
++ (instancetype)sharedDefaultDevice;
++ (NSArray<ORBDevice *> *)allDevices;
 + (BOOL)isSupported;
 + (void)setAllowsRenderingInBackground:(BOOL)background;
 + (BOOL)allowsRenderingInBackground;
-+ (unsigned long long)defaultBackgroundGPUPriority;
-+ (unsigned long long)defaultGPUPriority;
++ (NSUInteger)defaultBackgroundGPUPriority;
++ (NSUInteger)defaultGPUPriority;
 + (BOOL)isRunningInBackground;
-+ (void)setDefaultBackgroundGPUPriority:(unsigned long long)gpupriority;
-+ (void)setDefaultGPUPriority:(unsigned long long)gpupriority;
-+ (id)sharedDevice:(id)device;
-+ (id)sharedDeviceForDisplay:(unsigned int)display;
++ (void)setDefaultBackgroundGPUPriority:(NSUInteger)gpupriority;
++ (void)setDefaultGPUPriority:(NSUInteger)gpupriority;
++ (instancetype)sharedDevice:(id<MTLDevice>)device;
++ (instancetype)sharedDeviceForDisplay:(unsigned int)display;
 
 /* instance methods */
 - (void)dealloc;
