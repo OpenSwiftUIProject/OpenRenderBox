@@ -9,7 +9,8 @@
 #if ORB_OBJC_FOUNDATION
 
 #include <OpenRenderBoxObjC/Device/ORBDevice.h>
-#include "ORBDrawableStatistics.h"
+#include <OpenRenderBoxObjC/Render/ORBDrawableStatistics.h>
+#include <OpenRenderBox/ORBColor.h>
 
 //#include "RBImageQueueLayer.h"
 //#include "RBSurfaceContentsLayer.h"
@@ -28,7 +29,7 @@
 @property (nonatomic) BOOL promotesFramebuffer;
 @property (nonatomic) unsigned long long pixelFormat;
 @property (nonatomic) BOOL clearsBackground;
-//@property (nonatomic) struct { float x0; float x1; float x2; float x3; } clearColor;
+@property (nonatomic) ORBColor clearColor;
 @property (nonatomic) long long maxDrawableCount;
 @property (nonatomic) BOOL allowsPackedDrawable;
 @property (nonatomic) BOOL allowsBottomLeftOrigin;
