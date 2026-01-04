@@ -9,6 +9,7 @@
 #if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CGColorSpace.h>
 #include <CoreFoundation/CFString.h>
+#endif /* ORB_TARGET_OS_DARWIN */
 #include <optional>
 
 namespace ORB {
@@ -23,6 +24,7 @@ enum class ColorSpace : uint32_t {
     PQ = 5,
 };
 
+#if ORB_TARGET_OS_DARWIN
 /// Converts a CGColorSpace name (CFStringRef) to internal ColorSpace enum.
 /// @param name The color space name from CGColorSpaceGetName.
 /// @return The ColorSpace if recognized, or std::nullopt if not.
@@ -68,12 +70,10 @@ CGColorSpaceRef pq_colorspace();
 
 /// Returns the gray color space.
 CGColorSpaceRef gray_colorspace();
+#endif /* ORB_TARGET_OS_DARWIN */
 
 } /* namespace ORB */
 
 std::optional<ORB::ColorSpace> orb_color_space(ORBColorSpace orbColorSpace);
 
 ORBColorSpace orb_color_space(std::optional<ORB::ColorSpace> colorSpace);
-
-#endif /* ORB_TARGET_OS_DARWIN */
-
