@@ -100,7 +100,22 @@ CGColorSpaceRef pq_colorspace() {
     return colorSpace;
 }
 
+CGColorSpaceRef gray_colorspace() {
+    static CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericGrayGamma2_2);
+    return colorSpace;
+}
+
 } /* namespace ORB */
 
+ORB::ColorSpace orb_color_space(ORBColorSpace orbColorSpace) {
+    return ORB::ColorSpace::LinearSRGB;
+}
+
+ORB::ColorSpace orb_color_space(std::optional<ORBColorSpace> orbColorSpace) {
+    if (!orbColorSpace.has_value()) {
+        return ORB::ColorSpace::LinearSRGB;
+    }
+    return ORB::ColorSpace::LinearSRGB;
+}
 #endif /* ORB_TARGET_OS_DARWIN */
 

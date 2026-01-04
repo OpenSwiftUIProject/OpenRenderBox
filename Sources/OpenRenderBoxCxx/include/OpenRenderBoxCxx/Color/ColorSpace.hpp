@@ -9,6 +9,7 @@
 #if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CGColorSpace.h>
 #include <CoreFoundation/CFString.h>
+#include <optional>
 
 namespace ORB {
 
@@ -72,7 +73,14 @@ CGColorSpaceRef extended_display_p3_colorspace();
 /// Returns the PQ (HDR) color space.
 CGColorSpaceRef pq_colorspace();
 
-} // namespace RB
+/// Returns the gray color space.
+CGColorSpaceRef gray_colorspace();
+
+} /* namespace ORB */
+
+ORB::ColorSpace orb_color_space(ORBColorSpace orbColorSpace);
+
+ORB::ColorSpace orb_color_space(std::optional<ORBColorSpace> orbColorSpace);
 
 #endif /* ORB_TARGET_OS_DARWIN */
 

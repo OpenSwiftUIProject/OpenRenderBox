@@ -3,7 +3,10 @@
 //  OpenRenderBox
 
 #include <OpenRenderBox/ORBColor.h>
+#include <OpenRenderBoxCxx/Color/ColorSpace.hpp>
 #include <math.h>
+
+using namespace ORB;
 
 // Global color constants
 const ORBColor ORBColorClear = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -120,16 +123,20 @@ ORBColor ORBColorFromCGColor2(CGColorRef color, size_t componentCount) {
     return ORBColorFromComponents2(colorSpace, components, componentCount);
 }
 
-CGColorRef ORBColorCopyCGColor(ORBColor color) {
+CGColorRef ORBColorCopyCGColor(ORBColor color, ORBColorSpace orbColorSpace) {
     CGFloat components[4] = {
         static_cast<CGFloat>(color.red),
         static_cast<CGFloat>(color.green),
         static_cast<CGFloat>(color.blue),
         static_cast<CGFloat>(color.alpha)
     };
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-    CGColorRef cgColor = CGColorCreate(colorSpace, components);
-    CGColorSpaceRelease(colorSpace);
+    bool isRedOutOfRange = (color.red < 0.0f || color.red > 1.0f);
+    bool isGreenOutOfRange = (color.green < 0.0f || color.green > 1.0f);
+    bool isBlueOutOfRange = (color.blue < 0.0f || color.blue > 1.0f);
+    ORB::ColorSpace colorSpace = orb_color_space(orbColorSpace);
+    bool extended = isRedOutOfRange || isGreenOutOfRange || isBlueOutOfRange;
+    CGColorSpaceRef cgColorSpace = ORB::cg_color_space(colorSpace, extended);
+    CGColorRef cgColor = CGColorCreate(cgColorSpace, components);
     return cgColor;
 }
 

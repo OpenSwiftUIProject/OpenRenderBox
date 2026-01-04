@@ -5,6 +5,7 @@
 #pragma once
 
 #include <OpenRenderBox/ORBBase.h>
+#include <OpenRenderBox/ORBColorSpace.h>
 #if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CGColor.h>
 #endif
@@ -40,7 +41,7 @@ ORB_EXPORT ORBColor ORBColorFromComponents(CGColorSpaceRef colorSpace, const CGF
 ORB_EXPORT ORBColor ORBColorFromComponents2(CGColorSpaceRef colorSpace, const CGFloat *components, size_t componentCount) ORB_SWIFT_NAME(ORBColor.init(colorSpace:components:componentCount:));
 ORB_EXPORT ORBColor ORBColorFromCGColor(CGColorRef color, bool premultiplied) ORB_SWIFT_NAME(ORBColor.init(_:premultiplied:));
 ORB_EXPORT ORBColor ORBColorFromCGColor2(CGColorRef color, size_t componentCount) ORB_SWIFT_NAME(ORBColor.init(_:componentCount:));
-ORB_EXPORT CGColorRef ORBColorCopyCGColor(ORBColor color) ORB_SWIFT_NAME(getter:ORBColor.cgColor(self:));
+ORB_EXPORT CGColorRef ORBColorCopyCGColor(ORBColor color, ORBColorSpace orbColorSpace) ORB_SWIFT_NAME(ORBColor.cgColor(self:colorSpace:));
 
 #endif /* ORB_TARGET_OS_DARWIN */
 
