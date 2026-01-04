@@ -8,11 +8,11 @@
 
 #include <Foundation/Foundation.h>
 
-// TODO
 @implementation ORBDevice
 
 + (id)sharedDefaultDevice {
-
+    // TODO
+    return nil;
 }
 
 + (id)allDevices {
@@ -26,7 +26,11 @@
 }
 
 - (instancetype)initWithDevice:(id<MTLDevice>)device {
-
+    self = [super init];
+    if (self) {
+        // TODO
+    }
+    return self;
 }
 
 @end
