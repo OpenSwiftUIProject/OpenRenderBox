@@ -176,6 +176,7 @@ var sharedCxxSettings: [CXXSetting] = [
 ]
 var sharedSwiftSettings: [SwiftSetting] = [
     .swiftLanguageMode(.v5),
+    .enableUpcomingFeature("InternalImportsByDefault"),
 ]
 if libraryEvolutionCondition {
     // NOTE: -enable-library-evolution will cause module verify failure for `swift build`.
@@ -245,7 +246,7 @@ let openRenderBoxTestsTarget = Target.testTarget(
 let openRenderBoxCompatibilityTestTarget = Target.testTarget(
     name: "OpenRenderBoxCompatibilityTests",
     dependencies: [
-        .product(name: "RealModule", package: "swift-numerics"),
+        .product(name: "Numerics", package: "swift-numerics"),
     ],
     exclude: ["README.md"],
     cSettings: sharedCSettings + [.define("SWIFT_TESTING")],
