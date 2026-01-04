@@ -9,7 +9,7 @@
 const ORBColor ORBColorClear = { 0.0f, 0.0f, 0.0f, 0.0f };
 const ORBColor ORBColorBlack = { 0.0f, 0.0f, 0.0f, 1.0f };
 const ORBColor ORBColorWhite = { 1.0f, 1.0f, 1.0f, 1.0f };
-const ORBColor ORBColorNull = { -32768.0f, -32768.0f, -32768.0f, -32768.0f };
+const ORBColor ORBColorNull = { ORBColorInvalidComponent, ORBColorInvalidComponent, ORBColorInvalidComponent, ORBColorInvalidComponent };
 const float ORBColorInvalidComponent = -32768.0f;
 
 // sRGB to linear constants
@@ -48,11 +48,11 @@ static inline float linearToSRGB(float value) {
     return value < 0.0f ? -result : result;
 }
 
-ORBColor ORBColorMake(float red, float green, float blue, float alpha) ORB_NOEXCEPT {
+ORBColor ORBColorMake(float red, float green, float blue, float alpha) {
     return (ORBColor){ red, green, blue, alpha };
 }
 
-ORBColor ORBColorMakeLinear(float red, float green, float blue, float alpha) ORB_NOEXCEPT {
+ORBColor ORBColorMakeLinear(float red, float green, float blue, float alpha) {
     return (ORBColor){
         sRGBToLinear(red),
         sRGBToLinear(green),
@@ -61,7 +61,7 @@ ORBColor ORBColorMakeLinear(float red, float green, float blue, float alpha) ORB
     };
 }
 
-ORBColor ORBColorToLinear(ORBColor color) ORB_NOEXCEPT {
+ORBColor ORBColorToLinear(ORBColor color) {
     return (ORBColor){
         sRGBToLinear(color.red),
         sRGBToLinear(color.green),
@@ -70,7 +70,7 @@ ORBColor ORBColorToLinear(ORBColor color) ORB_NOEXCEPT {
     };
 }
 
-ORBColor ORBColorFromLinear(ORBColor color) ORB_NOEXCEPT {
+ORBColor ORBColorFromLinear(ORBColor color) {
     return (ORBColor){
         linearToSRGB(color.red),
         linearToSRGB(color.green),
@@ -79,7 +79,7 @@ ORBColor ORBColorFromLinear(ORBColor color) ORB_NOEXCEPT {
     };
 }
 
-bool ORBColorEqualToColor(ORBColor lhs, ORBColor rhs) ORB_NOEXCEPT {
+bool ORBColorEqualToColor(ORBColor lhs, ORBColor rhs) {
     return lhs.red == rhs.red &&
            lhs.green == rhs.green &&
            lhs.blue == rhs.blue &&
@@ -90,12 +90,12 @@ bool ORBColorEqualToColor(ORBColor lhs, ORBColor rhs) ORB_NOEXCEPT {
 
 #include <CoreGraphics/CGColorSpace.h>
 
-ORBColor ORBColorFromComponents(CGColorSpaceRef colorSpace, const CGFloat *components, bool premultiplied) ORB_NOEXCEPT {
+ORBColor ORBColorFromComponents(CGColorSpaceRef colorSpace, const CGFloat *components, bool premultiplied) {
     size_t componentCount = premultiplied ? 2 : 1;
     return ORBColorFromComponents2(colorSpace, components, componentCount);
 }
 
-ORBColor ORBColorFromComponents2(CGColorSpaceRef colorSpace, const CGFloat *components, size_t componentCount) ORB_NOEXCEPT {
+ORBColor ORBColorFromComponents2(CGColorSpaceRef colorSpace, const CGFloat *components, size_t componentCount) {
     // TODO: Implement proper color space conversion
     (void)colorSpace;
     (void)componentCount;
@@ -107,20 +107,20 @@ ORBColor ORBColorFromComponents2(CGColorSpaceRef colorSpace, const CGFloat *comp
     };
 }
 
-ORBColor ORBColorFromCGColor(CGColorRef color, bool premultiplied) ORB_NOEXCEPT {
+ORBColor ORBColorFromCGColor(CGColorRef color, bool premultiplied) {
     CGColorSpaceRef colorSpace = CGColorGetColorSpace(color);
     const CGFloat *components = CGColorGetComponents(color);
     size_t componentCount = premultiplied ? 2 : 1;
     return ORBColorFromComponents2(colorSpace, components, componentCount);
 }
 
-ORBColor ORBColorFromCGColor2(CGColorRef color, size_t componentCount) ORB_NOEXCEPT {
+ORBColor ORBColorFromCGColor2(CGColorRef color, size_t componentCount) {
     CGColorSpaceRef colorSpace = CGColorGetColorSpace(color);
     const CGFloat *components = CGColorGetComponents(color);
     return ORBColorFromComponents2(colorSpace, components, componentCount);
 }
 
-CGColorRef ORBColorCopyCGColor(ORBColor color) ORB_NOEXCEPT {
+CGColorRef ORBColorCopyCGColor(ORBColor color) {
     CGFloat components[4] = {
         static_cast<CGFloat>(color.red),
         static_cast<CGFloat>(color.green),

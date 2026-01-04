@@ -23,14 +23,14 @@ static const ORBColorSpace kColorModeWorkingColorSpaceTable[16] = {
     ORBColorSpaceExtendedLinear, // 15
 };
 
-ORBColorSpace ORBColorModeWorkingColorSpace(ORBColorMode mode) ORB_NOEXCEPT {
+ORBColorSpace ORBColorModeWorkingColorSpace(ORBColorMode mode) {
     if (mode > 15) {
         return ORBColorSpaceInvalid;
     }
     return kColorModeWorkingColorSpaceTable[mode];
 }
 
-bool ORBColorModeHasExtendedRange(ORBColorMode mode) ORB_NOEXCEPT {
+bool ORBColorModeHasExtendedRange(ORBColorMode mode) {
     // 0x3804 = 0011 1000 0000 0100 binary
     // Extended range modes: 2, 11, 12, 13
     if (mode >= 14) {

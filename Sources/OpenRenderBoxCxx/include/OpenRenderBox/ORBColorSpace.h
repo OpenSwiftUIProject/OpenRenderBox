@@ -35,11 +35,8 @@ typedef CF_ENUM(uint32_t, ORBColorMode) {
     ORBColorMode15 = 15,
 };
 
-ORB_EXPORT
-ORBColorSpace ORBColorModeWorkingColorSpace(ORBColorMode mode) ORB_NOEXCEPT;
-
-ORB_EXPORT
-bool ORBColorModeHasExtendedRange(ORBColorMode mode) ORB_NOEXCEPT;
+ORB_EXPORT ORBColorSpace ORBColorModeWorkingColorSpace(ORBColorMode mode) ORB_SWIFT_NAME(getter:ORBColorMode.workingColorSpace(self:));
+ORB_EXPORT bool ORBColorModeHasExtendedRange(ORBColorMode mode) ORB_SWIFT_NAME(getter:ORBColorMode.hasExtendedRange(self:));
 
 ORB_EXTERN_C_END
 

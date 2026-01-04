@@ -106,5 +106,26 @@ struct ColorTests {
         let color2 = ORBColor(red: r2, green: g2, blue: b2, alpha: a2)
         #expect(!color1.isEqual(to: color2))
     }
+
+    // MARK: - Color Constants
+
+    @Test("ORBColor Constant", arguments: [
+        (ORBColor.clear, Float(0.0), Float(0.0), Float(0.0), Float(0.0)),
+        (ORBColor.black, Float(0.0), Float(0.0), Float(0.0), Float(1.0)),
+        (ORBColor.white, Float(1.0), Float(1.0), Float(1.0), Float(1.0)),
+        (ORBColor.null, Float(-32768.0), Float(-32768.0), Float(-32768.0), Float(-32768.0)),
+    ])
+    func constant(_ color: ORBColor, expectedRed: Float, expectedGreen: Float, expectedBlue: Float, expectedAlpha: Float) {
+        #expect(color.red.isApproximatelyEqual(to: expectedRed))
+        #expect(color.green.isApproximatelyEqual(to: expectedGreen))
+        #expect(color.blue.isApproximatelyEqual(to: expectedBlue))
+        #expect(color.alpha.isApproximatelyEqual(to: expectedAlpha))
+    }
+
+    @Test("ORBColorInvalidComponent")
+    func colorInvalidComponent() {
+        let value = ORBColor.invalidComponent
+        #expect(value.isApproximatelyEqual(to: -32768.0))
+    }
 }
 
