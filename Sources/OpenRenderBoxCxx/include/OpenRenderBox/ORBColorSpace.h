@@ -10,13 +10,13 @@ ORB_ASSUME_NONNULL_BEGIN
 
 ORB_EXTERN_C_BEGIN
 
-typedef CF_ENUM(uint32_t, ORBColorSpace) {
+typedef ORB_ENUM(uint32_t, ORBColorSpace) {
     ORBColorSpaceInvalid = 0,
     ORBColorSpaceSRGB = 1,
     ORBColorSpaceExtendedLinear = 2,
-};
+} ORB_SWIFT_NAME(ORBColor.Space);
 
-typedef CF_ENUM(uint32_t, ORBColorMode) {
+typedef ORB_ENUM(uint32_t, ORBColorMode) {
     ORBColorMode0 = 0,
     ORBColorMode1 = 1,
     ORBColorMode2 = 2,
@@ -33,7 +33,7 @@ typedef CF_ENUM(uint32_t, ORBColorMode) {
     ORBColorMode13 = 13,
     ORBColorMode14 = 14,
     ORBColorMode15 = 15,
-};
+} ORB_SWIFT_NAME(ORBColor.Mode);
 
 ORB_EXPORT ORBColorSpace ORBColorModeWorkingColorSpace(ORBColorMode mode) ORB_SWIFT_NAME(getter:ORBColorMode.workingColorSpace(self:));
 ORB_EXPORT bool ORBColorModeHasExtendedRange(ORBColorMode mode) ORB_SWIFT_NAME(getter:ORBColorMode.hasExtendedRange(self:));

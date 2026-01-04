@@ -5,8 +5,6 @@
 #if OPENRENDERBOX_RENDERBOX
 @_exported public import RenderBox
 public typealias ORBColor = RBColor
-public typealias ORBColorMode = RBColorMode
-public typealias ORBColorSpace = RBColorSpace
 public typealias ORBDevice = RBDevice
 public typealias ORBLayer = RBLayer
 public typealias ORBPath = RBPath
