@@ -5,6 +5,13 @@
 #include <OpenRenderBox/ORBColor.h>
 #include <math.h>
 
+// Global color constants
+const ORBColor ORBColorClear = { 0.0f, 0.0f, 0.0f, 0.0f };
+const ORBColor ORBColorBlack = { 0.0f, 0.0f, 0.0f, 1.0f };
+const ORBColor ORBColorWhite = { 1.0f, 1.0f, 1.0f, 1.0f };
+const ORBColor ORBColorNull = { -32768.0f, -32768.0f, -32768.0f, -32768.0f };
+const float ORBColorInvalidComponent = -32768.0f;
+
 // sRGB to linear constants
 static const float kSRGBToLinearThreshold = 0.04045f;
 static const float kSRGBToLinearScale = 12.92f;
@@ -78,3 +85,52 @@ bool ORBColorEqualToColor(ORBColor lhs, ORBColor rhs) ORB_NOEXCEPT {
            lhs.blue == rhs.blue &&
            lhs.alpha == rhs.alpha;
 }
+
+#if ORB_TARGET_OS_DARWIN
+
+#include <CoreGraphics/CGColorSpace.h>
+
+ORBColor ORBColorFromComponents(CGColorSpaceRef colorSpace, const CGFloat *components, bool premultiplied) ORB_NOEXCEPT {
+    size_t componentCount = premultiplied ? 2 : 1;
+    return ORBColorFromComponents2(colorSpace, components, componentCount);
+}
+
+ORBColor ORBColorFromComponents2(CGColorSpaceRef colorSpace, const CGFloat *components, size_t componentCount) ORB_NOEXCEPT {
+    // TODO: Implement proper color space conversion
+    (void)colorSpace;
+    (void)componentCount;
+    return (ORBColor){
+        static_cast<float>(components[0]),
+        static_cast<float>(components[1]),
+        static_cast<float>(components[2]),
+        static_cast<float>(components[3])
+    };
+}
+
+ORBColor ORBColorFromCGColor(CGColorRef color, bool premultiplied) ORB_NOEXCEPT {
+    CGColorSpaceRef colorSpace = CGColorGetColorSpace(color);
+    const CGFloat *components = CGColorGetComponents(color);
+    size_t componentCount = premultiplied ? 2 : 1;
+    return ORBColorFromComponents2(colorSpace, components, componentCount);
+}
+
+ORBColor ORBColorFromCGColor2(CGColorRef color, size_t componentCount) ORB_NOEXCEPT {
+    CGColorSpaceRef colorSpace = CGColorGetColorSpace(color);
+    const CGFloat *components = CGColorGetComponents(color);
+    return ORBColorFromComponents2(colorSpace, components, componentCount);
+}
+
+CGColorRef ORBColorCopyCGColor(ORBColor color) ORB_NOEXCEPT {
+    CGFloat components[4] = {
+        static_cast<CGFloat>(color.red),
+        static_cast<CGFloat>(color.green),
+        static_cast<CGFloat>(color.blue),
+        static_cast<CGFloat>(color.alpha)
+    };
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
+    CGColorRef cgColor = CGColorCreate(colorSpace, components);
+    CGColorSpaceRelease(colorSpace);
+    return cgColor;
+}
+
+#endif /* ORB_TARGET_OS_DARWIN */

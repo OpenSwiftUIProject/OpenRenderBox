@@ -5,6 +5,9 @@
 #pragma once
 
 #include <OpenRenderBox/ORBBase.h>
+#if ORB_TARGET_OS_DARWIN
+#include <CoreGraphics/CGColor.h>
+#endif
 
 ORB_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +19,17 @@ typedef struct ORBColor {
     float blue;
     float alpha;
 } ORBColor;
+
+ORB_EXPORT const ORBColor ORBColorClear
+    ORB_SWIFT_NAME(ORBColor.clear);
+ORB_EXPORT const ORBColor ORBColorBlack
+    ORB_SWIFT_NAME(ORBColor.black);
+ORB_EXPORT const ORBColor ORBColorWhite
+    ORB_SWIFT_NAME(ORBColor.white);
+ORB_EXPORT const ORBColor ORBColorNull
+    ORB_SWIFT_NAME(ORBColor.null);
+ORB_EXPORT const float ORBColorInvalidComponent
+    ORB_SWIFT_NAME(ORBColor.invalidComponent);
 
 ORB_EXPORT
 ORBColor ORBColorMake(float red, float green, float blue, float alpha) ORB_NOEXCEPT
@@ -36,6 +50,30 @@ ORBColor ORBColorFromLinear(ORBColor color) ORB_NOEXCEPT
 ORB_EXPORT
 bool ORBColorEqualToColor(ORBColor lhs, ORBColor rhs) ORB_NOEXCEPT
     ORB_SWIFT_NAME(ORBColor.isEqual(self:to:));
+
+#if ORB_TARGET_OS_DARWIN
+
+ORB_EXPORT
+ORBColor ORBColorFromComponents(CGColorSpaceRef colorSpace, const CGFloat *components, bool premultiplied) ORB_NOEXCEPT
+    ORB_SWIFT_NAME(ORBColor.init(colorSpace:components:premultiplied:));
+
+ORB_EXPORT
+ORBColor ORBColorFromComponents2(CGColorSpaceRef colorSpace, const CGFloat *components, size_t componentCount) ORB_NOEXCEPT
+    ORB_SWIFT_NAME(ORBColor.init(colorSpace:components:componentCount:));
+
+ORB_EXPORT
+ORBColor ORBColorFromCGColor(CGColorRef color, bool premultiplied) ORB_NOEXCEPT
+    ORB_SWIFT_NAME(ORBColor.init(_:premultiplied:));
+
+ORB_EXPORT
+ORBColor ORBColorFromCGColor2(CGColorRef color, size_t componentCount) ORB_NOEXCEPT
+    ORB_SWIFT_NAME(ORBColor.init(_:componentCount:));
+
+ORB_EXPORT
+CGColorRef ORBColorCopyCGColor(ORBColor color) ORB_NOEXCEPT
+    ORB_SWIFT_NAME(getter:ORBColor.cgColor(self:));
+
+#endif /* ORB_TARGET_OS_DARWIN */
 
 ORB_EXTERN_C_END
 
