@@ -8,13 +8,14 @@
 
 #if ORB_OBJC_FOUNDATION
 
+#include <OpenRenderBox/ORBColor.h>
 #include <OpenRenderBoxObjC/Device/ORBDevice.h>
 #include <OpenRenderBoxObjC/Render/ORBDrawableStatistics.h>
-#include <OpenRenderBox/ORBColor.h>
+#include <OpenRenderBoxObjC/Render/_ORBDrawableDelegate.h>
+#include <OpenRenderBoxObjC/Render/ORBDisplayList.h>
 
 //#include "RBImageQueueLayer.h"
 //#include "RBSurfaceContentsLayer.h"
-//#include "_RBDrawableDelegate-Protocol.h"
 //#include "_RBSharedSurfaceOwner-Protocol.h"
 
 #include <QuartzCore/QuartzCore.h>
@@ -24,7 +25,7 @@
 
 ORB_ASSUME_NONNULL_BEGIN
 
-@interface ORBLayer: CALayer </*_RBDrawableDelegate, _RBSharedSurfaceOwner,*/ ORBDrawableStatistics>
+@interface ORBLayer: CALayer <_ORBDrawableDelegate, /*_RBSharedSurfaceOwner,*/ ORBDrawableStatistics>
 
 @property (retain, nonatomic, nullable) ORBDevice *device;
 @property (nonatomic) BOOL rendersAsynchronously;
@@ -68,7 +69,7 @@ ORB_ASSUME_NONNULL_BEGIN
 - (BOOL)_willMoveSubsurface:(unsigned int)subsurface;
 - (void)copyImageInRect:(CGRect)rect options:(nullable id)options completionQueue:(nullable id)queue handler:(nullable id /* block */)handler;
 - (BOOL)displayWithBounds:(CGRect)bounds callback:(nullable id /* block */)callback;
-- (void)drawInDisplayList:(nullable id)list;
+- (void)drawInDisplayList:(nullable ORBDisplayList *)list;
 - (void)resetStatistics:(NSUInteger)statistics alpha:(double)alpha;
 - (void)waitUntilAsyncRenderingCompleted;
 

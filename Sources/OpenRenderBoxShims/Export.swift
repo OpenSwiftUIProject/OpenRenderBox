@@ -7,6 +7,8 @@
 public typealias ORBColor = RBColor
 public typealias ORBDevice = RBDevice
 public typealias ORBLayer = RBLayer
+public typealias ORBLayerDelegate = RBLayerDelegate
+public typealias ORBDisplayList = RBDisplayList
 public typealias ORBPath = RBPath
 public typealias ORBUUID = RBUUID
 public let renderBoxEnabled = true
