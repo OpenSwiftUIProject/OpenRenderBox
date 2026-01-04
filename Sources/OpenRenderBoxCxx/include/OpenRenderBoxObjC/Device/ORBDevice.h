@@ -15,16 +15,18 @@
 
 @protocol MTLCaptureScope, MTLDevice, OS_dispatch_queue;
 
+ORB_ASSUME_NONNULL_BEGIN
+
 @interface ORBDevice: NSObject <ORBImageRenderer>
 
-@property (readonly, nonatomic) id <MTLDevice> device;
+@property (readonly, nonatomic) id<MTLDevice> device;
 @property (readonly, nonatomic) NSObject<OS_dispatch_queue> *queue;
-@property (readonly, nonatomic) id <MTLCaptureScope> captureScope;
+@property (readonly, nonatomic, nullable) id<MTLCaptureScope> captureScope;
 @property NSUInteger GPUPriority;
 @property NSUInteger backgroundGPUPriority;
 
-///* class methods */
-+ (instancetype)sharedDefaultDevice;
+/* class methods */
++ (nullable instancetype)sharedDefaultDevice;
 + (NSArray<ORBDevice *> *)allDevices;
 + (BOOL)isSupported;
 + (void)setAllowsRenderingInBackground:(BOOL)background;
@@ -34,19 +36,21 @@
 + (BOOL)isRunningInBackground;
 + (void)setDefaultBackgroundGPUPriority:(NSUInteger)gpupriority;
 + (void)setDefaultGPUPriority:(NSUInteger)gpupriority;
-+ (instancetype)sharedDevice:(id<MTLDevice>)device;
-+ (instancetype)sharedDeviceForDisplay:(unsigned int)display;
++ (nullable instancetype)sharedDevice:(id<MTLDevice>)device;
++ (nullable instancetype)sharedDeviceForDisplay:(unsigned int)display;
 
 /* instance methods */
 - (void)dealloc;
 - (instancetype)initWithDevice:(id<MTLDevice>)device;
-- (CGImageRef)renderImageInRect:(CGRect)rect options:(id)options renderer:(id /* block */)renderer;
+- (nullable CGImageRef)renderImageInRect:(CGRect)rect options:(nullable id)options renderer:(nullable id /* block */)renderer;
 - (void)collectResources;
-- (void)compileShader:(id)shader completionQueue:(id)queue handler:(id /* block */)handler;
-- (BOOL)compileShader:(id)shader error:(id *)error;
-- (id)pipelineDescriptions:(id)descriptions extraColorFormats:(id)formats;
-- (void)renderImageInRect:(CGRect)rect options:(id)options renderer:(id /* block */)renderer completionQueue:(id)queue handler:(id /* block */)handler;
+- (void)compileShader:(id)shader completionQueue:(nullable id)queue handler:(nullable id /* block */)handler;
+- (BOOL)compileShader:(id)shader error:(id _Nullable * _Nullable)error;
+- (nullable id)pipelineDescriptions:(nullable id)descriptions extraColorFormats:(nullable id)formats;
+- (void)renderImageInRect:(CGRect)rect options:(nullable id)options renderer:(nullable id /* block */)renderer completionQueue:(nullable id)queue handler:(nullable id /* block */)handler;
 
 @end
+
+ORB_ASSUME_NONNULL_END
 
 #endif /* ORB_OBJC_FOUNDATION */

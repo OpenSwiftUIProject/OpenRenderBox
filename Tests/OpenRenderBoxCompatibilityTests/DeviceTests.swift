@@ -8,14 +8,14 @@ import Testing
 
 @MainActor
 @Suite(.enabled(if: compatibilityTestEnabled))
-struct ORBDeviceTests {
+struct DeviceTests {
     @Test
     func classMethods() {
         let device = ORBDevice.sharedDefault()
         #expect(device != nil)
 
         let devices = ORBDevice.allDevices()
-        #expect(devices != nil)
+        #expect(!devices.isEmpty)
 
         let supported = ORBDevice.isSupported()
         #expect(supported == true)
