@@ -151,7 +151,7 @@ struct ColorTests {
     }
     #endif
 
-
+    #if compiler(>=6.2) // old Xcode version swift-testing bug
     @Suite
     struct ColorModeTests {
         // MARK: - ORBColorModeWorkingColorSpace
@@ -202,4 +202,5 @@ struct ColorTests {
             #expect(mode.hasExtendedRange == expectedResult)
         }
     }
+    #endif
 }
