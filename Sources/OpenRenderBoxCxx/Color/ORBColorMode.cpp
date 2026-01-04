@@ -1,9 +1,9 @@
 //
-//  ORBColorSpace.cpp
+//  ORBColorMode.cpp
 //  OpenRenderBox
 
-#include <OpenRenderBox/ORBColorSpace.h>
-
+#include <OpenRenderBox/ORBColorMode.h>
+//
 //static const ORBColorSpace kColorModeWorkingColorSpaceTable[16] = {
 //    ORBColorSpaceSRGB,           // 0
 //    ORBColorSpaceExtendedLinear, // 1
