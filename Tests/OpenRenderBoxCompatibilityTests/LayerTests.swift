@@ -25,10 +25,10 @@ struct LayerTests {
         #expect(layer.rendersAsynchronously == false)
 
         // colorMode
-        layer.colorMode = 0
-        #expect(layer.colorMode == 0)
-        layer.colorMode = 1
-        #expect(layer.colorMode == 1)
+        layer.colorMode = .init(0)
+        #expect(layer.colorMode.rawValue == 0)
+        layer.colorMode = .init(1)
+        #expect(layer.colorMode.rawValue == 1)
 
         // promotesFramebuffer
         layer.promotesFramebuffer = true
