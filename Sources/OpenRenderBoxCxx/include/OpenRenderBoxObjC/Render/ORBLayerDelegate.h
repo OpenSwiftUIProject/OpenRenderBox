@@ -9,7 +9,7 @@
 #if ORB_OBJC_FOUNDATION
 
 #include <OpenRenderBoxObjC/Render/ORBDisplayList.h>
-
+#include <OpenRenderBoxObjC/Device/ORBDevice.h>
 #include <Foundation/Foundation.h>
 #include <QuartzCore/QuartzCore.h>
 
@@ -24,7 +24,7 @@ ORB_ASSUME_NONNULL_BEGIN
 @optional
 
 - (void)RBLayer:(ORBLayer *)layer draw:(ORBDisplayList *)inDisplayList;
-- (nullable id)RBLayerDefaultDevice:(ORBLayer *)layer;
+- (nullable ORBDevice *)RBLayerDefaultDevice:(ORBLayer *)layer;
 
 @end
 
