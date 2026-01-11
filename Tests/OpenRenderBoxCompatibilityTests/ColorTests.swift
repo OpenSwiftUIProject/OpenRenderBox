@@ -135,12 +135,12 @@ struct ColorTests {
 
     #if canImport(CoreGraphics)
     @Test("ORBColorCopyCGColor", arguments: [
-        (ORBColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0), ORBColor.Space.SRGB),
-        (ORBColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0), ORBColor.Space.linearSRGB),
-        (ORBColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.5), ORBColor.Space.displayP3),
-        (ORBColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0), ORBColor.Space.linearDisplayP3),
+        (ORBColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0), ORBColor.ColorSpace.SRGB),
+        (ORBColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 1.0), ORBColor.ColorSpace.linearSRGB),
+        (ORBColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 0.5), ORBColor.ColorSpace.displayP3),
+        (ORBColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1.0), ORBColor.ColorSpace.linearDisplayP3),
     ])
-    func colorCopyCGColor(color: ORBColor, colorSpace: ORBColor.Space) throws {
+    func colorCopyCGColor(color: ORBColor, colorSpace: ORBColor.ColorSpace) throws {
         let cgColor = try #require(color.cgColor(colorSpace: colorSpace))
         #expect(cgColor.numberOfComponents == 4)
         let components = cgColor.components!
@@ -157,24 +157,24 @@ struct ColorTests {
         // MARK: - ORBColorModeWorkingColorSpace
 
         @Test("ORBColorModeWorkingColorSpace", arguments: [
-            (ORBColor.Mode.mode0, ORBColor.Space.SRGB),
-            (ORBColor.Mode.mode1, ORBColor.Space.linearSRGB),
-            (ORBColor.Mode.mode2, ORBColor.Space.linearSRGB),
-            (ORBColor.Mode.mode3, ORBColor.Space.SRGB),
-            (ORBColor.Mode.mode4, ORBColor.Space.SRGB),
-            (ORBColor.Mode.mode5, ORBColor.Space.SRGB),
-            (ORBColor.Mode.mode6, ORBColor.Space.linearSRGB),
-            (ORBColor.Mode.mode7, ORBColor.Space.linearSRGB),
-            (ORBColor.Mode.mode8, ORBColor.Space.linearSRGB),
-            (ORBColor.Mode.mode9, ORBColor.Space.SRGB),
-            (ORBColor.Mode.mode10, ORBColor.Space.linearSRGB),
-            (ORBColor.Mode.mode11, ORBColor.Space.SRGB),
-            (ORBColor.Mode.mode12, ORBColor.Space.SRGB),
-            (ORBColor.Mode.mode13, ORBColor.Space.linearSRGB),
-            (ORBColor.Mode.mode14, ORBColor.Space.SRGB),
-            (ORBColor.Mode.mode15, ORBColor.Space.linearSRGB),
+            (ORBColor.Mode.mode0, ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode.mode1, ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode.mode2, ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode.mode3, ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode.mode4, ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode.mode5, ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode.mode6, ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode.mode7, ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode.mode8, ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode.mode9, ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode.mode10, ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode.mode11, ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode.mode12, ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode.mode13, ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode.mode14, ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode.mode15, ORBColor.ColorSpace.linearSRGB),
         ])
-        func colorModeWorkingColorSpace(mode: ORBColor.Mode, expectedColorSpace: ORBColor.Space) {
+        func colorModeWorkingColorSpace(mode: ORBColor.Mode, expectedColorSpace: ORBColor.ColorSpace) {
             #expect(mode.workingColorSpace == expectedColorSpace)
         }
 
