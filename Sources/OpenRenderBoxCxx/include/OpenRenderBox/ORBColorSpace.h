@@ -16,7 +16,7 @@ typedef ORB_ENUM(uint32_t, ORBColorSpace) {
     ORBColorSpaceLinearSRGB = 2,
     ORBColorSpaceDisplayP3 = 3,
     ORBColorSpaceLinearDisplayP3 = 4,
-} ORB_SWIFT_NAME(ORBColor.Space);
+} ORB_SWIFT_NAME(ORBColor.ColorSpace);
 
 ORB_EXTERN_C_END
 

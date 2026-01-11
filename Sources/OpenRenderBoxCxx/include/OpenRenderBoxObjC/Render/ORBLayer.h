@@ -4,11 +4,13 @@
 
 #pragma once
 
+#include "OpenRenderBox/ORBColorMode.h"
 #include <OpenRenderBox/ORBBase.h>
 
 #if ORB_OBJC_FOUNDATION
 
 #include <OpenRenderBox/ORBColor.h>
+#include <OpenRenderBox/ORBColorMode.h>
 #include <OpenRenderBoxObjC/Device/ORBDevice.h>
 #include <OpenRenderBoxObjC/Render/ORBDrawableStatistics.h>
 #include <OpenRenderBoxObjC/Render/_ORBDrawableDelegate.h>
@@ -29,7 +31,7 @@ ORB_ASSUME_NONNULL_BEGIN
 
 @property (retain, nonatomic, nullable) ORBDevice *device;
 @property (nonatomic) BOOL rendersAsynchronously;
-@property (nonatomic) int colorMode;
+@property (nonatomic) ORBColorMode colorMode;
 @property (nonatomic) BOOL promotesFramebuffer;
 @property (nonatomic) NSUInteger pixelFormat;
 @property (nonatomic) BOOL clearsBackground;
