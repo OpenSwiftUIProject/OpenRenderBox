@@ -5,7 +5,7 @@
 #include <OpenRenderBoxCxx/Util/assert.hpp>
 #include <OpenRenderBoxCxx/Util/log.hpp>
 
-char* error_message = nullptr;
+static char* error_message = nullptr;
 
 namespace ORB {
 void precondition_failure(const char *format, ...) {
