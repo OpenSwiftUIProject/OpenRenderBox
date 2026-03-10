@@ -1,5 +1,5 @@
 //
-//  Shims.swift
+//  ORBShims.swift
 //  OpenRenderBoxShims
 
 /// A type that identifies the underlying RenderBox implementation vendor.
@@ -24,21 +24,21 @@ public struct RenderBoxVendor: RawRepresentable, CaseIterable {
 #if OPENRENDERBOX_RENDERBOX
 @_exported public import RenderBox
 
+public typealias ORBAnimation = RBAnimation
+public typealias ORBColor = RBColor
+public typealias ORBDevice = RBDevice
+public typealias ORBDisplayList = RBDisplayList
+public typealias ORBLayer = RBLayer
+public typealias ORBLayerDelegate = RBLayerDelegate
+public typealias ORBPath = RBPath
+public typealias ORBPathApplyCallback = RBPathApplyCallback
+public typealias ORBUUID = RBUUID
+public typealias ORBSymbolAnimator = RBSymbolAnimator
+public typealias ORBSymbolAnimatorObserver = RBSymbolAnimatorObserver
+
 public let renderBoxVendor = RenderBoxVendor.rb
 #else
 @_exported import OpenRenderBox
-
-public typealias RBColor = ORBColor
-public typealias RBUUID = ORBUUID
-public typealias RBDisplayList = ORBDisplayList
-public typealias RBAnimation = ORBAnimation
-public typealias RBSymbolAnimator = ORBSymbolAnimator
-public typealias RBSymbolAnimatorObserver = ORBSymbolAnimatorObserver
-public typealias RBDevice = ORBDevice
-public typealias RBLayer = ORBLayer
-public typealias RBLayerDelegate = ORBLayerDelegate
-public typealias RBPath = ORBPath
-public typealias RBPathApplyCallback = ORBPathApplyCallback
 
 public let renderBoxVendor = RenderBoxVendor.orb
 #endif
