@@ -15,7 +15,7 @@ public final class ORBDisplayList: NSObject, ORBDisplayListContents {
     public var profile: UInt32 = 0
     public var contentRect: CGRect = .zero
     public var deviceScale: Double = 0
-    public var defaultColorSpace: Int32 = 0
+    public var defaultColorSpace: ORBColor.ColorSpace = .default
 
     public private(set) var clipBoundingBox: CGRect = .zero
 
@@ -261,7 +261,7 @@ public final class ORBDisplayList: NSObject, ORBDisplayListContents {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func addColorMultiplyFilter(withColor color: ORBColor, colorSpace space: Int32, flags: UInt32) {
+    public func addColorMultiplyFilter(withColor color: ORBColor, colorSpace space: ORBColor.ColorSpace, flags: UInt32) {
         _openRenderBoxUnimplementedFailure()
     }
 
@@ -269,7 +269,7 @@ public final class ORBDisplayList: NSObject, ORBDisplayListContents {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func addColorMonochromeFilter(withAmount amount: Float, color: ORBColor, colorSpace space: Int32, bias: Float, flags: UInt32) {
+    public func addColorMonochromeFilter(withAmount amount: Float, color: ORBColor, colorSpace space: ORBColor.ColorSpace, bias: Float, flags: UInt32) {
         _openRenderBoxUnimplementedFailure()
     }
 
@@ -277,7 +277,7 @@ public final class ORBDisplayList: NSObject, ORBDisplayListContents {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func addAlphaMultiplyFilter(withColor color: ORBColor, colorSpace space: Int32, flags: UInt32) {
+    public func addAlphaMultiplyFilter(withColor color: ORBColor, colorSpace space: ORBColor.ColorSpace, flags: UInt32) {
         _openRenderBoxUnimplementedFailure()
     }
 
@@ -299,11 +299,11 @@ public final class ORBDisplayList: NSObject, ORBDisplayListContents {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func addShadowStyle(withRadius radius: Double, offset: CGSize, color: ORBColor, colorSpace space: Int32, blendMode mode: Int32, flags: UInt32) {
+    public func addShadowStyle(withRadius radius: Double, offset: CGSize, color: ORBColor, colorSpace space: ORBColor.ColorSpace, blendMode mode: Int32, flags: UInt32) {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func addShadowStyle(withRadius radius: Double, midpoint: Float, offset: CGSize, color: ORBColor, colorSpace space: Int32, blendMode mode: Int32, flags: UInt32) {
+    public func addShadowStyle(withRadius radius: Double, midpoint: Float, offset: CGSize, color: ORBColor, colorSpace space: ORBColor.ColorSpace, blendMode mode: Int32, flags: UInt32) {
         _openRenderBoxUnimplementedFailure()
     }
 }

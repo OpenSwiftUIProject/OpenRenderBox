@@ -10,6 +10,7 @@
 
 #include <OpenRenderBoxObjC/Render/ORBDisplayListContents.h>
 #include <OpenRenderBox/ORBColor.h>
+#include <OpenRenderBox/ORBColorSpace.h>
 #include <Foundation/Foundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 
@@ -24,7 +25,7 @@ ORB_ASSUME_NONNULL_BEGIN
 @property (nonatomic) double deviceScale;
 @property (readonly, nonatomic) CGRect clipBoundingBox;
 @property (nonatomic) CGAffineTransform CTM;
-@property (nonatomic) int defaultColorSpace;
+@property (nonatomic) ORBColorSpace defaultColorSpace;
 @property (readonly, nonatomic) unsigned int identifier;
 @property (readonly, copy, nonatomic, nullable) NSUUID *identifierNamespace;
 @property (readonly, nonatomic) BOOL empty;
