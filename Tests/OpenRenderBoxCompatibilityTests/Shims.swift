@@ -11,15 +11,15 @@ public let compatibilityTestEnabled = true
 
 public typealias RBColor = ORBColor
 public typealias RBUUID = ORBUUID
-public typealias RBPath = ORBPath
+public typealias RBDisplayList = ORBDisplayList
 public typealias RBAnimation = ORBAnimation
 public typealias RBSymbolAnimator = ORBSymbolAnimator
 public typealias RBSymbolAnimatorObserver = ORBSymbolAnimatorObserver
-
-#if canImport(Darwin)
 public typealias RBDevice = ORBDevice
 public typealias RBLayer = ORBLayer
-#endif
+public typealias RBLayerDelegate = ORBLayerDelegate
+public typealias RBPath = ORBPath
+public typealias RBPathApplyCallback = ORBPathApplyCallback
 
 public let compatibilityTestEnabled = false
 #endif
