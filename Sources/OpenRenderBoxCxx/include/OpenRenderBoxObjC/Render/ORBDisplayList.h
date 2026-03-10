@@ -107,7 +107,7 @@ ORB_ASSUME_NONNULL_BEGIN
 - (void)addShadowStyleWithRadius:(double)radius offset:(CGSize)offset color:(ORBColor)color mode:(unsigned int)mode;
 - (void)addShadowStyleWithRadius:(double)radius offset:(CGSize)offset color:(ORBColor)color colorSpace:(int)space blendMode:(int)mode flags:(unsigned int)flags;
 - (void)addShadowStyleWithRadius:(double)radius midpoint:(float)midpoint offset:(CGSize)offset color:(ORBColor)color colorSpace:(int)space blendMode:(int)mode flags:(unsigned int)flags;
-- (void)addRotation3DStyleWithAngle:(double)angle axis:(struct { float x; float y; float z; })axis anchor:(struct { float x; float y; float z; })anchor perspective:(double)perspective flipWidth:(double)width;
+// TODO: addRotation3DStyleWithAngle - requires named struct for axis/anchor parameters
 - (void)addPathProjectionStyleWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint path:(id)path transform:(CGAffineTransform)transform flags:(unsigned int)flags;
 
 @end
