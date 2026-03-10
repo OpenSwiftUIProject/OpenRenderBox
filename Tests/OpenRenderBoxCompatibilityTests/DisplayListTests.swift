@@ -47,7 +47,7 @@ struct DisplayListTests {
     @Test
     func testBeginEndCGContext() {
         let displayList = ORBDisplayList()
-        let context = displayList.beginCGContext(withAlpha: 1.0).takeUnretainedValue()
+        let context = displayList.beginCGContext(withAlpha: 1.0)
         context.setFillColor(CGColor(red: 1, green: 0, blue: 0, alpha: 1))
         context.fill([CGRect(x: 0, y: 0, width: 10, height: 10)])
         displayList.endCGContext()
@@ -58,7 +58,7 @@ struct DisplayListTests {
     func testMoveContents() {
         let displayList = ORBDisplayList()
         displayList.defaultColorSpace = .SRGB
-        let context = displayList.beginCGContext(withAlpha: 1.0).takeUnretainedValue()
+        let context = displayList.beginCGContext(withAlpha: 1.0)
         context.setFillColor(CGColor(red: 1, green: 0, blue: 0, alpha: 1))
         context.fill([CGRect(x: 0, y: 0, width: 10, height: 10)])
         displayList.endCGContext()
@@ -89,7 +89,7 @@ struct DisplayListTests {
                 hints: [.ctm: AffineTransform(scaleByX: scale, byY: scale)]
             )
         )
-        let context = displayList.beginCGContext(withAlpha: 1.0).takeUnretainedValue()
+        let context = displayList.beginCGContext(withAlpha: 1.0)
         context.draw(cgImage, in: CGRect(origin: .zero, size: size))
         displayList.endCGContext()
 
