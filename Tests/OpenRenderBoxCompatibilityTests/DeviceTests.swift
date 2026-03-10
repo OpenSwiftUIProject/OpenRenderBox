@@ -11,22 +11,22 @@ import Testing
 struct DeviceTests {
     @Test
     func classMethods() {
-        let device = ORBDevice.sharedDefault()
+        let device = RBDevice.sharedDefault()
         #expect(device != nil)
 
-        let devices = ORBDevice.allDevices()
+        let devices = RBDevice.allDevices()
         #expect(!devices.isEmpty)
 
-        let supported = ORBDevice.isSupported()
+        let supported = RBDevice.isSupported()
         #expect(supported == true)
 
-        let priority = ORBDevice.defaultGPUPriority()
+        let priority = RBDevice.defaultGPUPriority()
         #expect(priority >= 0)
 
-        let backgroundPriority = ORBDevice.defaultBackgroundGPUPriority()
+        let backgroundPriority = RBDevice.defaultBackgroundGPUPriority()
         #expect(backgroundPriority >= 0)
 
-        let _ = ORBDevice.allowsRenderingInBackground()
+        let _ = RBDevice.allowsRenderingInBackground()
     }
 }
 

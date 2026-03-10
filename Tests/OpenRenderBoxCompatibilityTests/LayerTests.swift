@@ -12,10 +12,10 @@ import QuartzCore
 struct LayerTests {
     @Test
     func testLayerProperties() {
-        let layer = ORBLayer()
+        let layer = RBLayer()
 
         // device
-        layer.device = ORBDevice.sharedDefault()
+        layer.device = RBDevice.sharedDefault()
         #expect(layer.device != nil)
 
         // rendersAsynchronously

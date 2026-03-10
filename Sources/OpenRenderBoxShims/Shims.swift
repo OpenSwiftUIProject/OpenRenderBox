@@ -5,7 +5,7 @@
 /// A type that identifies the underlying RenderBox implementation vendor.
 ///
 /// Use ``renderBoxVendor`` to check which vendor is active at runtime.
-public struct RenderBoxVendor: RawRepresentable, Hashable, CaseIterable {
+public struct RenderBoxVendor: RawRepresentable, CaseIterable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -29,16 +29,22 @@ public let renderBoxVendor = RenderBoxVendor.rb
 @_exported import OpenRenderBox
 
 public typealias RBColor = ORBColor
-public typealias RBDevice = ORBDevice
-public typealias RBLayer = ORBLayer
-public typealias RBLayerDelegate = ORBLayerDelegate
-public typealias RBDisplayList = ORBDisplayList
-public typealias RBPath = ORBPath
-public typealias RBPathApplyCallback = ORBPathApplyCallback
 public typealias RBUUID = ORBUUID
+public typealias RBDisplayList = ORBDisplayList
 public typealias RBAnimation = ORBAnimation
 public typealias RBSymbolAnimator = ORBSymbolAnimator
 public typealias RBSymbolAnimatorObserver = ORBSymbolAnimatorObserver
+
+#if canImport(ObjectiveC)
+public typealias RBDevice = ORBDevice
+public typealias RBLayer = ORBLayer
+public typealias RBLayerDelegate = ORBLayerDelegate
+#endif
+
+#if !OPENRENDERBOX_CF_CGTYPES
+public typealias RBPath = ORBPath
+public typealias RBPathApplyCallback = ORBPathApplyCallback
+#endif
 
 public let renderBoxVendor = RenderBoxVendor.orb
 #endif

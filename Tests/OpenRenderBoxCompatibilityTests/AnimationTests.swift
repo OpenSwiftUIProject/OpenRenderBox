@@ -11,7 +11,7 @@ import CoreGraphics
 struct AnimationTests {
     @Test
     func basicAnimation() {
-        let animation = ORBAnimation()
+        let animation = RBAnimation()
 
         // activeDuration should be 0 for empty animation
         #expect(animation.activeDuration == 0)
@@ -26,21 +26,21 @@ struct AnimationTests {
 
     @Test
     func addBezier() {
-        let animation = ORBAnimation()
+        let animation = RBAnimation()
         animation.addBezierDuration(0.3, controlPoint1: CGPoint(x: 0.42, y: 0), controlPoint2: CGPoint(x: 0.58, y: 1))
         #expect(animation.activeDuration > 0)
     }
 
     @Test
     func addDelay() {
-        let animation = ORBAnimation()
+        let animation = RBAnimation()
         animation.addDelay(0.5)
         #expect(animation.activeDuration == 0.5)
     }
 
     @Test
     func addSpeed() {
-        let animation = ORBAnimation()
+        let animation = RBAnimation()
         animation.addBezierDuration(1.0, controlPoint1: .zero, controlPoint2: CGPoint(x: 1, y: 1))
         let baseDuration = animation.activeDuration
         animation.addSpeed(2.0)
@@ -49,14 +49,14 @@ struct AnimationTests {
 
     @Test
     func addSpring() {
-        let animation = ORBAnimation()
+        let animation = RBAnimation()
         animation.addSpringDuration(0.5, mass: 1.0, stiffness: 100, damping: 10, initialVelocity: 0)
         #expect(animation.activeDuration > 0)
     }
 
     @Test
     func addRepeat() {
-        let animation = ORBAnimation()
+        let animation = RBAnimation()
         animation.addBezierDuration(0.3, controlPoint1: .zero, controlPoint2: CGPoint(x: 1, y: 1))
         animation.addRepeatCount(3, autoreverses: true)
         #expect(animation.activeDuration > 0)
@@ -64,16 +64,16 @@ struct AnimationTests {
 
     @Test
     func addPreset() {
-        let animation = ORBAnimation()
+        let animation = RBAnimation()
         animation.addPreset(0, duration: 0.5)
         #expect(animation.activeDuration > 0)
     }
 
     @Test
     func copyAndEqual() {
-        let animation = ORBAnimation()
+        let animation = RBAnimation()
         animation.addDelay(0.5)
-        let copy = animation.copy() as! ORBAnimation
+        let copy = animation.copy() as! RBAnimation
         #expect(animation.isEqual(copy))
         #expect(copy.activeDuration == animation.activeDuration)
     }

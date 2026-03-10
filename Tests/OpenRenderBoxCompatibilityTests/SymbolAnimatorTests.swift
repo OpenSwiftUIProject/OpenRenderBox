@@ -11,7 +11,7 @@ import CoreGraphics
 struct SymbolAnimatorTests {
     @Test
     func basicProperties() {
-        let animator = ORBSymbolAnimator()
+        let animator = RBSymbolAnimator()
 
         // Default state
         #expect(animator.isAnimating == false)
@@ -33,7 +33,7 @@ struct SymbolAnimatorTests {
 
     @Test
     func renderingProperties() {
-        let animator = ORBSymbolAnimator()
+        let animator = RBSymbolAnimator()
 
         animator.renderingMode = 1
         #expect(animator.renderingMode == 1)
@@ -53,7 +53,7 @@ struct SymbolAnimatorTests {
 
     @Test
     func animationManagement() {
-        let animator = ORBSymbolAnimator()
+        let animator = RBSymbolAnimator()
 
         // removeAllAnimations on empty animator should not crash
         animator.removeAllAnimations()
@@ -64,7 +64,7 @@ struct SymbolAnimatorTests {
 
     @Test
     func timeAndVelocity() {
-        let animator = ORBSymbolAnimator()
+        let animator = RBSymbolAnimator()
 
         animator.currentTime = 1.5
         #expect(animator.currentTime == 1.5)
@@ -75,7 +75,7 @@ struct SymbolAnimatorTests {
 
     @Test
     func rectProperties() {
-        let animator = ORBSymbolAnimator()
+        let animator = RBSymbolAnimator()
         _ = animator.alignmentRect
         _ = animator.unroundedAlignmentRect
         _ = animator.boundingRect

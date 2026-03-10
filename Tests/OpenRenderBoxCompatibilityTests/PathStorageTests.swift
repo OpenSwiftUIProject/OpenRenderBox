@@ -11,7 +11,7 @@ import CoreGraphics
 struct PathStorageTests {
     @Test
     func storageIsEmpty() {
-        let path = ORBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
+        let path = RBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
         let storage = path.storage
         storage.initialize(capacity: 96, source: nil)
         #expect(storage.isEmpty == true)
@@ -23,7 +23,7 @@ struct PathStorageTests {
 
     @Test
     func storageIsSingleElement() {
-        let path = ORBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
+        let path = RBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
         let storage = path.storage
         storage.initialize(capacity: 96, source: nil)
         #expect(storage.isSingleElement == false)
@@ -35,7 +35,7 @@ struct PathStorageTests {
 
     @Test
     func storageBezierOrder() {
-        let path = ORBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
+        let path = RBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
         let order = path.storage.bezierOrder
         #expect(order == 1)
         path.release()
@@ -44,7 +44,7 @@ struct PathStorageTests {
     @Test
     func storageBoundingRect() {
         let rect = CGRect(x: 10, y: 20, width: 100, height: 50)
-        let path = ORBPath(rect: rect, transform: nil)
+        let path = RBPath(rect: rect, transform: nil)
         let storage = path.storage
         storage.initialize(capacity: 96, source: nil)
         storage.append(path: path)
@@ -63,8 +63,8 @@ struct PathStorageTests {
         (CGRect(x: 10, y: 20, width: 50, height: 50), CGRect(x: 10, y: 20, width: 50, height: 50), true),
     ])
     func storageEquality(rect1: CGRect, rect2: CGRect, expectedEqual: Bool) {
-        let path1 = ORBPath(rect: rect1, transform: nil)
-        let path2 = ORBPath(rect: rect2, transform: nil)
+        let path1 = RBPath(rect: rect1, transform: nil)
+        let path2 = RBPath(rect: rect2, transform: nil)
         let storage1 = path1.storage
         let storage2 = path2.storage
         storage1.initialize(capacity: 96, source: nil)
@@ -78,10 +78,10 @@ struct PathStorageTests {
         path2.release()
     }
 
-    @Test("Verify no crash or memleak of ORBPathStorageGetCGPath call", arguments: 1...20)
+    @Test("Verify no crash or memleak of RBPathStorageGetCGPath call", arguments: 1...20)
     func storageGetCGPath(iteration: Int) {
         let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
-        let path = ORBPath(rect: rect, transform: nil)
+        let path = RBPath(rect: rect, transform: nil)
         let storage = path.storage
         storage.initialize(capacity: 64, source: nil)
         storage.append(path: path)
