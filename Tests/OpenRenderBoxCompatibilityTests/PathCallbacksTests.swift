@@ -11,7 +11,7 @@ import CoreGraphics
 struct PathCallbacksTests {
     @Test
     func cgPathCallbacks() {
-        let callbacks = RBPath.Callbacks.cgPath
+        let callbacks = ORBPath.Callbacks.cgPath
         #expect(callbacks.flags.isExtended == false)
         #expect(callbacks.retain != nil)
         #expect(callbacks.release != nil)
