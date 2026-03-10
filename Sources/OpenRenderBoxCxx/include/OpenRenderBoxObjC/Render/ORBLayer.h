@@ -13,7 +13,6 @@
 #include <OpenRenderBox/ORBColorMode.h>
 #include <OpenRenderBoxObjC/Device/ORBDevice.h>
 #include <OpenRenderBoxObjC/Render/ORBDrawableStatistics.h>
-#include <OpenRenderBoxObjC/Render/_ORBDrawableDelegate.h>
 #include <OpenRenderBoxObjC/Render/ORBDisplayList.h>
 
 //#include "RBImageQueueLayer.h"
@@ -27,7 +26,7 @@
 
 ORB_ASSUME_NONNULL_BEGIN
 
-@interface ORBLayer: CALayer <_ORBDrawableDelegate, /*_RBSharedSurfaceOwner,*/ ORBDrawableStatistics>
+@interface ORBLayer: CALayer </*_RBSharedSurfaceOwner,*/ ORBDrawableStatistics>
 
 @property (retain, nonatomic, nullable) ORBDevice *device;
 @property (nonatomic) BOOL rendersAsynchronously;
@@ -41,10 +40,6 @@ ORB_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL allowsBottomLeftOrigin;
 @property (readonly, nonatomic, getter=isDrawableAvailable) BOOL drawableAvailable;
 @property (nonatomic) BOOL needsSynchronousUpdate;
-@property (readonly) NSUInteger hash;
-@property (readonly) Class superclass;
-@property (readonly, copy) NSString *description;
-@property (readonly, copy, nullable) NSString *debugDescription;
 @property (readonly, copy, nonatomic, nullable) NSDictionary *statistics;
 @property (copy, nonatomic, nullable) id /* block */ statisticsHandler;
 

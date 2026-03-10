@@ -1,6 +1,9 @@
 //
 //  _ORBDrawableDelegate.h
 //  OpenRenderBox
+//
+//  Audited for 6.5.4
+//  Status: Complete
 
 #pragma once
 
@@ -25,4 +28,3 @@ ORB_ASSUME_NONNULL_BEGIN
 ORB_ASSUME_NONNULL_END
 
 #endif /* ORB_OBJC_FOUNDATION */
-
