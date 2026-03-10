@@ -5,6 +5,7 @@
 
 #if !canImport(ObjectiveC)
 public import Foundation
+public import OpenCoreGraphicsShims
 
 public class ORBDisplayListInterpolator: NSObject {
     // MARK: - Properties

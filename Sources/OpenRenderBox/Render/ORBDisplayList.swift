@@ -7,6 +7,7 @@
 
 #if !canImport(ObjectiveC)
 public import Foundation
+public import OpenCoreGraphicsShims
 
 public final class ORBDisplayList: NSObject, ORBDisplayListContents {
     // MARK: - Properties
