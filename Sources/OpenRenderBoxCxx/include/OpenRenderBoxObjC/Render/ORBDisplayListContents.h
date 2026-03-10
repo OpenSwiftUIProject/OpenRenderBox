@@ -1,6 +1,9 @@
 //
 //  ORBDisplayListContents.h
 //  OpenRenderBox
+//
+//  Audited for 6.5.4
+//  Status: Complete
 
 #pragma once
 
@@ -8,12 +11,16 @@
 
 #if ORB_OBJC_FOUNDATION
 
+#include <OpenRenderBoxObjC/Encoding/ORBEncodable.h>
+#include <OpenRenderBoxObjC/Encoding/ORBDecodable.h>
 #include <Foundation/Foundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 
 ORB_ASSUME_NONNULL_BEGIN
 
-@protocol ORBDisplayListContents <NSObject>
+struct _ORBDrawingState;
+
+@protocol ORBDisplayListContents <NSObject, ORBEncodable, ORBDecodable>
 
 @required
 
@@ -22,6 +29,7 @@ ORB_ASSUME_NONNULL_BEGIN
 @property (readonly, copy, nonatomic) NSString *xmlDescription;
 
 - (BOOL)isEmpty;
+- (void)drawInState:(struct _ORBDrawingState *)state;
 - (void)renderInContext:(CGContextRef)context options:(nullable id)options;
 
 @optional
