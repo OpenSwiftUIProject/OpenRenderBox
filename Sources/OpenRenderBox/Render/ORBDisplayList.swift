@@ -144,11 +144,11 @@ public final class ORBDisplayList: NSObject, ORBDisplayListContents {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func drawDisplayList(_ list: any ORBDisplayListContents) {
+    public func draw(_ list: any ORBDisplayListContents) {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func drawDisplayList(_ list: any ORBDisplayListContents, alpha: Float) {
+    public func draw(_ list: any ORBDisplayListContents, alpha: Float) {
         _openRenderBoxUnimplementedFailure()
     }
 
