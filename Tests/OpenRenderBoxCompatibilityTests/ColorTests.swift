@@ -151,28 +151,27 @@ struct ColorTests {
     }
     #endif
 
-    #if compiler(>=6.2) // old Xcode version swift-testing bug
     @Suite
     struct ColorModeTests {
         // MARK: - ORBColorModeWorkingColorSpace
 
         @Test("ORBColorModeWorkingColorSpace", arguments: [
-            (ORBColor.Mode.mode0, ORBColor.ColorSpace.SRGB),
-            (ORBColor.Mode.mode1, ORBColor.ColorSpace.linearSRGB),
-            (ORBColor.Mode.mode2, ORBColor.ColorSpace.linearSRGB),
-            (ORBColor.Mode.mode3, ORBColor.ColorSpace.SRGB),
-            (ORBColor.Mode.mode4, ORBColor.ColorSpace.SRGB),
-            (ORBColor.Mode.mode5, ORBColor.ColorSpace.SRGB),
-            (ORBColor.Mode.mode6, ORBColor.ColorSpace.linearSRGB),
-            (ORBColor.Mode.mode7, ORBColor.ColorSpace.linearSRGB),
-            (ORBColor.Mode.mode8, ORBColor.ColorSpace.linearSRGB),
-            (ORBColor.Mode.mode9, ORBColor.ColorSpace.SRGB),
-            (ORBColor.Mode.mode10, ORBColor.ColorSpace.linearSRGB),
-            (ORBColor.Mode.mode11, ORBColor.ColorSpace.SRGB),
-            (ORBColor.Mode.mode12, ORBColor.ColorSpace.SRGB),
-            (ORBColor.Mode.mode13, ORBColor.ColorSpace.linearSRGB),
-            (ORBColor.Mode.mode14, ORBColor.ColorSpace.SRGB),
-            (ORBColor.Mode.mode15, ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode(rawValue: 0), ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode(rawValue: 1), ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode(rawValue: 2), ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode(rawValue: 3), ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode(rawValue: 4), ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode(rawValue: 5), ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode(rawValue: 6), ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode(rawValue: 7), ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode(rawValue: 8), ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode(rawValue: 9), ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode(rawValue: 10), ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode(rawValue: 11), ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode(rawValue: 12), ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode(rawValue: 13), ORBColor.ColorSpace.linearSRGB),
+            (ORBColor.Mode(rawValue: 14), ORBColor.ColorSpace.SRGB),
+            (ORBColor.Mode(rawValue: 15), ORBColor.ColorSpace.linearSRGB),
         ])
         func colorModeWorkingColorSpace(mode: ORBColor.Mode, expectedColorSpace: ORBColor.ColorSpace) {
             #expect(mode.workingColorSpace == expectedColorSpace)
@@ -181,26 +180,25 @@ struct ColorTests {
         // MARK: - ORBColorModeHasExtendedRange
 
         @Test("ORBColorModeHasExtendedRange", arguments: [
-            (ORBColor.Mode.mode0, false),
-            (ORBColor.Mode.mode1, false),
-            (ORBColor.Mode.mode2, true),
-            (ORBColor.Mode.mode3, false),
-            (ORBColor.Mode.mode4, false),
-            (ORBColor.Mode.mode5, false),
-            (ORBColor.Mode.mode6, false),
-            (ORBColor.Mode.mode7, false),
-            (ORBColor.Mode.mode8, false),
-            (ORBColor.Mode.mode9, false),
-            (ORBColor.Mode.mode10, false),
-            (ORBColor.Mode.mode11, true),
-            (ORBColor.Mode.mode12, true),
-            (ORBColor.Mode.mode13, true),
-            (ORBColor.Mode.mode14, false),
-            (ORBColor.Mode.mode15, false),
+            (ORBColor.Mode(rawValue: 0), false),
+            (ORBColor.Mode(rawValue: 1), false),
+            (ORBColor.Mode(rawValue: 2), true),
+            (ORBColor.Mode(rawValue: 3), false),
+            (ORBColor.Mode(rawValue: 4), false),
+            (ORBColor.Mode(rawValue: 5), false),
+            (ORBColor.Mode(rawValue: 6), false),
+            (ORBColor.Mode(rawValue: 7), false),
+            (ORBColor.Mode(rawValue: 8), false),
+            (ORBColor.Mode(rawValue: 9), false),
+            (ORBColor.Mode(rawValue: 10), false),
+            (ORBColor.Mode(rawValue: 11), true),
+            (ORBColor.Mode(rawValue: 12), true),
+            (ORBColor.Mode(rawValue: 13), true),
+            (ORBColor.Mode(rawValue: 14), false),
+            (ORBColor.Mode(rawValue: 15), false),
         ])
         func colorModeHasExtendedRange(mode: ORBColor.Mode, expectedResult: Bool) {
             #expect(mode.hasExtendedRange == expectedResult)
         }
     }
-    #endif
 }
