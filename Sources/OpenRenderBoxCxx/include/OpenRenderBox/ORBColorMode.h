@@ -19,4 +19,3 @@ ORB_EXPORT bool ORBColorModeHasExtendedRange(ORBColorMode mode) ORB_SWIFT_NAME(g
 ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
-
