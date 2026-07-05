@@ -5,35 +5,39 @@
 #if !OPENRENDERBOX_CF_CGTYPES
 public import OpenCoreGraphicsShims
 
+// MARK: - ORBPath.CallbacksFlags
+
+extension ORBPath {
+    /// Flags for path callbacks
+    public struct CallbacksFlags {
+        public var unknown0: UInt8
+        public var unknown1: UInt8
+        public var isExtended: Bool
+        public var padding: (UInt8, UInt8, UInt8, UInt8, UInt8)
+
+        public init() {
+            self.unknown0 = 0
+            self.unknown1 = 0
+            self.isExtended = false
+            self.padding = (0, 0, 0, 0, 0)
+        }
+
+        public init(unknown0: UInt8, unknown1: UInt8, isExtended: Bool, padding: (UInt8, UInt8, UInt8, UInt8, UInt8)) {
+            self.unknown0 = unknown0
+            self.unknown1 = unknown1
+            self.isExtended = isExtended
+            self.padding = padding
+        }
+    }
+}
+
 // MARK: - ORBPath.Callbacks
 
 extension ORBPath {
     /// Callbacks structure for path operations
     /// This allows different path storage types (CGPath, custom storage, etc.) to provide their own implementations
     public struct Callbacks {
-        /// Flags for path callbacks
-        public struct Flags {
-            public var unknown0: UInt8
-            public var unknown1: UInt8
-            public var isExtended: Bool
-            public var padding: (UInt8, UInt8, UInt8, UInt8, UInt8)
-
-            public init() {
-                self.unknown0 = 0
-                self.unknown1 = 0
-                self.isExtended = false
-                self.padding = (0, 0, 0, 0, 0)
-            }
-
-            public init(unknown0: UInt8, unknown1: UInt8, isExtended: Bool, padding: (UInt8, UInt8, UInt8, UInt8, UInt8)) {
-                self.unknown0 = unknown0
-                self.unknown1 = unknown1
-                self.isExtended = isExtended
-                self.padding = padding
-            }
-        }
-
-        public var flags: ORBPath.Callbacks.Flags
+        public var flags: ORBPath.CallbacksFlags
         public var retain: ((UnsafeRawPointer) -> UnsafeRawPointer)?
         public var release: ((UnsafeRawPointer) -> Void)?
         public var apply: ((UnsafeRawPointer, UnsafeMutableRawPointer, ORBPathApplyCallback?) -> Bool)?
@@ -46,7 +50,7 @@ extension ORBPath {
         public var next: ((UnsafeRawPointer) -> UnsafePointer<ORBPath.Callbacks>?)?
         
         public init() {
-            self.flags = ORBPath.Callbacks.Flags()
+            self.flags = ORBPath.CallbacksFlags()
             self.retain = nil
             self.release = nil
             self.apply = nil
@@ -60,7 +64,7 @@ extension ORBPath {
         }
         
         public init(
-            flags: ORBPath.Callbacks.Flags,
+            flags: ORBPath.CallbacksFlags,
             retain: ((UnsafeRawPointer) -> UnsafeRawPointer)?,
             release: ((UnsafeRawPointer) -> Void)?,
             apply: ((UnsafeRawPointer, UnsafeMutableRawPointer, ORBPathApplyCallback?) -> Bool)?,
@@ -101,7 +105,7 @@ extension ORBPath.Callbacks {
 extension ORBPath {
     /// Extended callbacks structure with additional extended callbacks argument
     public struct CallbacksExtended {
-        public var flags: ORBPath.Callbacks.Flags
+        public var flags: ORBPath.CallbacksFlags
         public var retain: ((UnsafeRawPointer) -> UnsafeRawPointer)?
         public var release: ((UnsafeRawPointer) -> Void)?
         public var apply: ((UnsafeRawPointer, UnsafeMutableRawPointer, ORBPathApplyCallback?, UnsafePointer<ORBPath.CallbacksExtended>) -> Bool)?
@@ -114,7 +118,7 @@ extension ORBPath {
         public var next: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> UnsafePointer<ORBPath.CallbacksExtended>?)?
         
         public init() {
-            self.flags = ORBPath.Callbacks.Flags()
+            self.flags = ORBPath.CallbacksFlags()
             self.retain = nil
             self.release = nil
             self.apply = nil
@@ -128,7 +132,7 @@ extension ORBPath {
         }
 
         public init(
-            flags: ORBPath.Callbacks.Flags,
+            flags: ORBPath.CallbacksFlags,
             retain: ((UnsafeRawPointer) -> UnsafeRawPointer)?,
             release: ((UnsafeRawPointer) -> Void)?,
             apply: ((UnsafeRawPointer, UnsafeMutableRawPointer, ORBPathApplyCallback?, UnsafePointer<ORBPath.CallbacksExtended>) -> Bool)?,
