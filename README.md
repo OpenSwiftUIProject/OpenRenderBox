@@ -20,7 +20,7 @@ Currently, this project is in early development.
 
 ## Build
 
-The current suggested toolchain to build the project is Swift 6.2.4 / Xcode 26.3.
+The current suggested toolchain to build the project is Swift 6.3.3 / Xcode 26.6.
 
 ## Supported platforms
 
