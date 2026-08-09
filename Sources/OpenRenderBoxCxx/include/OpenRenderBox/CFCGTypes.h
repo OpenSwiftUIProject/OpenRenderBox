@@ -12,8 +12,6 @@
 #if !defined(__COREFOUNDATION_CFCGTYPES__)
 #define __COREFOUNDATION_CFCGTYPES__ 1
 
-#include <CoreFoundation/CFBase.h>
-#include <CoreFoundation/CFAvailability.h>
 #include <float.h>
 #include <stdint.h>
 
@@ -83,7 +81,7 @@ typedef struct CF_BOXABLE CGRect CGRect;
 
 /* Rectangle edges. */
 
-typedef CF_CLOSED_ENUM(uint32_t, CGRectEdge) {
+typedef ORB_CLOSED_ENUM(uint32_t, CGRectEdge) {
     CGRectMinXEdge, CGRectMinYEdge, CGRectMaxXEdge, CGRectMaxYEdge
 };
 
@@ -104,7 +102,7 @@ struct CGAffineTransform {
  *  CGAffineTransform      scale           shear            rotation          translation
  */
 typedef struct CGAffineTransformComponents CGAffineTransformComponents
-    CF_SWIFT_NAME(CGAffineTransform.Components);
+    ORB_SWIFT_NAME(CGAffineTransform.Components);
 
 struct CGAffineTransformComponents {
 
