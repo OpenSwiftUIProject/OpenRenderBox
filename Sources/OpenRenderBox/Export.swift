@@ -12,3 +12,9 @@
 @_exported public import OpenRenderBoxCxx.C
 #endif
 #endif
+
+#if os(WASI)
+extension ORBColor {
+    public typealias ColorSpace = ORBColorSpace
+}
+#endif

@@ -167,6 +167,8 @@ var sharedCSettings: [CSetting] = [
     .unsafeFlags(["-I", libSwiftPath], .when(platforms: .nonDarwinPlatforms)),
     // .unsafeFlags(["-fmodules"]),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
+    .define("_WASI_EMULATED_SIGNAL", .when(platforms: [.wasi])),
+    .define("_WASI_EMULATED_MMAN", .when(platforms: [.wasi])),
 ]
 var sharedCxxSettings: [CXXSetting] = [
     .unsafeFlags(["-I", libSwiftPath], .when(platforms: .nonDarwinPlatforms)),
@@ -176,6 +178,10 @@ var sharedCxxSettings: [CXXSetting] = [
 var sharedSwiftSettings: [SwiftSetting] = [
     .swiftLanguageMode(.v5),
     .enableUpcomingFeature("InternalImportsByDefault"),
+]
+let sharedLinkerSettings: [LinkerSetting] = [
+    .linkedLibrary("wasi-emulated-signal", .when(platforms: [.wasi])),
+    .linkedLibrary("wasi-emulated-mman", .when(platforms: [.wasi])),
 ]
 if libraryEvolutionCondition {
     // NOTE: -enable-library-evolution will cause module verify failure for `swift build`.
@@ -222,13 +228,30 @@ let openRenderBoxTarget = Target.target(
     ],
     cSettings: sharedCSettings,
     cxxSettings: sharedCxxSettings,
-    swiftSettings: sharedSwiftSettings
+    swiftSettings: sharedSwiftSettings,
+    linkerSettings: sharedLinkerSettings
 )
 // FIXME: Merge into one target
 // OpenRenderBox is a C++ & Swift mix target.
 // The SwiftPM support for such usage is still in progress.
+let openRenderBoxCxxExcludes = buildForDarwinPlatform ? [] : [
+    "Animation/ORBAnimation.mm",
+    "Animation/ORBSymbolAnimation.m",
+    "Animation/ORBSymbolAnimator.m",
+    "Animation/ORBSymbolUpdate.m",
+    "Animation/ORBTransition.mm",
+    "Device/ORBDevice.mm",
+    "Encoding/ORBEncoderSet.m",
+    "Render/ORBDisplayList.m",
+    "Render/ORBDisplayListInterpolator.m",
+    "Render/ORBDisplayListPredicate.m",
+    "Render/ORBDisplayListTransform.m",
+    "Render/ORBLayer.m",
+    "UUID/ORBUUID.mm",
+]
 let openRenderBoxCxxTarget = Target.target(
     name: "OpenRenderBoxCxx",
+    exclude: openRenderBoxCxxExcludes,
     publicHeadersPath: "include",
     cSettings: sharedCSettings + [.headerSearchPath(".")],
     cxxSettings: sharedCxxSettings + [.headerSearchPath(".")]
@@ -236,7 +259,8 @@ let openRenderBoxCxxTarget = Target.target(
 let openRenderBoxShimsTarget = Target.target(
     name: "OpenRenderBoxShims",
     dependencies: ["OpenRenderBoxShimsCxx"],
-    swiftSettings: sharedSwiftSettings
+    swiftSettings: sharedSwiftSettings,
+    linkerSettings: sharedLinkerSettings
 )
 let openRenderBoxShimsCxxTarget = Target.target(
     name: "OpenRenderBoxShimsCxx",
@@ -256,7 +280,8 @@ let openRenderBoxTestsTarget = Target.testTarget(
     exclude: ["README.md"],
     cSettings: sharedCSettings + [.define("SWIFT_TESTING")],
     cxxSettings: sharedCxxSettings + [.define("SWIFT_TESTING")],
-    swiftSettings: sharedSwiftSettings + [.interoperabilityMode(.Cxx)]
+    swiftSettings: sharedSwiftSettings + [.interoperabilityMode(.Cxx)],
+    linkerSettings: sharedLinkerSettings
 )
 let openRenderBoxCompatibilityTestTarget = Target.testTarget(
     name: "OpenRenderBoxCompatibilityTests",
@@ -266,7 +291,8 @@ let openRenderBoxCompatibilityTestTarget = Target.testTarget(
     exclude: ["README.md"],
     cSettings: sharedCSettings + [.define("SWIFT_TESTING")],
     cxxSettings: sharedCxxSettings + [.define("SWIFT_TESTING")],
-    swiftSettings: sharedSwiftSettings
+    swiftSettings: sharedSwiftSettings,
+    linkerSettings: sharedLinkerSettings
 )
 
 // MARK: - Package
