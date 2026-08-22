@@ -28,10 +28,4 @@ clone_checkout_rb() {
   fi
 }
 
-update_rb() {
-  cd $REPO_ROOT/../DarwinPrivateFrameworks
-  swift package update-xcframeworks --allow-writing-to-package-directory
-}
-
 clone_checkout_rb
-update_rb
