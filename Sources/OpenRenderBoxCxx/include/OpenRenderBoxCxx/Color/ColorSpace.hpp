@@ -10,7 +10,19 @@
 #include <CoreGraphics/CGColorSpace.h>
 #include <CoreFoundation/CFString.h>
 #endif /* ORB_TARGET_OS_DARWIN */
+#if __has_include(<optional>)
 #include <optional>
+namespace ORB {
+template <typename T> using Optional = std::optional<T>;
+constexpr auto nullopt = std::nullopt;
+}
+#else
+#include <experimental/optional>
+namespace ORB {
+template <typename T> using Optional = std::experimental::optional<T>;
+constexpr auto nullopt = std::experimental::nullopt;
+}
+#endif
 
 namespace ORB {
 
@@ -27,13 +39,13 @@ enum class ColorSpace : uint32_t {
 #if ORB_TARGET_OS_DARWIN
 /// Converts a CGColorSpace name (CFStringRef) to internal ColorSpace enum.
 /// @param name The color space name from CGColorSpaceGetName.
-/// @return The ColorSpace if recognized, or std::nullopt if not.
-std::optional<ColorSpace> color_space_from_cg_name(CFStringRef name);
+/// @return The ColorSpace if recognized, or ORB::nullopt if not.
+Optional<ColorSpace> color_space_from_cg_name(CFStringRef name);
 
 /// Converts a CGColorSpaceRef to internal ColorSpace enum.
 /// @param colorSpace The CGColorSpace to convert.
-/// @return The ColorSpace if recognized, or std::nullopt if not.
-std::optional<ColorSpace> color_space_from_cg(CGColorSpaceRef colorSpace);
+/// @return The ColorSpace if recognized, or ORB::nullopt if not.
+Optional<ColorSpace> color_space_from_cg(CGColorSpaceRef colorSpace);
 
 /// Returns a CGColorSpaceRef for the given internal color space.
 /// @param colorSpace The internal color space enum value.
@@ -74,6 +86,6 @@ CGColorSpaceRef gray_colorspace();
 
 } /* namespace ORB */
 
-std::optional<ORB::ColorSpace> orb_color_space(ORBColorSpace orbColorSpace);
+ORB::Optional<ORB::ColorSpace> orb_color_space(ORBColorSpace orbColorSpace);
 
-ORBColorSpace orb_color_space(std::optional<ORB::ColorSpace> colorSpace);
+ORBColorSpace orb_color_space(ORB::Optional<ORB::ColorSpace> colorSpace);
