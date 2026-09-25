@@ -197,9 +197,9 @@ extension Target {
         dependencies.append(
             .product(name: "RenderBox", package: "DarwinPrivateFrameworks")
         )
-        var swiftSettings = swiftSettings ?? []
-        swiftSettings.append(.define("OPENRENDERBOX_RENDERBOX"))
-        self.swiftSettings = swiftSettings
+        cSettings = (cSettings ?? []) + [.define("OPENRENDERBOX_RENDERBOX")]
+        cxxSettings = (cxxSettings ?? []) + [.define("OPENRENDERBOX_RENDERBOX")]
+        swiftSettings = (swiftSettings ?? []) + [.define("OPENRENDERBOX_RENDERBOX")]
     }
 }
 
@@ -231,7 +231,18 @@ let openRenderBoxCxxTarget = Target.target(
 )
 let openRenderBoxShimsTarget = Target.target(
     name: "OpenRenderBoxShims",
+    dependencies: ["OpenRenderBoxShimsCxx"],
     swiftSettings: sharedSwiftSettings
+)
+let openRenderBoxShimsCxxTarget = Target.target(
+    name: "OpenRenderBoxShimsCxx",
+    dependencies: renderBoxCondtion
+        ? [.product(name: "RenderBox", package: "DarwinPrivateFrameworks")]
+        : ["OpenRenderBox"],
+    sources: ["OpenRenderBoxShimsCxx.c"],
+    publicHeadersPath: renderBoxCondtion ? "include/RenderBox" : "include/OpenRenderBox",
+    cSettings: sharedCSettings,
+    cxxSettings: sharedCxxSettings
 )
 let openRenderBoxTestsTarget = Target.testTarget(
     name: "OpenRenderBoxTests",
@@ -270,7 +281,7 @@ let package = Package(
     name: "OpenRenderBox",
     products: [
         .library(name: "OpenRenderBox", type: libraryType, targets: ["OpenRenderBox", "OpenRenderBoxCxx"]),
-        .library(name: "OpenRenderBoxShims", type: libraryType, targets: ["OpenRenderBoxShims"]),
+        .library(name: "OpenRenderBoxShims", type: libraryType, targets: ["OpenRenderBoxShims", "OpenRenderBoxShimsCxx"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.1.1"),
@@ -279,6 +290,7 @@ let package = Package(
         openRenderBoxTarget,
         openRenderBoxCxxTarget,
         openRenderBoxShimsTarget,
+        openRenderBoxShimsCxxTarget,
         openRenderBoxTestsTarget,
         openRenderBoxCompatibilityTestTarget,
     ],

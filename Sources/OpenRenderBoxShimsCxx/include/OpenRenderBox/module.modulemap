@@ -1,0 +1,4 @@
+module OpenRenderBoxShimsCxx {
+    umbrella header "OpenRenderBoxShims/OpenRenderBoxShims.h"
+    export *
+}
