@@ -10,9 +10,9 @@
 
 namespace ORB {
 
-std::optional<ColorSpace> color_space_from_cg_name(CFStringRef name) {
+ORB::Optional<ColorSpace> color_space_from_cg_name(CFStringRef name) {
     if (name == nullptr) {
-        return std::nullopt;
+        return ORB::nullopt;
     } else if (CFEqual(name, kCGColorSpaceSRGB) ||
         CFEqual(name, kCGColorSpaceExtendedSRGB)) {
         return ColorSpace::SRGB;
@@ -26,13 +26,13 @@ std::optional<ColorSpace> color_space_from_cg_name(CFStringRef name) {
         CFEqual(name, kCGColorSpaceExtendedLinearDisplayP3)) {
         return ColorSpace::LinearDisplayP3;
     } else {
-        return std::nullopt;
+        return ORB::nullopt;
     }
 }
 
-std::optional<ColorSpace> color_space_from_cg(CGColorSpaceRef colorSpace) {
+ORB::Optional<ColorSpace> color_space_from_cg(CGColorSpaceRef colorSpace) {
     if (colorSpace == nullptr) {
-        return std::nullopt;
+        return ORB::nullopt;
     }
     CFStringRef name = CGColorSpaceGetName(colorSpace);
     return color_space_from_cg_name(name);
@@ -107,10 +107,10 @@ CGColorSpaceRef gray_colorspace() {
 
 } /* namespace ORB */
 
-std::optional<ORB::ColorSpace> orb_color_space(ORBColorSpace orbColorSpace) {
+ORB::Optional<ORB::ColorSpace> orb_color_space(ORBColorSpace orbColorSpace) {
     switch (orbColorSpace) {
         case ORBColorSpaceDefault:
-            return std::nullopt;
+            return ORB::nullopt;
         case ORBColorSpaceSRGB:
             return ORB::ColorSpace::SRGB;
         case ORBColorSpaceLinearSRGB:
@@ -120,15 +120,15 @@ std::optional<ORB::ColorSpace> orb_color_space(ORBColorSpace orbColorSpace) {
         case ORBColorSpaceLinearDisplayP3:
             return ORB::ColorSpace::LinearDisplayP3;
         default:
-            return std::nullopt;
+            return ORB::nullopt;
     }
 }
 
-ORBColorSpace orb_color_space(std::optional<ORB::ColorSpace> colorSpace) {
-    if (!colorSpace.has_value()) {
+ORBColorSpace orb_color_space(ORB::Optional<ORB::ColorSpace> colorSpace) {
+    if (!colorSpace) {
         return ORBColorSpaceDefault;
     }
-    switch (colorSpace.value()) {
+    switch (*colorSpace) {
         case ORB::ColorSpace::LinearSRGB:
             return ORBColorSpaceLinearSRGB;
         case ORB::ColorSpace::SRGB:
