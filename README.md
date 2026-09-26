@@ -22,6 +22,27 @@ Currently, this project is in early development.
 
 The current suggested toolchain to build the project is Swift 6.3.3 / Xcode 26.6.
 
+## Shims
+
+The `OpenRenderBoxShims` product provides Swift aliases and a C header for path APIs.
+Swift clients use:
+
+```swift
+import OpenRenderBoxShims
+```
+
+C, C++, and Objective-C clients use:
+
+```c
+#include <OpenRenderBoxShims/OpenRenderBoxShims.h>
+```
+
+The C module is `OpenRenderBoxShimsCxx`; its public header uses the product name.
+
+The package selects the public header directory for the configured backend.
+Clients use `ORB` names with either backend and do not need to define
+`OPENRENDERBOX_RENDERBOX` in their preprocessor settings.
+
 ## Supported platforms
 
 | **CI Status** |
