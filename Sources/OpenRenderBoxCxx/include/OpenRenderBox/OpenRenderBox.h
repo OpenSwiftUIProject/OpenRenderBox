@@ -1,4 +1,5 @@
 #include <OpenRenderBox/ORBBase.h>
+#include <OpenRenderBox/ORBBlendMode.h>
 #include <OpenRenderBox/ORBColor.h>
 #include <OpenRenderBox/ORBColorMode.h>
 #include <OpenRenderBox/ORBColorSpace.h>

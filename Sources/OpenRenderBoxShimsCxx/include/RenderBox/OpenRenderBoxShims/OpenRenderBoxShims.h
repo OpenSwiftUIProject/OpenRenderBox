@@ -4,10 +4,12 @@
 
 #pragma once
 
+#include <RenderBox/RBBlendMode.h>
 #include <RenderBox/RBPath.h>
 #include <RenderBox/RBPathCallbacks.h>
 #include <RenderBox/RBPathStorage.h>
 
+typedef RBBlendMode ORBBlendMode;
 typedef RBPath ORBPath;
 typedef RBPathElement ORBPathElement;
 typedef RBPathRoundedCornerStyle ORBPathRoundedCornerStyle;
@@ -16,6 +18,50 @@ typedef RBPathCallbacks ORBPathCallbacks;
 typedef RBPathCallbacksFlags ORBPathCallbacksFlags;
 typedef RBPathCallbacksExtended ORBPathCallbacksExtended;
 typedef RBPathStorageRef ORBPathStorageRef;
+
+#define ORBBlendModeNormal RBBlendModeNormal
+#define ORBBlendModeMultiply RBBlendModeMultiply
+#define ORBBlendModeScreen RBBlendModeScreen
+#define ORBBlendModeOverlay RBBlendModeOverlay
+#define ORBBlendModeDarken RBBlendModeDarken
+#define ORBBlendModeLighten RBBlendModeLighten
+#define ORBBlendModeColorDodge RBBlendModeColorDodge
+#define ORBBlendModeColorBurn RBBlendModeColorBurn
+#define ORBBlendModeSoftLight RBBlendModeSoftLight
+#define ORBBlendModeHardLight RBBlendModeHardLight
+#define ORBBlendModeDifference RBBlendModeDifference
+#define ORBBlendModeExclusion RBBlendModeExclusion
+#define ORBBlendModeHue RBBlendModeHue
+#define ORBBlendModeSaturation RBBlendModeSaturation
+#define ORBBlendModeColor RBBlendModeColor
+#define ORBBlendModeLuminosity RBBlendModeLuminosity
+#define ORBBlendModeClear RBBlendModeClear
+#define ORBBlendModeCopy RBBlendModeCopy
+#define ORBBlendModeSourceIn RBBlendModeSourceIn
+#define ORBBlendModeSourceOut RBBlendModeSourceOut
+#define ORBBlendModeSourceAtop RBBlendModeSourceAtop
+#define ORBBlendModeDestinationOver RBBlendModeDestinationOver
+#define ORBBlendModeDestinationIn RBBlendModeDestinationIn
+#define ORBBlendModeDestinationOut RBBlendModeDestinationOut
+#define ORBBlendModeDestinationAtop RBBlendModeDestinationAtop
+#define ORBBlendModeXOR RBBlendModeXOR
+#define ORBBlendModePlusDarker RBBlendModePlusDarker
+#define ORBBlendModePlusLighter RBBlendModePlusLighter
+#define ORBBlendModeLinearDodge RBBlendModeLinearDodge
+#define ORBBlendModeLinearBurn RBBlendModeLinearBurn
+#define ORBBlendModeLinearLight RBBlendModeLinearLight
+#define ORBBlendModePinLight RBBlendModePinLight
+#define ORBBlendModeSubtract RBBlendModeSubtract
+#define ORBBlendModeDivide RBBlendModeDivide
+#define ORBBlendModeMaximum RBBlendModeMaximum
+#define ORBBlendModeAdd RBBlendModeAdd
+#define ORBBlendModeSubtractSource RBBlendModeSubtractSource
+#define ORBBlendModeSubtractDestination RBBlendModeSubtractDestination
+#define ORBBlendModeDarkenSourceOver RBBlendModeDarkenSourceOver
+#define ORBBlendModeLightenSourceOver RBBlendModeLightenSourceOver
+#define ORBBlendModeMinimum RBBlendModeMinimum
+#define ORBBlendModeMinimumInverse RBBlendModeMinimumInverse
+#define ORBBlendModePassThrough RBBlendModePassThrough
 
 #define ORBPathElementMoveToPoint RBPathElementMoveToPoint
 #define ORBPathElementAddLineToPoint RBPathElementAddLineToPoint
