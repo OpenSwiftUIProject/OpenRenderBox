@@ -25,6 +25,7 @@ public struct RenderBoxVendor: RawRepresentable, CaseIterable {
 @_exported public import RenderBox
 
 public typealias ORBAnimation = RBAnimation
+public typealias ORBBlendMode = RBBlendMode
 public typealias ORBColor = RBColor
 public typealias ORBDevice = RBDevice
 public typealias ORBDisplayList = RBDisplayList
