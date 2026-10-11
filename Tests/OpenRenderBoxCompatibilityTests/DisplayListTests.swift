@@ -63,8 +63,20 @@ struct DisplayListTests {
         context.fill([CGRect(x: 0, y: 0, width: 10, height: 10)])
         displayList.endCGContext()
 
-        let contents = displayList.moveContents()
-        #expect(contents != nil)
+        let contents: any ORBDisplayListContents = displayList.moveContents()
+        #expect(!contents.isEmpty())
+        #expect(displayList.isEmpty())
+
+        let emptyContents: any ORBDisplayListContents = displayList.moveContents()
+        #expect(emptyContents.isEmpty())
+        #expect(displayList.isEmpty())
+    }
+
+    @Test
+    func testMoveEmptyContents() {
+        let displayList = ORBDisplayList()
+        let contents: any ORBDisplayListContents = displayList.moveContents()
+        #expect(contents.isEmpty())
         #expect(displayList.isEmpty())
     }
 
@@ -94,8 +106,7 @@ struct DisplayListTests {
         displayList.endCGContext()
 
         let contents = displayList.moveContents()
-        #expect(contents != nil)
-        #expect(contents!.isEmpty() == false)
+        #expect(!contents.isEmpty())
     }
     #endif
 }
