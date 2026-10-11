@@ -7,6 +7,8 @@
 
 #if ORB_OBJC_FOUNDATION
 
+ORBDisplayListRenderKey const ORBDisplayListRenderRasterizationScale = @"rasterizationscale";
+
 @interface ORBDisplayList () <_ORBDisplayListContents>
 @end
 

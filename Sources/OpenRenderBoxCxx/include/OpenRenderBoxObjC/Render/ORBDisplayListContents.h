@@ -20,6 +20,10 @@ ORB_ASSUME_NONNULL_BEGIN
 
 struct _ORBDrawingState;
 
+typedef NSString *ORBDisplayListRenderKey NS_TYPED_EXTENSIBLE_ENUM;
+
+ORB_EXPORT ORBDisplayListRenderKey const ORBDisplayListRenderRasterizationScale ORB_SWIFT_NAME(ORBDisplayListRenderKey.rasterizationScale);
+
 @protocol ORBDisplayListContents <NSObject, ORBEncodable, ORBDecodable>
 
 @required
