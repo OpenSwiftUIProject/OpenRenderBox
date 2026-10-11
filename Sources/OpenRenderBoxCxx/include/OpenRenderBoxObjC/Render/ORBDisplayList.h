@@ -56,7 +56,7 @@ ORB_ASSUME_NONNULL_BEGIN
 - (void)drawDisplayList:(id<ORBDisplayListContents>)list alpha:(float)alpha;
 - (void)drawInRect:(CGRect)rect alpha:(float)alpha blendMode:(int)mode flags:(unsigned int)flags operation:(id /* block */)operation;
 - (void)renderInContext:(CGContextRef)context options:(nullable id)options;
-- (nullable id<ORBDisplayListContents>)moveContents;
+- (id<ORBDisplayListContents>)moveContents;
 - (void)setIdentifier:(unsigned int)identifier namespace:(nullable NSUUID *)ns;
 - (void)beginRecordingXML;
 - (void)addAffineTransformStyle:(CGAffineTransform)style;

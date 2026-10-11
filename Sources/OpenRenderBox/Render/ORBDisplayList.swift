@@ -154,7 +154,7 @@ public final class ORBDisplayList: NSObject, ORBDisplayListContents {
 
     // MARK: - Contents
 
-    public func moveContents() -> (any ORBDisplayListContents)? {
+    public func moveContents() -> any ORBDisplayListContents {
         _openRenderBoxUnimplementedFailure()
     }
 
