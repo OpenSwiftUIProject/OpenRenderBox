@@ -280,8 +280,8 @@ default:
 let package = Package(
     name: "OpenRenderBox",
     products: [
-        .library(name: "OpenRenderBox", type: libraryType, targets: ["OpenRenderBox", "OpenRenderBoxCxx"]),
-        .library(name: "OpenRenderBoxShims", type: libraryType, targets: ["OpenRenderBoxShims", "OpenRenderBoxShimsCxx"]),
+        .library(name: "OpenRenderBox", type: libraryType, targets: ["OpenRenderBox"]),
+        .library(name: "OpenRenderBoxShims", type: libraryType, targets: ["OpenRenderBoxShims"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-numerics", from: "1.1.1"),
