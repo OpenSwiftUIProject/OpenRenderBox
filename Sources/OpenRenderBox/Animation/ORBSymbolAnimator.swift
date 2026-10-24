@@ -5,6 +5,7 @@
 
 #if !canImport(ObjectiveC)
 public import Foundation
+public import OpenRenderBoxCxx
 
 // MARK: - ORBSymbolAnimatorObserver
 
@@ -23,7 +24,7 @@ public class ORBSymbolAnimator: NSObject {
     public var variableValue: Double = 0
     public var opacities: ORBColor = .clear
     public var isHidden: Bool = false
-    public var scaleLevel: Int32 = 0
+    public var scaleLevel: ORBSymbolScaleLevel = .normal
     public var anchorPoint: CGPoint = .zero
     public var position: CGPoint = .zero
     public var size: CGSize = .zero
@@ -44,7 +45,7 @@ public class ORBSymbolAnimator: NSObject {
 
     // MARK: - Animation Management
 
-    public func addAnimation(_ animation: UInt32, options: Any?) -> UInt32 {
+    public func addAnimation(_ animation: ORBSymbolAnimation, options: Any?) -> UInt32 {
         _openRenderBoxUnimplementedFailure()
     }
 
@@ -52,7 +53,7 @@ public class ORBSymbolAnimator: NSObject {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func removeAnimation(_ animation: UInt32) {
+    public func removeAnimation(_ animation: ORBSymbolAnimation) {
         _openRenderBoxUnimplementedFailure()
     }
 
@@ -64,7 +65,7 @@ public class ORBSymbolAnimator: NSObject {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func cancelAnimation(_ animation: UInt32) {
+    public func cancelAnimation(_ animation: ORBSymbolAnimation) {
         _openRenderBoxUnimplementedFailure()
     }
 

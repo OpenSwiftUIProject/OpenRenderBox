@@ -1,0 +1,39 @@
+//
+//  ORBSymbolAnimation.h
+//  OpenRenderBox
+
+#pragma once
+
+#include <OpenRenderBox/ORBSymbolAnimation.h>
+
+#if ORB_OBJC_FOUNDATION
+
+#include <Foundation/Foundation.h>
+
+ORB_ASSUME_NONNULL_BEGIN
+
+typedef NSString *ORBSymbolAnimationOptionKey NS_TYPED_EXTENSIBLE_ENUM ORB_SWIFT_NAME(ORBSymbolAnimation.OptionKey);
+
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationTiming;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationSpeed;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationClampsSpeed;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationRepeatCount;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationRepeatDelay;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationPriority;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationByLayer;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationOnCompletion;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationSymbolDefaults;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationBreatheOptions;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationPulseOptions;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationBounceOptions;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationWiggleOptions;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationWiggleAngle;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationRotateOptions;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationVariableColorOptions;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationAppearDisappearOptions;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationReplaceOptions;
+ORB_EXPORT ORBSymbolAnimationOptionKey const ORBSymbolAnimationInterpolateOptions;
+
+ORB_ASSUME_NONNULL_END
+
+#endif /* ORB_OBJC_FOUNDATION */

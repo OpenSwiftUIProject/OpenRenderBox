@@ -39,6 +39,8 @@ public typealias ORBLayerDelegate = RBLayerDelegate
 public typealias ORBPath = RBPath
 public typealias ORBPathApplyCallback = RBPathApplyCallback
 public typealias ORBUUID = RBUUID
+public typealias ORBSymbolAnimation = RBSymbolAnimation
+public typealias ORBSymbolScaleLevel = RBSymbolScaleLevel
 public typealias ORBSymbolAnimator = RBSymbolAnimator
 public typealias ORBSymbolAnimatorObserver = RBSymbolAnimatorObserver
 

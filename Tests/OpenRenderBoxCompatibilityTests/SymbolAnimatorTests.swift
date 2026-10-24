@@ -47,8 +47,8 @@ struct SymbolAnimatorTests {
         animator.depth = 2
         #expect(animator.depth == 2)
 
-        animator.scaleLevel = 1
-        #expect(animator.scaleLevel == 1)
+        animator.scaleLevel = .up
+        #expect(animator.scaleLevel == .up)
     }
 
     @Test
