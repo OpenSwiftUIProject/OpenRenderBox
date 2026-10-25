@@ -20,6 +20,7 @@ public typealias ORBSymbolAnimation = RBSymbolAnimation
 public typealias ORBSymbolScaleLevel = RBSymbolScaleLevel
 public typealias ORBSymbolAnimator = RBSymbolAnimator
 public typealias ORBSymbolAnimatorObserver = RBSymbolAnimatorObserver
+public typealias ORBSymbolRenderingMode = RBSymbolRenderingMode
 
 public let compatibilityTestEnabled = true
 #else

@@ -35,8 +35,8 @@ struct SymbolAnimatorTests {
     func renderingProperties() {
         let animator = ORBSymbolAnimator()
 
-        animator.renderingMode = 1
-        #expect(animator.renderingMode == 1)
+        animator.renderingMode = .monochrome
+        #expect(animator.renderingMode == .monochrome)
 
         animator.flipsRightToLeft = true
         #expect(animator.flipsRightToLeft == true)

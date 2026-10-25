@@ -11,6 +11,7 @@
 #include <OpenRenderBoxObjC/Render/ORBDisplayListContents.h>
 #include <OpenRenderBox/ORBColor.h>
 #include <OpenRenderBox/ORBColorSpace.h>
+#include <OpenRenderBox/ORBDrawingState.h>
 #include <Foundation/Foundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 
@@ -111,6 +112,12 @@ ORB_ASSUME_NONNULL_BEGIN
 - (void)addPathProjectionStyleWithStartPoint:(CGPoint)startPoint endPoint:(CGPoint)endPoint path:(id)path transform:(CGAffineTransform)transform flags:(unsigned int)flags;
 
 @end
+
+ORB_EXTERN_C_BEGIN
+
+ORB_EXPORT ORBDrawingState ORBDisplayListGetState(ORBDisplayList *list) ORB_SWIFT_NAME(getter:ORBDisplayList.state(self:));
+
+ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
 
