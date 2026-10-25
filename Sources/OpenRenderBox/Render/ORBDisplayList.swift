@@ -8,9 +8,14 @@
 #if !canImport(ObjectiveC)
 public import Foundation
 public import OpenCoreGraphicsShims
+public import OpenRenderBoxCxx
 
 public final class ORBDisplayList: NSObject, ORBDisplayListContents {
     // MARK: - Properties
+
+    public var state: ORBDrawingState {
+        _openRenderBoxUnimplementedFailure()
+    }
 
     public var linearColors: Bool = false
     public var profile: UInt32 = 0

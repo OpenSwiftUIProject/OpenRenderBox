@@ -116,6 +116,14 @@ extension ORBPath {
 // MARK: - Properties
 
 extension ORBPath {
+    public var isNull: Bool {
+        storage == Self.null.storage && callbacks == Self.null.callbacks
+    }
+
+    public func copy(transform: UnsafePointer<CGAffineTransform>) -> ORBPath {
+        _openRenderBoxUnimplementedFailure()
+    }
+
     public var isEmpty: Bool {
         _openRenderBoxUnimplementedFailure()
     }

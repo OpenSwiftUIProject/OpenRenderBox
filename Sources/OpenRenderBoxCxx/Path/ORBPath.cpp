@@ -55,6 +55,18 @@ void ORBPathRelease(ORBPath path) {
 
 #if ORB_TARGET_OS_DARWIN
 
+ORBPath ORBPathCopyTransformedPath(ORBPath path, const CGAffineTransform *transform) {
+    if (ORBPathIsNull(path)) {
+        return ORBPathNull;
+    }
+    CGPathRef source = ORBPathCopyCGPath(path);
+    CGPathRef transformed = CGPathCreateCopyByTransformingPath(source, transform);
+    ORBPath result = ORBPathMakeWithCGPath(transformed);
+    CGPathRelease(transformed);
+    CGPathRelease(source);
+    return result;
+}
+
 // MARK: - Path Creation
 
 namespace {

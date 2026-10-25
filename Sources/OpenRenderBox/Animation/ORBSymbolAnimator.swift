@@ -19,7 +19,7 @@ public class ORBSymbolAnimator: NSObject {
     // MARK: - Properties
 
     public var glyph: AnyObject?
-    public var renderingMode: UInt32 = 0
+    public var renderingMode: ORBSymbolRenderingMode = .preferred
     public var flipsRightToLeft: Bool = false
     public var variableValue: Double = 0
     public var opacities: ORBColor = .clear
@@ -79,19 +79,17 @@ public class ORBSymbolAnimator: NSObject {
 
     // MARK: - Update
 
-    public func beginUpdate(withRenderingMode mode: UInt32) -> OpaquePointer {
+    public func beginUpdate(with mode: ORBSymbolRenderingMode) -> ORBSymbolUpdate {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func beginUpdate(withRenderingMode mode: UInt32, position: UnsafePointer<CGPoint>?, size: UnsafePointer<CGSize>?, flags: UInt32) -> OpaquePointer {
+    public func beginUpdate(with mode: ORBSymbolRenderingMode, position: UnsafePointer<CGPoint>?, size: UnsafePointer<CGSize>?, flags: ORBSymbolUpdateFlags) -> ORBSymbolUpdate {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public func endUpdate(_ update: OpaquePointer) {
-        _openRenderBoxUnimplementedFailure()
-    }
+    public func end(_ update: ORBSymbolUpdate) {}
 
-    public func copyDebugDescription(for update: OpaquePointer) -> Any? {
+    public func copyDebugDescription(for update: ORBSymbolUpdate) -> Any? {
         _openRenderBoxUnimplementedFailure()
     }
 

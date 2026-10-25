@@ -34,6 +34,7 @@ public typealias ORBDisplayListInterpolator = RBDisplayListInterpolator
 public typealias ORBDisplayListPredicate = RBDisplayListPredicate
 public typealias ORBDisplayListRenderKey = RBDisplayListRenderKey
 public typealias ORBDisplayListTransform = RBDisplayListTransform
+public typealias ORBDrawingState = RBDrawingState
 public typealias ORBLayer = RBLayer
 public typealias ORBLayerDelegate = RBLayerDelegate
 public typealias ORBPath = RBPath
@@ -43,6 +44,12 @@ public typealias ORBSymbolAnimation = RBSymbolAnimation
 public typealias ORBSymbolScaleLevel = RBSymbolScaleLevel
 public typealias ORBSymbolAnimator = RBSymbolAnimator
 public typealias ORBSymbolAnimatorObserver = RBSymbolAnimatorObserver
+public typealias ORBSymbolRenderingMode = RBSymbolRenderingMode
+public typealias ORBSymbolUpdate = RBSymbolUpdate
+public typealias ORBSymbolUpdateFlags = RBSymbolUpdateFlags
+public typealias ORBSymbolUpdateLayer = RBSymbolUpdateLayer
+public typealias ORBSymbolUpdateLayerFlags = RBSymbolUpdateLayerFlags
+public typealias ORBSymbolStyle = RBSymbolStyle
 
 public let renderBoxVendor = RenderBoxVendor.rb
 #else

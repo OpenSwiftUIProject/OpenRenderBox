@@ -85,6 +85,18 @@ ORB_EXPORT
 ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:bottomLeftRadius:bottomRightRadius:topRightRadius:style:transform:));
 #endif
 
+#if ORB_TARGET_OS_DARWIN
+// MARK: - Path Transformation
+
+ORB_EXPORT
+ORBPath ORBPathCopyTransformedPath(ORBPath path, const CGAffineTransform *transform) ORB_SWIFT_NAME(ORBPath.copy(self:transform:));
+
+static ORB_INLINE bool ORBPathIsNull(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.isNull(self:)) {
+    return path.storage == ORBPathNull.storage && path.callbacks == ORBPathNull.callbacks;
+}
+
+#endif
+
 // MARK: - Path Operation
 
 ORB_EXPORT

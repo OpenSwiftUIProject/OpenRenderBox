@@ -9,6 +9,8 @@
 #if ORB_OBJC_FOUNDATION
 
 #include <OpenRenderBox/ORBColor.h>
+#include <OpenRenderBox/ORBSymbolRenderingMode.h>
+#include <OpenRenderBox/ORBSymbolUpdate.h>
 #include <OpenRenderBoxObjC/Animation/ORBSymbolAnimatorObserver.h>
 #include <OpenRenderBoxObjC/Animation/ORBSymbolAnimation.h>
 #include <Foundation/Foundation.h>
@@ -17,13 +19,12 @@
 ORB_ASSUME_NONNULL_BEGIN
 
 @class CUINamedVectorGlyph;
-struct _ORBSymbolUpdate;
 
 // TODO
 @interface ORBSymbolAnimator : NSObject
 
 @property (retain, nonatomic, nullable) CUINamedVectorGlyph *glyph;
-@property (nonatomic) unsigned int renderingMode;
+@property (nonatomic) ORBSymbolRenderingMode renderingMode;
 @property (nonatomic) BOOL flipsRightToLeft;
 @property (nonatomic) double variableValue;
 @property (nonatomic) ORBColor opacities;
@@ -45,16 +46,16 @@ struct _ORBSymbolUpdate;
 
 /* instance methods */
 - (unsigned int)addAnimation:(ORBSymbolAnimation)animation options:(nullable id)options ORB_SWIFT_NAME(addAnimation(_:options:));
-- (struct _ORBSymbolUpdate *)beginUpdateWithRenderingMode:(unsigned int)mode;
-- (void)endUpdate:(struct _ORBSymbolUpdate *)update;
+- (ORBSymbolUpdate)beginUpdateWithRenderingMode:(ORBSymbolRenderingMode)mode;
+- (void)endUpdate:(ORBSymbolUpdate)update;
 - (void)removeAllAnimations;
 - (void)removeAnimation:(ORBSymbolAnimation)animation ORB_SWIFT_NAME(removeAnimation(_:));
-- (struct _ORBSymbolUpdate *)beginUpdateWithRenderingMode:(unsigned int)mode position:(nullable const CGPoint *)position size:(nullable const CGSize *)size flags:(unsigned int)flags;
+- (ORBSymbolUpdate)beginUpdateWithRenderingMode:(ORBSymbolRenderingMode)mode position:(nullable const CGPoint *)position size:(nullable const CGSize *)size flags:(ORBSymbolUpdateFlags)flags;
 - (void)cancelAllAnimations;
 - (void)cancelAnimation:(ORBSymbolAnimation)animation ORB_SWIFT_NAME(cancelAnimation(_:));
 - (void)cancelAnimationWithID:(unsigned int)animationID;
 - (ORBColor)colorForStyle:(unsigned int)style;
-- (nullable id)copyDebugDescriptionForUpdate:(struct _ORBSymbolUpdate *)update;
+- (nullable id)copyDebugDescriptionForUpdate:(ORBSymbolUpdate)update;
 - (void)removeAnimationWithID:(unsigned int)animationID;
 - (void)setColor:(ORBColor)color forStyle:(unsigned int)style;
 - (void)setPriority:(float)priority ofAnimationWithID:(unsigned int)animationID;
