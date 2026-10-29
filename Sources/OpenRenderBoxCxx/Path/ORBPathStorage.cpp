@@ -21,7 +21,7 @@ bool append_element_callback(void * info, ORBPathElement element, const CGFloat 
 } /* Path */
 } /* ORB */
 
-void ORBPathStorageInit(ORBPathStorageRef dst, uint32_t capacity, ORBPathStorageRef source) {
+void ORBPathStorageInit(ORBPathStorageRef dst, size_t capacity, ORBPathStorageRef source) {
     if (source != nullptr) {
         dst->storage = ORB::Path::Storage(capacity, source->storage);
     } else {
@@ -37,8 +37,8 @@ void ORBPathStorageClear(ORBPathStorageRef storage) {
     storage->storage.clear();
 }
 
-bool ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, const CGFloat * points, const void * userInfo) {
-    return storage->storage.append_element(element, points, userInfo);
+void ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, const CGFloat * points, const void * userInfo) {
+    storage->storage.append_element(element, points, userInfo);
 }
 
 bool ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
@@ -61,7 +61,7 @@ bool ORBPathStorageIsSingleElement(ORBPathStorageRef storage) {
     return storage->storage.flags().isSingleElement();
 }
 
-uint32_t ORBPathStorageGetBezierOrder(ORBPathStorageRef storage) {
+size_t ORBPathStorageGetBezierOrder(ORBPathStorageRef storage) {
     return storage->storage.flags().bezierOrder();
 }
 

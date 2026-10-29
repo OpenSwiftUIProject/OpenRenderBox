@@ -5,6 +5,7 @@
 #pragma once
 
 #include <OpenRenderBox/ORBBase.h>
+#include <stddef.h>
 
 #if OPENRENDERBOX_CF_CGTYPES
 
@@ -40,7 +41,7 @@ typedef ORB_ENUM(int32_t, ORBPathRoundedCornerStyle) {
 } ORB_SWIFT_NAME(ORBPath.RoundedCornerStyle);
 
 /// Callback type for path element enumeration
-/// Returns true to stop enumeration, false to continue
+/// Returns true to continue enumeration, false to stop
 typedef bool (*ORBPathApplyCallback)(void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
 
 typedef struct ORBPathCallbacks ORBPathCallbacks ORB_SWIFT_NAME(ORBPath.ApplyCallback);
@@ -61,7 +62,7 @@ ORB_EXPORT
 const ORBPath ORBPathNull ORB_SWIFT_NAME(ORBPath.null);
 
 ORB_EXPORT
-void ORBPathRetain(ORBPath path) ORB_SWIFT_NAME(ORBPath.retain(self:));
+ORBPath ORBPathRetain(ORBPath path) ORB_SWIFT_NAME(ORBPath.retain(self:));
 
 ORB_EXPORT
 void ORBPathRelease(ORBPath path) ORB_SWIFT_NAME(ORBPath.release(self:));
@@ -82,7 +83,7 @@ ORB_EXPORT
 ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerHeight, ORBPathRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:cornerWidth:cornerHeight:style:transform:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:bottomLeftRadius:bottomRightRadius:topRightRadius:style:transform:));
+ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat topRightRadius, CGFloat bottomRightRadius, CGFloat bottomLeftRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:topRightRadius:bottomRightRadius:bottomLeftRadius:style:transform:));
 #endif
 
 #if ORB_TARGET_OS_DARWIN
@@ -121,7 +122,7 @@ ORB_EXPORT
 bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) ORB_SWIFT_NAME(ORBPath.contains(self:point:eoFill:));
 
 ORB_EXPORT
-bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.containsPoints(self:count:points:eoFill:transform:));
+uint64_t ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.containsPoints(self:count:points:eoFill:transform:));
 #endif
 
 ORB_EXTERN_C_END

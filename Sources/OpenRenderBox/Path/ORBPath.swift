@@ -80,7 +80,7 @@ extension ORBPath {
 // MARK: - Memory Management
 
 extension ORBPath {
-    public func retain() {
+    public func retain() -> ORBPath {
         _openRenderBoxUnimplementedFailure()
     }
     
@@ -108,7 +108,7 @@ extension ORBPath {
         _openRenderBoxUnimplementedFailure()
     }
 
-    public init(roundedRect rect: CGRect, topLeftRadius: CGFloat, bottomLeftRadius: CGFloat, bottomRightRadius: CGFloat, topRightRadius: CGFloat, style: ORBPath.RoundedCornerStyle, transform: UnsafePointer<CGAffineTransform>?) {
+    public init(roundedRect rect: CGRect, topLeftRadius: CGFloat, topRightRadius: CGFloat, bottomRightRadius: CGFloat, bottomLeftRadius: CGFloat, style: ORBPath.RoundedCornerStyle, transform: UnsafePointer<CGAffineTransform>?) {
         _openRenderBoxUnimplementedFailure()
     }
 }
@@ -148,7 +148,7 @@ extension ORBPath {
         _openRenderBoxUnimplementedFailure()
     }
     
-    public func containsPoints(count: UInt64, points: UnsafePointer<CGPoint>, eoFill: Bool, transform: UnsafePointer<CGAffineTransform>?) -> Bool {
+    public func containsPoints(count: UInt64, points: UnsafePointer<CGPoint>, eoFill: Bool, transform: UnsafePointer<CGAffineTransform>?) -> UInt64 {
         _openRenderBoxUnimplementedFailure()
     }
 }

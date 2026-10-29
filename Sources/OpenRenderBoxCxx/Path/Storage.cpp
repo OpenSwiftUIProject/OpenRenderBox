@@ -17,7 +17,7 @@ namespace ORB {
 namespace Path {
 atomic_uint Storage::_last_identifier;
 
-Storage::Storage(uint32_t capacity) {
+Storage::Storage(size_t capacity) {
     _unknown = nullptr;
     if (capacity <= 63) {
         precondition_failure("invalid capacity");
@@ -27,7 +27,7 @@ Storage::Storage(uint32_t capacity) {
     _identifier = get_identifier();
 }
 
-Storage::Storage(uint32_t capacity, const Storage &storage): Storage(capacity) {
+Storage::Storage(size_t capacity, const Storage &storage): Storage(capacity) {
     uint32_t originalCapity = flags().capacity();
     StorageFlags sourceFlags = storage.flags();
 

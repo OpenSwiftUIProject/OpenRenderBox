@@ -36,7 +36,7 @@ struct Cache {
 Cache* gCache = nullptr;
 
 // Helper to call bezierOrder on callbacks
-inline uint32_t callBezierOrder(const void* object, const ORBPathCallbacks* callbacks) {
+inline size_t callBezierOrder(const void* object, const ORBPathCallbacks* callbacks) {
     if (callbacks->bezierOrder) {
         return callbacks->bezierOrder(object);
     }
@@ -85,7 +85,7 @@ NestedCallbacks::NestedCallbacks(const ORBPathCallbacks* callbacks, size_t index
         return true;
     };
 
-    extended.bezierOrder = +[](const void *object, const ORBPathCallbacksExtended *ext) -> uint32_t {
+    extended.bezierOrder = +[](const void *object, const ORBPathCallbacksExtended *ext) -> size_t {
         auto self = reinterpret_cast<const NestedCallbacks*>(ext);
         return callBezierOrder(object, self->originalCallbacks);
     };
@@ -94,10 +94,11 @@ NestedCallbacks::NestedCallbacks(const ORBPathCallbacks* callbacks, size_t index
     extended.boundingRect = nullptr;
     extended.cgPath = nullptr;
 
-    extended.next = +[](const void *object, const ORBPathCallbacksExtended *ext) -> const ORBPathCallbacksExtended* {
+    extended.next = +[](const void *object, const ORBPathCallbacksExtended *ext) -> ORBPath {
         auto self = reinterpret_cast<const NestedCallbacks*>(ext);
         auto nextCallbacks = NestedCallbacks::get(self->originalCallbacks, self->nestedIndex + 1);
-        return &nextCallbacks->extended;
+        return {reinterpret_cast<ORBPathStorageRef>(const_cast<void *>(object)),
+                reinterpret_cast<const ORBPathCallbacks *>(&nextCallbacks->extended)};
     };
 }
 

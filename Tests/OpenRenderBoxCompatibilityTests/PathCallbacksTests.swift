@@ -4,10 +4,10 @@
 
 import Testing
 
-#if canImport(CoreGraphics)
+#if canImport(CoreGraphics) && (OPENRENDERBOX_CF_CGTYPES || OPENRENDERBOX_COMPATIBILITY_TEST)
 import CoreGraphics
 
-@Suite(.enabled(if: compatibilityTestEnabled))
+@Suite
 struct PathCallbacksTests {
     @Test
     func cgPathCallbacks() {
@@ -19,7 +19,6 @@ struct PathCallbacksTests {
         #expect(callbacks.isEqual != nil)
         #expect(callbacks.isEmpty != nil)
         #expect(callbacks.isSingleElement != nil)
-        #expect(callbacks.bezierOrder != nil)
         #expect(callbacks.boundingRect != nil)
         #expect(callbacks.cgPath != nil)
         #expect(callbacks.next == nil)

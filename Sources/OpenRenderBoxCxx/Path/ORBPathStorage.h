@@ -21,7 +21,7 @@ ORB_ASSUME_NONNULL_BEGIN
 ORB_EXTERN_C_BEGIN
 
 ORB_EXPORT
-void ORBPathStorageInit(ORBPathStorageRef dst, uint32_t capacity, ORBPathStorageRef _Nullable source) ORB_SWIFT_NAME(ORBPathStorageRef.initialize(self:capacity:source:));
+void ORBPathStorageInit(ORBPathStorageRef dst, size_t capacity, ORBPathStorageRef _Nullable source) ORB_SWIFT_NAME(ORBPathStorageRef.initialize(self:capacity:source:));
 
 ORB_EXPORT
 void ORBPathStorageDestroy(ORBPathStorageRef storage) ORB_SWIFT_NAME(ORBPathStorageRef.destroy(self:));
@@ -30,7 +30,7 @@ ORB_EXPORT
 void ORBPathStorageClear(ORBPathStorageRef storage) ORB_SWIFT_NAME(ORBPathStorageRef.clear(self:));
 
 ORB_EXPORT
-bool ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, CGFloat const * points, const void * _Nullable userInfo) ORB_SWIFT_NAME(ORBPathStorageRef.append(self:element:points:userInfo:));
+void ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, CGFloat const * points, const void * _Nullable userInfo) ORB_SWIFT_NAME(ORBPathStorageRef.append(self:element:points:userInfo:));
 
 ORB_EXPORT
 bool ORBPathStorageAppendPath(ORBPathStorageRef, ORBPath) ORB_SWIFT_NAME(ORBPathStorageRef.append(self:path:));
@@ -48,7 +48,7 @@ ORB_EXPORT
 bool ORBPathStorageIsSingleElement(ORBPathStorageRef storage) ORB_SWIFT_NAME(getter:ORBPathStorageRef.isSingleElement(self:));
 
 ORB_EXPORT
-uint32_t ORBPathStorageGetBezierOrder(ORBPathStorageRef storage) ORB_SWIFT_NAME(getter:ORBPathStorageRef.bezierOrder(self:));
+size_t ORBPathStorageGetBezierOrder(ORBPathStorageRef storage) ORB_SWIFT_NAME(getter:ORBPathStorageRef.bezierOrder(self:));
 
 #if ORB_TARGET_OS_DARWIN
 ORB_EXPORT

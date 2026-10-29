@@ -39,14 +39,14 @@ typedef struct ORB_SWIFT_NAME(ORBPath.Callbacks) ORBPathCallbacks {
     bool (* _Nullable isEqual)(const void *object, const void *otherObject);
     bool (* _Nullable isEmpty)(const void *object);
     bool (* _Nullable isSingleElement)(const void *object);
-    uint32_t (* _Nullable bezierOrder)(const void *object);
+    size_t (* _Nullable bezierOrder)(const void *object);
     CGRect (* _Nullable boundingRect)(const void *object);
     #if ORB_TARGET_OS_DARWIN
     CGPathRef _Nullable (* _Nullable cgPath)(const void *object);
     #else
     void * _Nullable (* _Nullable cgPath)(const void *object);
     #endif
-    const struct ORBPathCallbacks * _Nullable (* _Nullable next)(const void *object);
+    ORBPath (* _Nullable next)(const void *object);
 } ORBPathCallbacks;
 
 // static_assert without message requires C23 or C++17
@@ -74,14 +74,14 @@ typedef struct ORB_SWIFT_NAME(ORBPath.CallbacksExtended) ORBPathCallbacksExtende
     bool (* _Nullable isEqual)(const void *object, const void *otherObject, const struct ORBPathCallbacksExtended *extended);
     bool (* _Nullable isEmpty)(const void *object, const struct ORBPathCallbacksExtended *extended);
     bool (* _Nullable isSingleElement)(const void *object, const struct ORBPathCallbacksExtended *extended);
-    uint32_t (* _Nullable bezierOrder)(const void *object, const struct ORBPathCallbacksExtended *extended);
+    size_t (* _Nullable bezierOrder)(const void *object, const struct ORBPathCallbacksExtended *extended);
     CGRect (* _Nullable boundingRect)(const void *object, const struct ORBPathCallbacksExtended *extended);
     #if ORB_TARGET_OS_DARWIN
     CGPathRef _Nullable (* _Nullable cgPath)(const void *object, const struct ORBPathCallbacksExtended *extended);
     #else
     void * _Nullable (* _Nullable cgPath)(const void *object, const struct ORBPathCallbacksExtended *extended);
     #endif
-    const struct ORBPathCallbacksExtended * _Nullable (* _Nullable next)(const void *object, const struct ORBPathCallbacksExtended *extended);
+    ORBPath (* _Nullable next)(const void *object, const struct ORBPathCallbacksExtended *extended);
 } ORBPathCallbacksExtended;
 
 // static_assert without message requires C23 or C++17

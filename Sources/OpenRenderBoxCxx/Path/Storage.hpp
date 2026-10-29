@@ -43,7 +43,7 @@ public:
                  bool isCubicBezierOrder,
                  bool isSingleElement,
                  uint32_t size,
-                 uint32_t capacity)
+                 size_t capacity)
     : StorageFlags(StorageFlags()
             .withExternal(isExternal)
             .withQuadBezierOrder(isQuadBezierOrder)
@@ -91,7 +91,7 @@ public:
     }
 
     ORB_INLINE ORB_CONSTEXPR
-    uint32_t capacity() const ORB_NOEXCEPT {
+    size_t capacity() const ORB_NOEXCEPT {
         return (value >> 0x14);
     }
 
@@ -121,7 +121,7 @@ public:
     }
 
     ORB_INLINE ORB_CONSTEXPR
-    StorageFlags withCapacity(uint32_t capacity) const ORB_NOEXCEPT {
+    StorageFlags withCapacity(size_t capacity) const ORB_NOEXCEPT {
         return StorageFlags((value & 0xFFFFFFu) | ((capacity & 0xFFFu) << 0x14));
     }
 
@@ -147,8 +147,8 @@ private:
     static atomic_uint _last_identifier;
 
 public:
-    Storage(uint32_t capacity);
-    Storage(uint32_t capacity, const ORB::Path::Storage &storage);
+    Storage(size_t capacity);
+    Storage(size_t capacity, const ORB::Path::Storage &storage);
     ~Storage();
 
     bool operator == (const Storage &other) const ORB_NOEXCEPT;

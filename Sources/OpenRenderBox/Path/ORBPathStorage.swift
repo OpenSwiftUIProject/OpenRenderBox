@@ -6,7 +6,7 @@
 public import OpenCoreGraphicsShims
 
 extension ORBPath.Storage {
-    public func initialize(capacity: UInt32, source: ORBPath.Storage?) {
+    public func initialize(capacity: Int, source: ORBPath.Storage?) {
         _openRenderBoxUnimplementedFailure()
     }
     
@@ -18,7 +18,7 @@ extension ORBPath.Storage {
         _openRenderBoxUnimplementedFailure()
     }
     
-    public func append(element: ORBPath.Element, points: UnsafePointer<CGFloat>, userInfo: UnsafeRawPointer?) -> Bool {
+    public func append(element: ORBPath.Element, points: UnsafePointer<CGFloat>, userInfo: UnsafeRawPointer?) {
         _openRenderBoxUnimplementedFailure()
     }
     
@@ -42,7 +42,7 @@ extension ORBPath.Storage {
         _openRenderBoxUnimplementedFailure()
     }
     
-    public var bezierOrder: UInt32 {
+    public var bezierOrder: Int {
         _openRenderBoxUnimplementedFailure()
     }
     

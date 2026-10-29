@@ -39,17 +39,20 @@ const ORBPath ORBPathNull = {
     &empty_path_callbacks,
 };
 
-void ORBPathRetain(ORBPath path) {
+ORBPath ORBPathRetain(ORBPath path) {
     auto retain = path.callbacks->retain;
     if (retain != nullptr) {
-        retain(&path);
+        path.storage = reinterpret_cast<ORBPathStorage *>(
+            const_cast<void *>(retain(path.storage))
+        );
     }
+    return path;
 }
 
 void ORBPathRelease(ORBPath path) {
     auto release = path.callbacks->release;
     if (release != nullptr) {
-        release(&path);
+        release(path.storage);
     }
 }
 
@@ -120,7 +123,7 @@ ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerH
     return path;
 }
 
-ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat bottomLeftRadius, CGFloat bottomRightRadius, CGFloat topRightRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform *transform) {
+ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat topRightRadius, CGFloat bottomRightRadius, CGFloat bottomLeftRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform *transform) {
     // TODO: Handle ORBRoundedCornerStyleContinuous with custom bezier curves
     CGMutablePathRef cgPath = CGPathCreateMutable();
 
@@ -264,7 +267,7 @@ bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) {
     return ORBPathContainsPoints(path, 1, &point, eoFill, nullptr);
 }
 
-bool ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform *transform) {
+uint64_t ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform *transform) {
     // TODO: Implement point containment testing with winding rule
     return false;
 }
