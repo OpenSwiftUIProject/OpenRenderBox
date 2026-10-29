@@ -13,6 +13,7 @@
 #include <cstring>
 #include <limits>
 #if ORB_TARGET_OS_DARWIN
+#include "PathMapper.hpp"
 #include <malloc/malloc.h>
 #endif
 
@@ -205,6 +206,11 @@ void Storage::push_values(uint8_t encoding, const CGFloat *values, size_t count)
 }
 
 void Storage::invalidate() {
+#if ORB_TARGET_OS_DARWIN
+    if (_flags.requiresMapping()) {
+        invalidate_mapped_storage(_identifier);
+    }
+#endif
     uintptr_t bounds = __atomic_exchange_n(&_bounds, 0, __ATOMIC_ACQ_REL);
     if (bounds & 1) {
         delete[] reinterpret_cast<float *>(bounds & ~uintptr_t(3));
@@ -424,6 +430,11 @@ bool Storage::apply_elements(void *info, ORBPathApplyCallback callback) const OR
     if (callback == NestedCallbacks::single_element_callback) {
         return NestedCallbacks::single_element_fast(*this, info);
     }
+#if ORB_TARGET_OS_DARWIN
+    if (_flags.requiresMapping() && callback == apply_mapping_element) {
+        return apply_mapped_storage(*this, info, 0);
+    }
+#endif
     return apply_elements_(info, callback);
 }
 
@@ -439,6 +450,11 @@ bool Storage::apply_elements_(void *info, ORBPathApplyCallback callback) const O
 }
 
 bool Storage::apply_elements_at_depth(void *info, ORBPathApplyCallback callback, size_t depth) const ORB_NOEXCEPT {
+#if ORB_TARGET_OS_DARWIN
+    if (_flags.requiresMapping() && callback == apply_mapping_element) {
+        return apply_mapped_storage(*this, info, depth);
+    }
+#endif
     if (depth == 0) {
         return apply_elements_(info, callback);
     }
@@ -465,7 +481,52 @@ bool Storage::apply_elements_at_depth(void *info, ORBPathApplyCallback callback,
 }
 
 #if ORB_TARGET_OS_DARWIN
-
+CGRect Storage::bounding_rect() const ORB_NOEXCEPT {
+    uintptr_t cache = __atomic_load_n(&_bounds, __ATOMIC_ACQUIRE);
+    if (cache) {
+        uintptr_t address = (cache & 2 ? reinterpret_cast<uintptr_t>(this) : 0) + cache;
+        auto *values = reinterpret_cast<const float *>(address & ~uintptr_t(3));
+        return CGRectMake(values[0], values[1], values[2], values[3]);
+    }
+    if (_flags.isSingleElement()) {
+        uint8_t encoding = *actual_storage();
+        unsigned type = encoding & 0x1f;
+        if (!(encoding & 0x80) && type >= 5 && type <= 11) {
+            size_t offset = 1;
+            CGFloat values[4];
+            read_values(actual_storage(), offset, encoding, values, 4);
+            return CGRectMake(values[0], values[1], values[2], values[3]);
+        }
+    }
+    ORBPath path{reinterpret_cast<ORBPathStorageRef>(const_cast<Storage *>(this)), &storageCallbacks};
+    CGRect result = ORBPathGetBoundingRect(path);
+    float *values;
+    if (_flags.isExternal()) {
+        values = _external_bounds;
+        cache = 0x2a;
+    } else {
+        uintptr_t start = reinterpret_cast<uintptr_t>(actual_storage());
+        uintptr_t end = start + capacity();
+        uintptr_t aligned = (start + actual_size() + 3) & ~uintptr_t(3);
+        if (end >= aligned && end - aligned >= sizeof(float) * 4) {
+            values = reinterpret_cast<float *>(aligned);
+            cache = (aligned - reinterpret_cast<uintptr_t>(this)) | 2;
+        } else {
+            values = new float[4];
+            cache = reinterpret_cast<uintptr_t>(values) | 1;
+        }
+    }
+    values[0] = static_cast<float>(result.origin.x);
+    values[1] = static_cast<float>(result.origin.y);
+    values[2] = static_cast<float>(result.size.width);
+    values[3] = static_cast<float>(result.size.height);
+    result = CGRectMake(values[0], values[1], values[2], values[3]);
+    uintptr_t expected = 0;
+    if (!__atomic_compare_exchange_n(&_bounds, &expected, cache, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) && (cache & 1)) {
+        delete[] values;
+    }
+    return result;
+}
 
 CGPathRef Storage::cgpath() const ORB_NOEXCEPT {
     if (_flags.isInline()) {

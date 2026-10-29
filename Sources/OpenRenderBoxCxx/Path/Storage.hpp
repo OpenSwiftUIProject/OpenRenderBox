@@ -203,6 +203,7 @@ public:
     bool apply_elements_at_depth(void *info, ORBPathApplyCallback callback, size_t depth) const ORB_NOEXCEPT;
 
     #if ORB_TARGET_OS_DARWIN
+    CGRect bounding_rect() const ORB_NOEXCEPT;
     CGPathRef _Nullable cgpath() const ORB_NOEXCEPT;
     #endif
 

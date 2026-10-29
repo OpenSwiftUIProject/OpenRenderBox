@@ -4,10 +4,10 @@
 
 import Testing
 
-#if canImport(CoreGraphics)
+#if canImport(CoreGraphics) && (OPENRENDERBOX_CF_CGTYPES || OPENRENDERBOX_COMPATIBILITY_TEST)
 import CoreGraphics
 
-@Suite(.enabled(if: compatibilityTestEnabled))
+@Suite
 struct PathTests {
     @Test
     func createRectPath() {
@@ -50,6 +50,12 @@ struct PathTests {
         (CGPoint(x: 50, y: 50), true),
         (CGPoint(x: 150, y: 150), false),
         (CGPoint(x: 0, y: 0), true),
+        (CGPoint(x: 50, y: 0), true),
+        (CGPoint(x: 100, y: 0), false),
+        (CGPoint(x: 100, y: 50), false),
+        (CGPoint(x: 50, y: 100), false),
+        (CGPoint(x: 0, y: 100), false),
+        (CGPoint(x: 0, y: 50), true),
         (CGPoint(x: 100, y: 100), false),
         (CGPoint(x: -1, y: 50), false),
     ])
@@ -82,7 +88,7 @@ struct PathTests {
             countPtr.pointee += 1
             return true // continue iteration
         }
-        #expect(elementCount == 5) // move + 4 lines for rect
+        #expect(elementCount == 5) // Move, three lines, and close.
         path.release()
     }
 

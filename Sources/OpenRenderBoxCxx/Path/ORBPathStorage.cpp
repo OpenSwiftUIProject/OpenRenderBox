@@ -75,7 +75,7 @@ size_t ORBPathStorageGetBezierOrder(ORBPathStorageRef storage) {
 #if ORB_TARGET_OS_DARWIN
 
 CGRect ORBPathStorageGetBoundingRect(ORBPathStorageRef storage) {
-    precondition_failure("TODO");
+    return storage->storage.bounding_rect();
 }
 
 CGPathRef ORBPathStorageGetCGPath(ORBPathStorageRef storage) {

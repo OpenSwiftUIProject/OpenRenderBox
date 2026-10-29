@@ -6,6 +6,20 @@
 import CoreGraphics
 import Foundation
 
+// The curve reference data comes from RenderBox in iOS 18.5.
+let referencePathGeometryEnabled: Bool = {
+    #if OPENRENDERBOX_COMPATIBILITY_TEST
+    #if os(iOS)
+    let version = ProcessInfo.processInfo.operatingSystemVersion
+    return version.majorVersion == 18 && version.minorVersion == 5
+    #else
+    return false
+    #endif
+    #else
+    return true
+    #endif
+}()
+
 func withPathStorage<Result>(
     capacity: Int = 96,
     source: ORBPath.Storage? = nil,
@@ -78,4 +92,26 @@ func pathElements(_ path: ORBPath) -> [PathElementRecord] {
     }
     return elements
 }
+#endif
+
+#if canImport(CoreGraphics) && (OPENRENDERBOX_CF_CGTYPES || OPENRENDERBOX_COMPATIBILITY_TEST)
+func cgPathElements(_ path: CGPath) -> [PathElementRecord] {
+    var elements: [PathElementRecord] = []
+    path.applyWithBlock { element in
+        let element = element.pointee
+        let count: Int
+        switch element.type {
+        case .moveToPoint, .addLineToPoint: count = 1
+        case .addQuadCurveToPoint: count = 2
+        case .addCurveToPoint: count = 3
+        case .closeSubpath: count = 0
+        @unknown default: count = 0
+        }
+        let values = UnsafeBufferPointer(start: element.points, count: count).flatMap { [$0.x, $0.y] }
+        elements.append(PathElementRecord(element: element.type.rawValue, points: values))
+    }
+    return elements
+}
+
+// Ignore commands that do not change the geometry of a closed clip result.
 #endif

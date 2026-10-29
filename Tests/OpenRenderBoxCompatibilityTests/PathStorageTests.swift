@@ -23,6 +23,33 @@ struct PathStorageTests {
         var keys: UnsafePointer<ClipKeyframe>?
     }
     @Test
+    func storageIsEmpty() {
+        let path = ORBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
+        defer { path.release() }
+        withPathStorage { storage in
+            #expect(storage.isEmpty)
+            #expect(storage.append(path: path))
+            #expect(!storage.isEmpty)
+            storage.clear()
+            #expect(storage.isEmpty)
+            #expect(pathElements(storage).isEmpty)
+        }
+    }
+
+    @Test
+    func storageIsSingleElement() {
+        let path = ORBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
+        defer { path.release() }
+        withPathStorage { storage in
+            #expect(!storage.isSingleElement)
+            #expect(storage.append(path: path))
+            #expect(storage.isSingleElement)
+            #expect(storage.append(path: path))
+            #expect(!storage.isSingleElement)
+        }
+    }
+
+    @Test
     func storageBezierOrder() {
         withPathStorage { storage in
             #expect(storage.bezierOrder == 1)
@@ -33,6 +60,39 @@ struct PathStorageTests {
             #expect(storage.bezierOrder == 3)
             storage.clear()
             #expect(storage.bezierOrder == 1)
+        }
+    }
+
+    @Test
+    func storageBoundingRect() {
+        let rect = CGRect(x: 10, y: 20, width: 100, height: 50)
+        let path = ORBPath(rect: rect, transform: nil)
+        defer { path.release() }
+        withPathStorage { storage in
+            #expect(storage.append(path: path))
+            #expect(storage.boundingRect == rect)
+            #expect(pathElements(storage) == pathElements(path))
+        }
+    }
+
+    @Test(arguments: [
+        (CGRect(x: 0, y: 0, width: 100, height: 100), CGRect(x: 0, y: 0, width: 100, height: 100), true),
+        (CGRect(x: 0, y: 0, width: 100, height: 100), CGRect(x: 0, y: 0, width: 200, height: 200), false),
+        (CGRect(x: 10, y: 20, width: 50, height: 50), CGRect(x: 10, y: 20, width: 50, height: 50), true),
+    ])
+    func storageEquality(rect1: CGRect, rect2: CGRect, expectedEqual: Bool) {
+        let path1 = ORBPath(rect: rect1, transform: nil)
+        let path2 = ORBPath(rect: rect2, transform: nil)
+        defer {
+            path1.release()
+            path2.release()
+        }
+        withPathStorage { storage1 in
+            withPathStorage { storage2 in
+                #expect(storage1.append(path: path1))
+                #expect(storage2.append(path: path2))
+                #expect(storage1.isEqual(to: storage2) == expectedEqual)
+            }
         }
     }
 
@@ -121,6 +181,27 @@ struct PathStorageTests {
             }
             #expect(!completed)
             #expect(count == 1)
+        }
+    }
+
+    @Test("Cached paths follow storage mutation", arguments: 1...4)
+    func storageGetCGPath(iteration: Int) throws {
+        let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
+        let path = ORBPath(rect: rect, transform: nil)
+        defer { path.release() }
+        try withPathStorage(capacity: 64) { storage in
+            #expect(storage.append(path: path))
+            for _ in 1...7 {
+                storage.append(element: .moveToPoint, points: [50, 50], userInfo: nil)
+                storage.append(element: .addLineToPoint, points: [100, 50], userInfo: nil)
+                storage.append(element: .closeSubpath, points: [], userInfo: nil)
+            }
+            let cached = try #require(storage.cgPath)
+            #expect(cached.boundingBoxOfPath == rect)
+            storage.append(element: .moveToPoint, points: [200, 200], userInfo: nil)
+            storage.append(element: .addLineToPoint, points: [300, 300], userInfo: nil)
+            #expect(storage.cgPath?.boundingBoxOfPath == CGRect(x: 0, y: 0, width: 300, height: 300))
+            #expect(cached.boundingBoxOfPath == rect)
         }
     }
 }

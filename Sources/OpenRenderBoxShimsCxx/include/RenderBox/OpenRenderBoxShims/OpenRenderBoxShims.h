@@ -18,6 +18,17 @@ typedef RBPathCallbacks ORBPathCallbacks;
 typedef RBPathCallbacksFlags ORBPathCallbacksFlags;
 typedef RBPathCallbacksExtended ORBPathCallbacksExtended;
 typedef RBPathStorageRef ORBPathStorageRef;
+typedef RBPathShapeType ORBPathShapeType;
+typedef RBPathRectShape ORBPathRectShape;
+typedef RBPathFixedRoundedRectShape ORBPathFixedRoundedRectShape;
+typedef RBPathUnevenRoundedRectShape ORBPathUnevenRoundedRectShape;
+typedef RBPathLineShape ORBPathLineShape;
+typedef RBPathStrokeStyle ORBPathStrokeStyle;
+typedef RBPathStrokedShape ORBPathStrokedShape;
+typedef RBPathNestedShape ORBPathNestedShape;
+typedef RBPathTrimmedShape ORBPathTrimmedShape;
+typedef RBPathShape ORBPathShape;
+typedef RBPathApplyShapeCallback ORBPathApplyShapeCallback;
 
 #define ORBBlendModeNormal RBBlendModeNormal
 #define ORBBlendModeMultiply RBBlendModeMultiply
@@ -93,6 +104,15 @@ typedef RBPathStorageRef ORBPathStorageRef;
 #define ORBPathRoundedCornerStyleCircular RBPathRoundedCornerStyleCircular
 #define ORBPathRoundedCornerStyleContinuous RBPathRoundedCornerStyleContinuous
 
+#define ORBPathShapeTypeRect RBPathShapeTypeRect
+#define ORBPathShapeTypeEllipse RBPathShapeTypeEllipse
+#define ORBPathShapeTypeLine RBPathShapeTypeLine
+#define ORBPathShapeTypeFixedRoundedRect RBPathShapeTypeFixedRoundedRect
+#define ORBPathShapeTypeUnevenRoundedRect RBPathShapeTypeUnevenRoundedRect
+#define ORBPathShapeTypeNested RBPathShapeTypeNested
+#define ORBPathShapeTypeStroked RBPathShapeTypeStroked
+#define ORBPathShapeTypeTrimmed RBPathShapeTypeTrimmed
+#define ORBPathShapeTypeOffset RBPathShapeTypeOffset
 
 #define ORBPathEmpty RBPathEmpty
 #define ORBPathNull RBPathNull
@@ -103,8 +123,11 @@ typedef RBPathStorageRef ORBPathStorageRef;
 #define ORBPathMakeEllipse RBPathMakeEllipse
 #define ORBPathMakeRoundedRect RBPathMakeRoundedRect
 #define ORBPathMakeUnevenRoundedRect RBPathMakeUnevenRoundedRect
+#define ORBPathCopyTransformedPath RBPathCopyTransformedPath
 #define ORBPathIsSingleElement RBPathIsSingleElement
 #define ORBPathGetBezierOrder RBPathGetBezierOrder
+#define ORBPathApplyShape RBPathApplyShape
+#define ORBPathGetBoundingRect RBPathGetBoundingRect
 #define ORBPathIsEmpty RBPathIsEmpty
 #define ORBPathApplyElements RBPathApplyElements
 #define ORBPathEqualToPath RBPathEqualToPath

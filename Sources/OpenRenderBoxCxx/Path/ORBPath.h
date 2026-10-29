@@ -5,13 +5,10 @@
 #pragma once
 
 #include <OpenRenderBox/ORBBase.h>
-#include <stddef.h>
 
 #if OPENRENDERBOX_CF_CGTYPES
-
-#if ORB_TARGET_OS_DARWIN
+#include <stddef.h>
 #include <CoreGraphics/CoreGraphics.h>
-#endif
 
 ORB_ASSUME_NONNULL_BEGIN
 
@@ -72,6 +69,93 @@ typedef struct ORBPath {
     const ORBPathCallbacks * callbacks;
 } ORBPath;
 
+/// A primitive shape recognized by ``ORBPathApplyShape``.
+typedef ORB_ENUM(int32_t, ORBPathShapeType) {
+    ORBPathShapeTypeRect = 0,
+    ORBPathShapeTypeEllipse = 1,
+    ORBPathShapeTypeLine = 2,
+    ORBPathShapeTypeFixedRoundedRect = 3,
+    ORBPathShapeTypeUnevenRoundedRect = 4,
+    ORBPathShapeTypeNested = 5,
+    ORBPathShapeTypeStroked = 6,
+    ORBPathShapeTypeTrimmed = 7,
+    ORBPathShapeTypeOffset = 8,
+};
+
+typedef struct ORBPathRectShape {
+    CGAffineTransform transform;
+    CGRect rect;
+} ORBPathRectShape;
+
+typedef struct ORBPathFixedRoundedRectShape {
+    CGAffineTransform transform;
+    CGRect rect;
+    CGSize cornerSize;
+    ORBPathRoundedCornerStyle style;
+} ORBPathFixedRoundedRectShape;
+
+typedef struct ORBPathUnevenRoundedRectShape {
+    CGAffineTransform transform;
+    CGRect rect;
+    CGFloat topLeftRadius;
+    CGFloat topRightRadius;
+    CGFloat bottomRightRadius;
+    CGFloat bottomLeftRadius;
+    ORBPathRoundedCornerStyle style;
+} ORBPathUnevenRoundedRectShape;
+
+typedef struct ORBPathLineShape {
+    CGPoint start;
+    CGPoint end;
+} ORBPathLineShape;
+
+typedef struct ORBPathStrokeStyle {
+    CGFloat lineWidth;
+    int32_t lineCap;
+    int32_t lineJoin;
+    CGFloat miterLimit;
+    CGFloat dashPhase;
+    uint64_t dashCount;
+    const CGFloat * _Nullable dash;
+} ORBPathStrokeStyle;
+
+typedef struct ORBPathStrokedShape {
+    ORBPath path;
+    ORBPathStrokeStyle style;
+} ORBPathStrokedShape;
+
+typedef struct ORBPathNestedShape {
+    ORBPath path;
+    CGAffineTransform transform;
+} ORBPathNestedShape;
+
+typedef struct ORBPathTrimmedShape {
+    ORBPath path;
+    CGFloat from;
+    CGFloat to;
+} ORBPathTrimmedShape;
+
+typedef union ORBPathShape {
+    ORBPathRectShape rect;
+    ORBPathRectShape ellipse;
+    ORBPathLineShape line;
+    ORBPathFixedRoundedRectShape fixedRoundedRect;
+    ORBPathUnevenRoundedRectShape unevenRoundedRect;
+    ORBPathStrokedShape stroked;
+    ORBPathNestedShape nested;
+    ORBPathTrimmedShape trimmed;
+} ORBPathShape;
+
+#if defined(__cplusplus) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
+static_assert(sizeof(ORBPath) == 0x10);
+static_assert(offsetof(ORBPathUnevenRoundedRectShape, rect) == 0x30);
+static_assert(offsetof(ORBPathUnevenRoundedRectShape, topLeftRadius) == 0x50);
+static_assert(offsetof(ORBPathUnevenRoundedRectShape, style) == 0x70);
+static_assert(sizeof(ORBPathShape) == 0x78);
+#endif
+
+typedef void (*ORBPathApplyShapeCallback)(void * info, ORBPathShapeType type, const ORBPathShape *shape);
+
 /// Global empty path (storage = null, callbacks = &ORBPathEmptyCallbacks)
 ORB_EXPORT
 const ORBPath ORBPathEmpty ORB_SWIFT_NAME(ORBPath.empty);
@@ -90,7 +174,7 @@ void ORBPathRelease(ORBPath path) ORB_SWIFT_NAME(ORBPath.release(self:));
 
 #if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
-ORBPath ORBPathMakeWithCGPath(CGPathRef cgPath) ORB_SWIFT_NAME(ORBPath.init(cgPath:));
+ORBPath ORBPathMakeWithCGPath(CGPathRef _Nullable cgPath) ORB_SWIFT_NAME(ORBPath.init(cgPath:));
 
 ORB_EXPORT
 ORBPath ORBPathMakeRect(CGRect rect, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(rect:transform:));
@@ -105,17 +189,13 @@ ORB_EXPORT
 ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat topRightRadius, CGFloat bottomRightRadius, CGFloat bottomLeftRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:topRightRadius:bottomRightRadius:bottomLeftRadius:style:transform:));
 #endif
 
-#if ORB_TARGET_OS_DARWIN
-// MARK: - Path Transformation
-
 ORB_EXPORT
-ORBPath ORBPathCopyTransformedPath(ORBPath path, const CGAffineTransform *transform) ORB_SWIFT_NAME(ORBPath.copy(self:transform:));
+ORBPath ORBPathCopyTransformedPath(ORBPath path, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.copy(self:transform:));
 
 static ORB_INLINE bool ORBPathIsNull(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.isNull(self:)) {
     return path.storage == ORBPathNull.storage && path.callbacks == ORBPathNull.callbacks;
 }
 
-#endif
 
 // MARK: - Path Operation
 
@@ -132,6 +212,9 @@ ORB_EXPORT
 bool ORBPathApplyElements(ORBPath path, void * info, _Nullable ORBPathApplyCallback callback) ORB_SWIFT_NAME(ORBPath.apply(self:info:callback:));
 
 ORB_EXPORT
+bool ORBPathApplyShape(ORBPath path, bool allowLine, void * info, ORBPathApplyShapeCallback callback) ORB_SWIFT_NAME(ORBPath.applyShape(self:allowLine:info:callback:));
+
+ORB_EXPORT
 bool ORBPathEqualToPath(ORBPath lhs, ORBPath rhs) ORB_SWIFT_NAME(ORBPath.isEqual(self:to:));
 
 // MARK: - CGPath Interoperability
@@ -139,6 +222,9 @@ bool ORBPathEqualToPath(ORBPath lhs, ORBPath rhs) ORB_SWIFT_NAME(ORBPath.isEqual
 #if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
 CGPathRef ORBPathCopyCGPath(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.cgPath(self:));
+
+ORB_EXPORT
+CGRect ORBPathGetBoundingRect(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.boundingRect(self:));
 #endif
 
 // MARK: - Point Containment

@@ -44,6 +44,8 @@ module OpenRenderBoxCxx.Animation {
 module OpenRenderBoxCxx.Path {
     requires cplusplus
     header "../Path/NestedCallbacks.hpp"
+    header "../Path/PathMapper.hpp"
+    header "../Path/RoundedRect.hpp"
     header "../Path/Storage.hpp"
     export *
 }
