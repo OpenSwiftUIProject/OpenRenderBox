@@ -124,6 +124,8 @@ typedef RBPathApplyShapeCallback ORBPathApplyShapeCallback;
 #define ORBPathMakeRoundedRect RBPathMakeRoundedRect
 #define ORBPathMakeUnevenRoundedRect RBPathMakeUnevenRoundedRect
 #define ORBPathCopyTransformedPath RBPathCopyTransformedPath
+#define ORBPathCopyStrokedPath RBPathCopyStrokedPath
+#define ORBPathCopyTrimmedPath RBPathCopyTrimmedPath
 #define ORBPathIsSingleElement RBPathIsSingleElement
 #define ORBPathGetBezierOrder RBPathGetBezierOrder
 #define ORBPathApplyShape RBPathApplyShape

@@ -192,6 +192,12 @@ ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat
 ORB_EXPORT
 ORBPath ORBPathCopyTransformedPath(ORBPath path, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.copy(self:transform:));
 
+ORB_EXPORT
+ORBPath ORBPathCopyStrokedPath(ORBPath path, CGFloat lineWidth, int32_t lineCap, int32_t lineJoin, CGFloat miterLimit, CGFloat dashPhase, const CGFloat * _Nullable dash, size_t dashCount) ORB_SWIFT_NAME(ORBPath.stroked(self:lineWidth:lineCap:lineJoin:miterLimit:dashPhase:dash:dashCount:));
+
+ORB_EXPORT
+ORBPath ORBPathCopyTrimmedPath(ORBPath path, CGFloat from, CGFloat to) ORB_SWIFT_NAME(ORBPath.trimmed(self:from:to:));
+
 static ORB_INLINE bool ORBPathIsNull(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.isNull(self:)) {
     return path.storage == ORBPathNull.storage && path.callbacks == ORBPathNull.callbacks;
 }

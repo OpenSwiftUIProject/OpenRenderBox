@@ -353,16 +353,87 @@ ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat
     return {reinterpret_cast<ORBPathStorage *>(new UnevenRoundedRectPathStorage(args, transform)), &callbacks};
 }
 
-ORBPath ORBPathCopyTransformedPath(ORBPath path, const CGAffineTransform *transform) {
-    if (ORBPathIsNull(path)) {
-        return ORBPathNull;
+namespace {
+struct WrappedPathStorage {
+    uint32_t referenceCount = 1;
+    ORBPath path;
+    ORBPathElement element;
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    CGFloat values[3] = {};
+    int32_t cap = 0;
+    int32_t join = 0;
+    std::vector<CGFloat> dash;
+
+    WrappedPathStorage(ORBPath path, ORBPathElement element)
+        : path(ORBPathRetain(path)), element(element) {}
+    ~WrappedPathStorage() { ORBPathRelease(path); }
+};
+
+const ORBPathCallbacks wrapped_path_callbacks = {
+    .flags = {},
+    .retain = retain_single_element_path<WrappedPathStorage>,
+    .release = release_single_element_path<WrappedPathStorage>,
+    .apply = +[](const void *object, void *info, ORBPathApplyCallback callback) -> bool {
+        auto &storage = *static_cast<const WrappedPathStorage *>(object);
+        ORB::Path::Storage::StrokeInfo stroke{storage.cap, storage.join, storage.dash.size(), storage.dash.data()};
+        const void *metadata = storage.element == ORBPathElementTransformed ? static_cast<const void *>(&storage.transform)
+            : storage.element == ORBPathElementStroked ? &stroke : nullptr;
+        return callback(info, storage.element, storage.values, metadata)
+            && ORBPathApplyElements(storage.path, info, callback)
+            && callback(info, ORBPathElementEnd, storage.values, nullptr);
+    },
+    .isEqual = +[](const void *a, const void *b) -> bool {
+        auto &lhs = *static_cast<const WrappedPathStorage *>(a);
+        auto &rhs = *static_cast<const WrappedPathStorage *>(b);
+        return lhs.element == rhs.element && CGAffineTransformEqualToTransform(lhs.transform, rhs.transform)
+            && std::equal(lhs.values, lhs.values + 3, rhs.values) && lhs.cap == rhs.cap && lhs.join == rhs.join
+            && lhs.dash == rhs.dash && ORBPathEqualToPath(lhs.path, rhs.path);
+    },
+    .isEmpty = +[](const void *) -> bool { return false; },
+    .isSingleElement = +[](const void *) -> bool { return true; },
+    .bezierOrder = nullptr,
+    .boundingRect = nullptr,
+    .cgPath = nullptr,
+    .next = +[](const void *object) -> ORBPath { return static_cast<const WrappedPathStorage *>(object)->path; },
+};
+
+ORBPath nested_path(ORBPath path) {
+    if (path.callbacks->flags.isExtended) {
+        auto *extended = reinterpret_cast<const ORBPathCallbacksExtended *>(path.callbacks);
+        if (extended->next) { return extended->next(path.storage, extended); }
+    } else if (path.callbacks->next) {
+        return path.callbacks->next(path.storage);
     }
-    CGPathRef source = ORBPathCopyCGPath(path);
-    CGPathRef transformed = CGPathCreateCopyByTransformingPath(source, transform);
-    ORBPath result = ORBPathMakeWithCGPath(transformed);
-    CGPathRelease(transformed);
-    CGPathRelease(source);
-    return result;
+    auto *callbacks = ORB::Path::NestedCallbacks::get(path.callbacks, 1);
+    return {path.storage, reinterpret_cast<const ORBPathCallbacks *>(&callbacks->extended)};
+}
+} // namespace
+
+ORBPath ORBPathCopyTransformedPath(ORBPath path, const CGAffineTransform *transform) {
+    if (path.callbacks == &empty_path_callbacks) { return path; }
+    auto *storage = new WrappedPathStorage(path, ORBPathElementTransformed);
+    storage->transform = transform ? *transform : CGAffineTransformIdentity;
+    return {reinterpret_cast<ORBPathStorage *>(storage), &wrapped_path_callbacks};
+}
+
+ORBPath ORBPathCopyStrokedPath(ORBPath path, CGFloat width, int32_t cap, int32_t join, CGFloat miter, CGFloat phase, const CGFloat *dash, size_t count) {
+    if (path.callbacks == &empty_path_callbacks) { return ORBPathEmpty; }
+    auto *storage = new WrappedPathStorage(path, ORBPathElementStroked);
+    storage->values[0] = width;
+    storage->values[1] = miter;
+    storage->values[2] = phase;
+    storage->cap = cap;
+    storage->join = join;
+    if (dash && count) { storage->dash.assign(dash, dash + count); }
+    return {reinterpret_cast<ORBPathStorage *>(storage), &wrapped_path_callbacks};
+}
+
+ORBPath ORBPathCopyTrimmedPath(ORBPath path, CGFloat from, CGFloat to) {
+    if (path.callbacks == &empty_path_callbacks) { return ORBPathEmpty; }
+    auto *storage = new WrappedPathStorage(path, ORBPathElementTrimmed);
+    storage->values[0] = from;
+    storage->values[1] = to;
+    return {reinterpret_cast<ORBPathStorage *>(storage), &wrapped_path_callbacks};
 }
 
 #endif /* ORB_TARGET_OS_DARWIN */
@@ -524,6 +595,29 @@ bool ORBPathApplyShape(
             const void *userInfo
         ) -> bool {
             auto info = static_cast<ShapeInfo *>(rawInfo);
+            if (element == ORBPathElementTransformed || element == ORBPathElementTrimmed || element == ORBPathElementStroked) {
+                ORBPathShape shape = {};
+                auto nested = nested_path(info->path);
+                ORBPathShapeType type;
+                if (element == ORBPathElementTransformed) {
+                    shape.nested = {nested, userInfo ? *static_cast<const CGAffineTransform *>(userInfo) : CGAffineTransformIdentity};
+                    type = ORBPathShapeTypeNested;
+                } else if (element == ORBPathElementTrimmed) {
+                    shape.trimmed = {nested, values[0], values[1]};
+                    type = ORBPathShapeTypeTrimmed;
+                } else {
+                    ORB::Path::Storage::StrokeInfo stroke = {};
+                    if (userInfo) { stroke = *static_cast<const ORB::Path::Storage::StrokeInfo *>(userInfo); }
+                    static const CGFloat emptyDash = 0;
+                    size_t count = stroke.values ? stroke.count : 0;
+                    auto *dash = count ? static_cast<const CGFloat *>(stroke.values) : &emptyDash;
+                    shape.stroked = {nested, {values[0], stroke.cap, stroke.join, values[1], values[2], count, dash}};
+                    type = ORBPathShapeTypeStroked;
+                }
+                info->callback(info->info, type, &shape);
+                info->matched = true;
+                return false;
+            }
             switch (element) {
             case ORBPathElementRect:
             case ORBPathElementRoundedRect:

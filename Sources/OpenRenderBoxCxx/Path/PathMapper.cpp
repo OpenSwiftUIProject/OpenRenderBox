@@ -7,6 +7,7 @@
 #if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
 
 #include "PathMapper.hpp"
+#include "PathGeometry.hpp"
 #include "RoundedRect.hpp"
 #include "Storage.hpp"
 #include <Util/assert.hpp>
@@ -20,6 +21,8 @@
 namespace ORB {
 namespace Path {
 namespace {
+
+using namespace Geometry;
 
 void add_relative_arc(CGMutablePathRef path, const CGAffineTransform *transform,
                       CGPoint center, CGFloat radius, CGFloat start, CGFloat delta) {
@@ -84,14 +87,233 @@ void add_arc(CGMutablePathRef path, const CGAffineTransform *transform, CGPoint 
     add_relative_arc(path, transform, center, radius, start, end - start);
 }
 
-struct Mapper {
-    CGMutablePathRef path = CGPathCreateMutable();
+struct Segment {
+    CGPathElementType type;
+    Cubic curve;
+    CGFloat length;
+};
 
-    ~Mapper() { CGPathRelease(path); }
+struct TrimInput {
+    std::vector<Segment> segments;
+    CGPoint current = CGPointZero;
+    CGPoint start = CGPointZero;
+    CGFloat length = 0;
+
+    void append(const CGPathElement &element) {
+        Cubic curve{{current, {}, {}, {}}};
+        CGFloat segmentLength = 0;
+        switch (element.type) {
+            case kCGPathElementMoveToPoint:
+                current = start = element.points[0];
+                curve.p[0] = current;
+                break;
+            case kCGPathElementAddLineToPoint:
+                curve.p[3] = element.points[0];
+                segmentLength = distance(current, curve.p[3]);
+                current = curve.p[3];
+                break;
+            case kCGPathElementAddQuadCurveToPoint:
+                curve.p[1] = {(current.x + 2 * element.points[0].x) / 3, (current.y + 2 * element.points[0].y) / 3};
+                curve.p[2] = {(element.points[1].x + 2 * element.points[0].x) / 3, (element.points[1].y + 2 * element.points[0].y) / 3};
+                curve.p[3] = element.points[1];
+                segmentLength = curve_measure(curve, 0, false);
+                current = curve.p[3];
+                break;
+            case kCGPathElementAddCurveToPoint:
+                std::copy_n(element.points, 3, curve.p + 1);
+                segmentLength = curve_measure(curve, 0, false);
+                current = curve.p[3];
+                break;
+            case kCGPathElementCloseSubpath:
+                curve.p[3] = start;
+                segmentLength = distance(current, start);
+                current = start;
+                break;
+        }
+        length += segmentLength;
+        segments.push_back({element.type, curve, segmentLength});
+    }
+};
+
+CGPathRef copy_trimmed_path(CGPathRef path, float from, float to) {
+    if (from <= 0 && to >= 1) {
+        return CGPathCreateCopy(path);
+    }
+    CGMutablePathRef result = CGPathCreateMutable();
+    if (!(from < to)) {
+        return result;
+    }
+    TrimInput input;
+    CGPathApply(path, &input, +[](void *context, const CGPathElement *element) {
+        static_cast<TrimInput *>(context)->append(*element);
+    });
+    CGFloat fromDistance = input.length * from, toDistance = input.length * to;
+    float consumed = 0;
+    bool needsMove = true, includesStart = false;
+    for (const auto &segment : input.segments) {
+        if (segment.type == kCGPathElementMoveToPoint) {
+            needsMove = true;
+            includesStart = false;
+            continue;
+        }
+        CGFloat begin = consumed, end = begin + segment.length;
+        consumed = static_cast<float>(end);
+        if (segment.length == 0) {
+            if (segment.type == kCGPathElementCloseSubpath && includesStart && begin <= toDistance) {
+                CGPathCloseSubpath(result);
+            }
+            continue;
+        }
+        CGFloat first = fromDistance >= begin ? std::fmax((fromDistance - begin) / segment.length, 0) : 0;
+        CGFloat last = toDistance < end ? std::fmin((toDistance - begin) / segment.length, 1) : 1;
+        if (!(first < last)) {
+            continue;
+        }
+        if (needsMove) {
+            includesStart = first == 0;
+        }
+        if (segment.type == kCGPathElementAddLineToPoint || segment.type == kCGPathElementCloseSubpath) {
+            CGPoint start = mix(segment.curve.p[0], segment.curve.p[3], first);
+            CGPoint finish = mix(segment.curve.p[0], segment.curve.p[3], last);
+            if (needsMove) {
+                CGPathMoveToPoint(result, nullptr, start.x, start.y);
+                needsMove = false;
+            }
+            CGPathAddLineToPoint(result, nullptr, finish.x, finish.y);
+            if (segment.type == kCGPathElementCloseSubpath && last == 1 && includesStart) {
+                CGPathCloseSubpath(result);
+            }
+        } else {
+            Cubic curve = segment.curve;
+            if (first > 0 || last < 1) {
+                if (first > 0.001) {
+                    first = curve_measure(curve, first * segment.length, true);
+                }
+                if (last < 0.999) {
+                    last = curve_measure(curve, last * segment.length, true);
+                }
+                Cubic left, right;
+                if (first > 0.001) {
+                    curve.split(first, left, right);
+                    curve = right;
+                    last = (last - first) / (1 - first);
+                }
+                if (last < 0.999) {
+                    curve.split(last, left, right);
+                    curve = left;
+                }
+            }
+            if (needsMove) {
+                CGPathMoveToPoint(result, nullptr, curve.p[0].x, curve.p[0].y);
+                needsMove = false;
+            }
+            CGPathAddCurveToPoint(result, nullptr, curve.p[1].x, curve.p[1].y, curve.p[2].x, curve.p[2].y, curve.p[3].x, curve.p[3].y);
+        }
+    }
+    return result;
+}
+
+struct Frame {
+    unsigned type;
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGAffineTransform transform = CGAffineTransformIdentity;
+    CGFloat values[3] = {};
+    int32_t cap = 0;
+    int32_t join = 0;
+    std::vector<CGFloat> dash;
+
+    explicit Frame(unsigned type) : type(type) {}
+    ~Frame() {
+        CGPathRelease(path);
+    }
+
+    CGPathRef finish() {
+        switch (type) {
+            case 17:
+                return CGPathCreateCopyByTransformingPath(path, &transform);
+            case 18:
+                return copy_trimmed_path(path, static_cast<float>(values[0]), static_cast<float>(values[1]));
+            case 19: {
+                CGPathRef input = dash.empty() ? CGPathRetain(path)
+                    : CGPathCreateCopyByDashingPath(path, nullptr, static_cast<float>(values[2]), dash.data(), dash.size());
+                CGPathRef result = CGPathCreateCopyByStrokingPath(input, nullptr, static_cast<float>(values[0]), static_cast<CGLineCap>(cap), static_cast<CGLineJoin>(join), static_cast<float>(values[1]));
+                CGPathRelease(input);
+                return result;
+            }
+            default:
+                return CGPathRetain(path);
+        }
+    }
+};
+
+void append_element(CGMutablePathRef path, const CGPathElement &element) {
+    const CGPoint *p = element.points;
+    switch (element.type) {
+        case kCGPathElementMoveToPoint: CGPathMoveToPoint(path, nullptr, p[0].x, p[0].y); break;
+        case kCGPathElementAddLineToPoint: CGPathAddLineToPoint(path, nullptr, p[0].x, p[0].y); break;
+        case kCGPathElementAddQuadCurveToPoint: CGPathAddQuadCurveToPoint(path, nullptr, p[0].x, p[0].y, p[1].x, p[1].y); break;
+        case kCGPathElementAddCurveToPoint: CGPathAddCurveToPoint(path, nullptr, p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y); break;
+        case kCGPathElementCloseSubpath: CGPathCloseSubpath(path); break;
+    }
+}
+
+struct Mapper {
+    std::vector<std::unique_ptr<Frame>> frames;
+
+    Mapper() { frames.push_back(std::make_unique<Frame>(0)); }
+
+    Frame &current() { return *frames.back(); }
+
+    bool flush(size_t index) {
+        Frame &frame = *frames[index];
+        CGPathRef path = frame.finish();
+        if (!path) { return false; }
+        struct AppendInfo {
+            Mapper *mapper;
+            size_t index;
+        } info{this, index - 1};
+        CGPathApply(path, &info, +[](void *context, const CGPathElement *element) {
+            auto &info = *static_cast<AppendInfo *>(context);
+            append_element(info.mapper->frames[info.index]->path, *element);
+        });
+        CGPathRelease(path);
+        return true;
+    }
+
+    void end_path(size_t index) {
+        Frame &frame = *frames[index];
+        switch (frame.type) {
+            case 18:
+                flush(index);
+                break;
+            case 19:
+                flush(index);
+                CGPathRelease(frame.path);
+                frame.path = CGPathCreateMutable();
+                end_path(index - 1);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void pop() {
+        if (frames.size() == 1) {
+            return;
+        }
+        unsigned type = current().type;
+        flush(frames.size() - 1);
+        frames.pop_back();
+        if (type == 19) {
+            end_path(frames.size() - 1);
+        }
+    }
 
     bool apply(ORBPathElement element, const CGFloat *values, const void *info) {
         auto type = static_cast<unsigned>(element);
         auto *transform = static_cast<const CGAffineTransform *>(info);
+        size_t index = frames.size() - 1;
+        CGMutablePathRef path = current().path;
         switch (type) {
             case 0:
                 CGPathMoveToPoint(path, transform, values[0], values[1]);
@@ -138,6 +360,31 @@ struct Mapper {
             case 15:
                 CGPathAddArcToPoint(path, transform, values[0], values[1], values[2], values[3], values[4]);
                 break;
+            case 16:
+                pop();
+                break;
+            case 17: case 18: case 19: {
+                auto frame = std::make_unique<Frame>(type);
+                if (type == 17 && info) {
+                    frame->transform = *transform;
+                } else if (type == 18) {
+                    frame->values[0] = values[0];
+                    frame->values[1] = values[1];
+                } else if (type == 19) {
+                    std::copy_n(values, 3, frame->values);
+                    if (info) {
+                        const auto &stroke = *static_cast<const Storage::StrokeInfo *>(info);
+                        frame->cap = stroke.cap;
+                        frame->join = stroke.join;
+                        if (stroke.count) {
+                            auto *dash = static_cast<const CGFloat *>(stroke.values);
+                            frame->dash.assign(dash, dash + stroke.count);
+                        }
+                    }
+                }
+                frames.push_back(std::move(frame));
+                break;
+            }
             default:
                 precondition_failure("unsupported path mapping element: %u", type);
         }
@@ -188,8 +435,9 @@ bool apply_mapped_storage(const Storage &storage, void *context, size_t depth) {
                 return static_cast<Mapper *>(context)->apply(element, values, info);
             }, depth);
         if (!complete) { return false; }
+        while (mapper.frames.size() > 1) { mapper.pop(); }
         mapped = std::make_shared<Storage>(sizeof(Storage));
-        CGPathApply(mapper.path, mapped.get(), +[](void *context, const CGPathElement *element) {
+        CGPathApply(mapper.current().path, mapped.get(), +[](void *context, const CGPathElement *element) {
             static_cast<Storage *>(context)->append_element(static_cast<ORBPathElement>(element->type),
                 reinterpret_cast<const CGFloat *>(element->points), nullptr);
         });
@@ -205,7 +453,10 @@ CGPathRef copy_cg_path(ORBPath path) {
     if (!complete) {
         precondition_failure("path enumeration stopped during conversion");
     }
-    return CGPathRetain(mapper.path);
+    while (mapper.frames.size() > 1) {
+        mapper.pop();
+    }
+    return CGPathRetain(mapper.current().path);
 }
 
 } /* Path */
