@@ -10,6 +10,9 @@
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
 #include "Storage.hpp"
+#include "NestedCallbacks.hpp"
+#include <algorithm>
+#include <cstring>
 #include <Util/assert.hpp>
 
 // Empty path callbacks (all null) - C++ internal linkage
@@ -199,6 +202,32 @@ bool ORBPathIsEmpty(ORBPath path) {
     }
 }
 
+bool ORBPathIsSingleElement(ORBPath path) {
+    if (path.callbacks == &empty_path_callbacks) {
+        return false;
+    }
+    if (path.callbacks->flags.isExtended) {
+        auto extended = reinterpret_cast<const ORBPathCallbacksExtended *>(path.callbacks);
+        if (extended->isSingleElement != nullptr) {
+            return extended->isSingleElement(path.storage, extended);
+        }
+    } else if (path.callbacks->isSingleElement != nullptr) {
+        return path.callbacks->isSingleElement(path.storage);
+    }
+
+    ORB::Path::NestedCallbacks::SingleInfo count;
+    ORBPathApplyElements(path, &count, ORB::Path::NestedCallbacks::single_element_callback);
+    return count.count == 1;
+}
+
+size_t ORBPathGetBezierOrder(ORBPath path) {
+    if (path.callbacks->flags.isExtended) {
+        auto *extended = reinterpret_cast<const ORBPathCallbacksExtended *>(path.callbacks);
+        return extended->bezierOrder ? extended->bezierOrder(path.storage, extended) : 3;
+    }
+    return path.callbacks->bezierOrder ? path.callbacks->bezierOrder(path.storage) : 3;
+}
+
 bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callback) {
     if (callback == nullptr) {
         return true;
@@ -221,40 +250,80 @@ bool ORBPathApplyElements(ORBPath path, void *info, ORBPathApplyCallback callbac
 
 bool ORBPathEqualToPath(ORBPath lhs, ORBPath rhs) {
     if (lhs.callbacks == rhs.callbacks) {
-        if (lhs.storage == rhs.storage) {
-            return true;
+        if (lhs.storage == rhs.storage) { return true; }
+        if (lhs.callbacks->flags.isExtended) {
+            auto *extended = reinterpret_cast<const ORBPathCallbacksExtended *>(lhs.callbacks);
+            if (extended->isEqual) { return extended->isEqual(lhs.storage, rhs.storage, extended); }
+        } else if (lhs.callbacks->isEqual) {
+            return lhs.callbacks->isEqual(lhs.storage, rhs.storage);
         }
-        auto callbacks = lhs.callbacks;
-        if (callbacks->flags.isExtended) {
-            auto extended = reinterpret_cast<const ORBPathCallbacksExtended*>(callbacks);
-            auto isEqualCallback = extended->isEqual;
-            if (isEqualCallback) {
-                return isEqualCallback(lhs.storage, rhs.storage, extended);
-            }
-        } else {
-            auto isEqualCallback = callbacks->isEqual;
-            if (isEqualCallback) {
-                return isEqualCallback(lhs.storage, rhs.storage);
-            }
-        }
-        // auto storage = ORB::Path::Storage(1088);
-        // TODO
-        return false;
     } else {
         if (lhs.callbacks == &empty_path_callbacks) {
-            if (lhs.storage == ORBPathNull.storage) {
-                return rhs.callbacks == &empty_path_callbacks && rhs.storage == ORBPathNull.storage;
-            } else {
-                return ORBPathIsEmpty(rhs);
-            }
-        } else if (rhs.callbacks == &empty_path_callbacks) {
-            if (rhs.storage == ORBPathNull.storage) {
-                return false;
-            } else {
-                return ORBPathIsEmpty(lhs);
-            }
+            return lhs.storage == ORBPathNull.storage ? false : ORBPathIsEmpty(rhs);
+        }
+        if (rhs.callbacks == &empty_path_callbacks) {
+            return rhs.storage == ORBPathNull.storage ? false : ORBPathIsEmpty(lhs);
         }
     }
+    using Storage = ORB::Path::Storage;
+    // Only the left stream is normalized by Storage, matching the callback ABI.
+    Storage storage(sizeof(Storage));
+    ORBPathApplyElements(lhs, &storage, ORB::Path::append_element_callback);
+    struct Comparison {
+        const Storage &storage;
+        Storage::Iterator iterator;
+    } comparison{storage, {}};
+    bool equal = ORBPathApplyElements(rhs, &comparison, +[](void *context, ORBPathElement type, const CGFloat *points, const void *info) -> bool {
+        auto &comparison = *static_cast<Comparison *>(context);
+        Storage::Element element;
+        if (!comparison.iterator.next(comparison.storage, element) || type != element.type) { return false; }
+        for (size_t index = 0; index < Storage::argument_count(type); ++index) {
+            if (element.points[index] != points[index]) { return false; }
+        }
+        if (!info && !element.hasInfo) { return true; }
+        switch (type) {
+        case ORBPathElementCloseSubpath:
+        case ORBPathElementEnd:
+        case ORBPathElementTrimmed:
+        case ORBPathElementDilateGlyph:
+        case ORBPathElementOffset:
+            return true;
+        case ORBPathElementStroked:
+        case ORBPathElementClipStroke: {
+            Storage::StrokeInfo defaults{0, type == ORBPathElementClipStroke ? 1 : 0, 0, nullptr};
+            auto &a = element.hasInfo ? element.metadata.stroke : defaults;
+            auto &b = info ? *static_cast<const Storage::StrokeInfo *>(info) : defaults;
+            if (a.cap != b.cap || a.join != b.join || a.count != b.count) { return false; }
+            if (type == ORBPathElementStroked) {
+                auto *av = static_cast<const CGFloat *>(a.values), *bv = static_cast<const CGFloat *>(b.values);
+                for (size_t index = 0; index < a.count; ++index) { if (av[index] != bv[index]) { return false; } }
+            } else {
+                auto *av = static_cast<const Storage::StrokeRecord *>(a.values), *bv = static_cast<const Storage::StrokeRecord *>(b.values);
+                for (size_t index = 0; index < a.count; ++index) {
+                    if (av[index].type != bv[index].type) { return false; }
+                    float ap[3], bp[3];
+                    std::memcpy(ap, av[index].values, sizeof(ap));
+                    std::memcpy(bp, bv[index].values, sizeof(bp));
+                    if (!std::equal(ap, ap + 3, bp)) { return false; }
+                }
+            }
+            return true;
+        }
+        case ORBPathElementBoolean: {
+            const uint8_t defaults[2] = {};
+            auto *a = element.hasInfo ? element.metadata.boolean : defaults;
+            auto *b = info ? static_cast<const uint8_t *>(info) : defaults;
+            return a[0] == b[0] && a[1] == b[1];
+        }
+        default: {
+            CGAffineTransform a = CGAffineTransformIdentity;
+            if (element.hasInfo) { std::memcpy(&a, element.metadata.transform, sizeof(a)); }
+            auto &b = info ? *static_cast<const CGAffineTransform *>(info) : CGAffineTransformIdentity;
+            return CGAffineTransformEqualToTransform(a, b);
+        }
+        }
+    });
+    return equal && comparison.iterator.offset >= storage.actual_size();
 }
 
 #if ORB_TARGET_OS_DARWIN

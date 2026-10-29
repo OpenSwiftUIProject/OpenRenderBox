@@ -37,6 +37,7 @@ public typealias ORBDisplayListTransform = RBDisplayListTransform
 public typealias ORBDrawingState = RBDrawingState
 public typealias ORBLayer = RBLayer
 public typealias ORBLayerDelegate = RBLayerDelegate
+public let __ORBPathElementArgumentCount = __RBPathElementArgumentCount
 public typealias ORBPath = RBPath
 public typealias ORBPathApplyCallback = RBPathApplyCallback
 public typealias ORBUUID = RBUUID

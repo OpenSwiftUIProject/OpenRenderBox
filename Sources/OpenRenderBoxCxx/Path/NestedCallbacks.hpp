@@ -9,49 +9,51 @@
 #if OPENRENDERBOX_CF_CGTYPES
 
 #include <OpenRenderBox/ORBPathCallbacks.h>
+#include "Storage.hpp"
 
 ORB_ASSUME_NONNULL_BEGIN
 
 namespace ORB {
 namespace Path {
 
-class Storage;
-
-/// Extended callbacks wrapper for accessing nested paths.
-/// Maintains a global cache to avoid creating duplicate wrappers.
 struct NestedCallbacks {
-    ORBPathCallbacksExtended extended;               // 0x00-0x57
-    const ORBPathCallbacks * _Nonnull originalCallbacks; // 0x58
-    size_t nestedIndex;                              // 0x60
+    struct ApplyInfo {
+        void *context;
+        ORBPathApplyCallback callback;
+        size_t targetDepth;
+        size_t currentDepth;
+        bool reachedEnd;
+    };
 
-    /// Get or create a NestedCallbacks for the given callbacks and nesting index
-    static const NestedCallbacks* get(const ORBPathCallbacks* callbacks, size_t index);
+    struct SingleInfo {
+        size_t targetDepth = 0;
+        size_t currentDepth = 0;
+        size_t count = 0;
+        bool pendingClose = false;
+    };
 
-    /// Callback for apply_elements that tracks nesting depth
-    static bool apply_elements_callback(void* info, ORBPathElement element, const double* points, const void* userInfo);
+    ORBPathCallbacksExtended extended;
+    const ORBPathCallbacks *originalCallbacks;
+    size_t nestedIndex;
 
-    /// Callback for single_element detection
-    static bool single_element_callback(void* info, ORBPathElement element, const double* points, const void* userInfo);
-
-    /// Fast path for applying elements on Storage
-    static bool apply_elements_fast(const Storage& storage, void* info);
-
-    /// Fast path for single element detection on Storage
-    static bool single_element_fast(const Storage& storage, void* info);
-
-    /// Find the first element at a given nesting depth
-    static bool first_element(const Storage& storage, void* iterator, size_t depth);
+    static const NestedCallbacks *get(const ORBPathCallbacks *callbacks, size_t index);
+    static bool is_nesting_element(ORBPathElement element) ORB_NOEXCEPT;
+    static bool apply_elements_callback(void *info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
+    static bool single_element_callback(void *info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
+    static bool apply_elements_fast(const Storage &storage, void *info);
+    static bool single_element_fast(const Storage &storage, void *info);
+    static bool first_element(const Storage &storage, Storage::Iterator &iterator, size_t depth);
 
 private:
-    NestedCallbacks(const ORBPathCallbacks* callbacks, size_t index);
+    NestedCallbacks(const ORBPathCallbacks *callbacks, size_t index);
 };
 
 static_assert(sizeof(NestedCallbacks) == 0x68, "NestedCallbacks size mismatch");
 static_assert(offsetof(NestedCallbacks, originalCallbacks) == 0x58, "originalCallbacks offset mismatch");
 static_assert(offsetof(NestedCallbacks, nestedIndex) == 0x60, "nestedIndex offset mismatch");
 
-} /* namespace Path */
-} /* namespace ORB */
+} /* Path */
+} /* ORB */
 
 ORB_ASSUME_NONNULL_END
 

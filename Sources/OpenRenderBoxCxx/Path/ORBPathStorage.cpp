@@ -7,25 +7,24 @@
 #include <OpenRenderBox/ORBPathStorage.h>
 #include "Storage.hpp"
 #include <Util/assert.hpp>
+#include <new>
 
 using namespace ORB;
 
 namespace ORB {
 namespace Path {
-namespace {
 bool append_element_callback(void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo) {
     reinterpret_cast<Storage *>(info)->append_element(element, points, userInfo);
     return true;
 }
-} /* anonymous namespace */
 } /* Path */
 } /* ORB */
 
 void ORBPathStorageInit(ORBPathStorageRef dst, size_t capacity, ORBPathStorageRef source) {
     if (source != nullptr) {
-        dst->storage = ORB::Path::Storage(capacity, source->storage);
+        new (dst) ORBPathStorage{ORB::Path::Storage(capacity, source->storage)};
     } else {
-        dst->storage = ORB::Path::Storage(capacity);
+        new (dst) ORBPathStorage{ORB::Path::Storage(capacity)};
     }
 }
 
@@ -42,6 +41,14 @@ void ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement eleme
 }
 
 bool ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
+    if (path.storage == storage) {
+        ORB::Path::Storage snapshot(sizeof(ORB::Path::Storage));
+        if (!ORBPathApplyElements(path, &snapshot, ORB::Path::append_element_callback)) {
+            return false;
+        }
+        storage->storage.append_storage(snapshot);
+        return true;
+    }
     return ORBPathApplyElements(path, storage, ORB::Path::append_element_callback);
 }
 
@@ -72,7 +79,6 @@ CGRect ORBPathStorageGetBoundingRect(ORBPathStorageRef storage) {
 }
 
 CGPathRef ORBPathStorageGetCGPath(ORBPathStorageRef storage) {
-    // FIXME
     return storage->storage.cgpath();
 }
 #endif

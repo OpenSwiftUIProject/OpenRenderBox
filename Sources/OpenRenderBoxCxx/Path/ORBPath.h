@@ -26,11 +26,30 @@ typedef ORB_ENUM(int32_t, ORBPathElement) {
     ORBPathElementCloseSubpath = 4,
     ORBPathElementRect = 5,
     ORBPathElementRoundedRect = 6,
+    ORBPathElementEllipse = 7,
     ORBPathElementFixedRoundedRectCircular = 8,
     ORBPathElementFixedRoundedRectContinuous = 9,
+    ORBPathElementUnevenRoundedRectCircular = 10,
+    ORBPathElementUnevenRoundedRectContinuous = 11,
+    ORBPathElementRelativeArc = 12,
+    ORBPathElementArc = 13,
+    ORBPathElementArcCounterclockwise = 14,
+    ORBPathElementArcTo = 15,
+    ORBPathElementEnd = 16,
+    ORBPathElementTransformed = 17,
+    ORBPathElementTrimmed = 18,
+    ORBPathElementStroked = 19,
+    ORBPathElementBoolean = 20,
+    ORBPathElementBooleanSeparator = 21,
+    ORBPathElementDilateGlyph = 22,
+    ORBPathElementOffset = 23,
+    ORBPathElementClipStroke = 24,
 
     ORBPathElementInvalid = 25,
 } ORB_SWIFT_NAME(ORBPath.Element);
+
+ORB_EXPORT
+const uint8_t __ORBPathElementArgumentCount[25];
 
 /// Defines the shape of a rounded rectangle's corners.
 typedef ORB_ENUM(int32_t, ORBPathRoundedCornerStyle) {
@@ -102,6 +121,12 @@ static ORB_INLINE bool ORBPathIsNull(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath
 
 ORB_EXPORT
 bool ORBPathIsEmpty(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.isEmpty(self:));
+
+ORB_EXPORT
+bool ORBPathIsSingleElement(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.isSingleElement(self:));
+
+ORB_EXPORT
+size_t ORBPathGetBezierOrder(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.bezierOrder(self:));
 
 ORB_EXPORT
 bool ORBPathApplyElements(ORBPath path, void * info, _Nullable ORBPathApplyCallback callback) ORB_SWIFT_NAME(ORBPath.apply(self:info:callback:));

@@ -13,6 +13,7 @@ public typealias ORBDisplayListContents = RBDisplayListContents
 public typealias ORBDisplayListInterpolator = RBDisplayListInterpolator
 public typealias ORBLayer = RBLayer
 public typealias ORBLayerDelegate = RBLayerDelegate
+public let __ORBPathElementArgumentCount = __RBPathElementArgumentCount
 public typealias ORBPath = RBPath
 public typealias ORBPathApplyCallback = RBPathApplyCallback
 public typealias ORBUUID = RBUUID
