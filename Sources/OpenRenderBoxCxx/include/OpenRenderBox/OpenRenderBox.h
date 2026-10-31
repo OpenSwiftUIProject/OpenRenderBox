@@ -12,6 +12,7 @@
 #include <OpenRenderBox/ORBSymbolRenderingMode.h>
 #include <OpenRenderBox/ORBSymbolUpdate.h>
 #include <OpenRenderBox/ORBTargetConditionals.h>
+#include <OpenRenderBox/ORBTransition.h>
 #include <OpenRenderBox/ORBUUID.h>
 #include <OpenRenderBox/ORBVersion.h>
 

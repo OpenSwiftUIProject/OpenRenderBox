@@ -13,6 +13,12 @@ module OpenRenderBoxCxx.Color {
     export *
 }
 
+module OpenRenderBoxCxx.Animation {
+    requires cplusplus
+    umbrella "OpenRenderBoxCxx/Animation"
+    export *
+}
+
 module OpenRenderBoxCxx.Path {
     requires cplusplus
     umbrella "OpenRenderBoxCxx/Path"

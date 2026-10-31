@@ -6,15 +6,36 @@
 #if !canImport(ObjectiveC)
 public import Foundation
 
-public class ORBAnimation: NSObject {
-    public private(set) var activeDuration: Double = 0
+public class ORBAnimation: NSObject, NSCopying {
+    private var springTerms: [UInt32] = []
+
+    var isEmpty: Bool { springTerms.isEmpty }
+
+    public var activeDuration: Double {
+        isEmpty ? 0 : Double(Float(bitPattern: springTerms[1]))
+    }
 
     public override init() {
         super.init()
     }
 
     public func removeAll() {
-        _openRenderBoxUnimplementedFailure()
+        springTerms.removeAll()
+    }
+
+    public func copy(with zone: NSZone? = nil) -> Any {
+        let copy = ORBAnimation()
+        copy.springTerms = springTerms
+        return copy
+    }
+
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? ORBAnimation else { return false }
+        return springTerms == other.springTerms
+    }
+
+    public override var hash: Int {
+        springTerms.hashValue
     }
 
     public func evaluate(atTime time: Double) -> Float {
@@ -46,7 +67,9 @@ public class ORBAnimation: NSObject {
     }
 
     public func addSpringDuration(_ duration: Double, mass: Double, stiffness: Double, damping: Double, initialVelocity velocity: Double) {
-        _openRenderBoxUnimplementedFailure()
+        springTerms.append(velocity == 0 ? 9 : 10)
+        springTerms.append(contentsOf: [duration, mass, stiffness, damping].map { Float($0).bitPattern })
+        if velocity != 0 { springTerms.append(Float(velocity).bitPattern) }
     }
 }
 #endif
