@@ -22,10 +22,10 @@ module OpenRenderBoxCxx.C {
     header "OpenRenderBox/ORBSymbolRenderingMode.h"
     header "OpenRenderBox/ORBUUID.h"
     header "OpenRenderBox/ORBVersion.h"
-    export *
 }
 
-module OpenRenderBoxCxx.Color {
+// These modules import system CoreGraphics and must be selected explicitly.
+explicit module OpenRenderBoxCxx.Color {
     requires cplusplus
     header "../Color/ColorSpace.hpp"
     export *
@@ -59,7 +59,7 @@ module OpenRenderBoxCxx.Util {
     export *
 }
 
-module OpenRenderBoxCxx.ObjC {
+explicit module OpenRenderBoxCxx.ObjC {
     requires objc
     header "OpenRenderBox/ORBAnimation.h"
     header "OpenRenderBox/ORBSymbolAnimator.h"

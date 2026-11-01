@@ -44,6 +44,9 @@ public let compatibilityTestEnabled = true
 #else
 @_exported import OpenRenderBox
 @_exported import OpenRenderBoxCxx
+#if canImport(ObjectiveC)
+@_exported import OpenRenderBoxCxx.ObjC
+#endif
 
 public let compatibilityTestEnabled = false
 #endif

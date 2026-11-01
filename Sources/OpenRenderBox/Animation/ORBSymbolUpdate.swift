@@ -4,7 +4,7 @@
 
 #if !canImport(ObjectiveC) || !OPENRENDERBOX_CF_CGTYPES
 public import OpenCoreGraphicsShims
-public import OpenRenderBoxCxx
+public import OpenRenderBoxCxx.C
 #endif
 
 #if !canImport(ObjectiveC)
