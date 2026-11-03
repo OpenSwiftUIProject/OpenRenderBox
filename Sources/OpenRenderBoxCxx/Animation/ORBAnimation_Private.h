@@ -4,10 +4,10 @@
 
 #pragma once
 
-#include <OpenRenderBoxObjC/Animation/ORBAnimation.h>
+#include <OpenRenderBox/ORBAnimation.h>
 
 #if ORB_OBJC_FOUNDATION && defined(__cplusplus)
-#include <OpenRenderBoxCxx/Animation/Animation.hpp>
+#include "Animation.hpp"
 
 @interface ORBAnimation ()
 - (const ORB::Animation &)orb_animation __attribute__((objc_direct));

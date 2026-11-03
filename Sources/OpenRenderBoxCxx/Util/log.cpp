@@ -2,7 +2,7 @@
 //  log.cpp
 //  OpenRenderBox
 
-#include <OpenRenderBoxCxx/Util/log.hpp>
+#include "log.hpp"
 
 #if ORB_TARGET_OS_DARWIN
 

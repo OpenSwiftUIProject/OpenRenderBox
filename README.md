@@ -22,6 +22,37 @@ Currently, this project is in early development.
 
 The current suggested toolchain to build the project is Swift 6.3.3 / Xcode 26.6.
 
+Tuist builds `OpenRenderBoxCxx` as a static library and links it into the dynamic
+`OpenRenderBox.framework`. This build uses the Darwin SDK's CoreGraphics types.
+Use SwiftPM for the other backend configurations.
+
+```sh
+tuist generate run --no-open --cache-profile none
+tuist xcodebuild build -workspace OpenRenderBox.xcworkspace -scheme OpenRenderBox \
+  -configuration Release -destination 'generic/platform=macOS' \
+  -derivedDataPath .build/tuist-framework CODE_SIGNING_ALLOWED=NO
+Scripts/Tests/framework-test .build/tuist-framework/Build/Products/Release/OpenRenderBox.framework
+```
+
+The framework contains the public C headers and the C++, Objective-C, and Swift
+modules. The client test uses a separate copy of the bundle with no source search
+paths and compiles the Swift interface.
+
+## Source Layout
+
+`Sources/OpenRenderBoxCxx` groups headers and implementations by feature.
+`include/OpenRenderBox` contains relative symbolic links to the public C and
+Objective-C headers, so each declaration has one source file. Clients keep paths such as
+`<OpenRenderBox/ORBPath.h>`. Headers that share C and Objective-C declarations
+use `ORB_OBJC_FOUNDATION` to guard the Objective-C declarations.
+
+The target uses `publicHeadersPath: "include"`. The module map lists the exported
+headers and preserves the Swift submodule names and language requirements.
+Swift sources remain in the separate `OpenRenderBox` target.
+
+Framework builds and template exports copy the linked header contents. The
+framework client test checks that exported headers are regular files.
+
 ## Shims
 
 The `OpenRenderBoxShims` product provides Swift aliases and a C header for path APIs.

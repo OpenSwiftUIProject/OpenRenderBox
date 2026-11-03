@@ -14,7 +14,7 @@ gen_interface() {
 gen_header() {
   mkdir -p .rb_template/Headers
 
-  cp -r Sources/OpenRenderBox/include/OpenRenderBox/* .rb_template/Headers/
+  cp -L Sources/OpenRenderBoxCxx/include/OpenRenderBox/*.h .rb_template/Headers/
 
   # Rename files from ORBxx to RBxx and OpenRenderBoxxx to RenderBoxxx
   find .rb_template/Headers -name "ORB*" -type f | while read file; do

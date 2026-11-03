@@ -3,7 +3,7 @@
 //  OpenRenderBox
 
 #include <OpenRenderBox/ORBColor.h>
-#include <OpenRenderBoxCxx/Color/ColorSpace.hpp>
+#include "ColorSpace.hpp"
 #include <math.h>
 
 using namespace ORB;

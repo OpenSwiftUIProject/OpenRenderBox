@@ -9,8 +9,8 @@
 
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
-#include <OpenRenderBoxCxx/Path/Storage.hpp>
-#include <OpenRenderBoxCxx/Util/assert.hpp>
+#include "Storage.hpp"
+#include <Util/assert.hpp>
 
 // Empty path callbacks (all null) - C++ internal linkage
 static const ORBPathCallbacks empty_path_callbacks = {

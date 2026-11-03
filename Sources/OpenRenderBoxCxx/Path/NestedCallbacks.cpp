@@ -6,12 +6,12 @@
 
 #if OPENRENDERBOX_CF_CGTYPES
 
-#include <OpenRenderBoxCxx/Path/NestedCallbacks.hpp>
+#include "NestedCallbacks.hpp"
 #include <mutex>
 #if ORB_TARGET_OS_DARWIN
 #include <os/lock.h>
 #endif
-#include <OpenRenderBoxCxx/Vector/vector.hpp>
+#include <Vector/vector.hpp>
 
 namespace ORB {
 namespace Path {

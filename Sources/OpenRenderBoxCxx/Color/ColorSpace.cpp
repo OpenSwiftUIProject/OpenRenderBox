@@ -2,7 +2,7 @@
 //  ColorSpace.cpp
 //  OpenRenderBox
 
-#include <OpenRenderBoxCxx/Color/ColorSpace.hpp>
+#include "ColorSpace.hpp"
 
 #if ORB_TARGET_OS_DARWIN
 

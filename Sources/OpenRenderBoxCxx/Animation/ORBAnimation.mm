@@ -2,7 +2,7 @@
 //  ORBAnimation.mm
 //  OpenRenderBox
 
-#include <OpenRenderBoxObjC/Animation/ORBAnimation.h>
+#include <OpenRenderBox/ORBAnimation.h>
 
 #if ORB_OBJC_FOUNDATION
 

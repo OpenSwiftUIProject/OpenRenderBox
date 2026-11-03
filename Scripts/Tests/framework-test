@@ -1,0 +1,96 @@
+#!/bin/bash
+set -euo pipefail
+
+framework="${1:?Usage: framework-test /path/to/OpenRenderBox.framework}"
+test_root=$(mktemp -d)
+trap 'rm -rf "$test_root"' EXIT
+ditto "$framework" "$test_root/OpenRenderBox.framework"
+cd "$test_root"
+
+case "$(xcrun otool -L OpenRenderBox.framework/OpenRenderBox)" in
+    *OpenRenderBoxCxx*)
+        echo "OpenRenderBox must not depend on a dynamic OpenRenderBoxCxx library." >&2
+        exit 1
+        ;;
+esac
+
+# Use only the bundle, including its Swift interface, to detect source-path dependencies.
+for module in OpenRenderBox.framework/Modules/OpenRenderBox.swiftmodule/*.swiftmodule; do
+    test ! -f "$module" || rm "$module"
+done
+for header in OpenRenderBox.framework/Headers/*.h; do
+    if [[ -L "$header" || ! -f "$header" ]]; then
+        echo "Framework headers must be regular files: $header" >&2
+        exit 1
+    fi
+    printf '#include <OpenRenderBox/%s>\n' "${header##*/}"
+done > public-headers.h
+
+cat > client.c <<'EOF'
+#include "public-headers.h"
+#include <assert.h>
+
+int main(void) {
+    ORBColor color = ORBColorMake(1, 0, 0, 1);
+    assert(color.red == 1 && color.alpha == 1);
+    return 0;
+}
+EOF
+
+cat > client.cpp <<'EOF'
+#include "public-headers.h"
+#include <OpenRenderBox/Animation/Animation.hpp>
+#include <cassert>
+
+int main() {
+    ORB::Animation animation;
+    assert(animation.empty());
+    animation.add_spring(1, 1, 1, 1, 0);
+    assert(!animation.empty());
+}
+EOF
+
+cat > client.m <<'EOF'
+#include <OpenRenderBox/ORBSymbolAnimator.h>
+#include <OpenRenderBox/ORBSymbolAnimatorObserver.h>
+#include <OpenRenderBox/ORBSymbolAnimation.h>
+#include <OpenRenderBox/ORBTransition.h>
+#include <assert.h>
+
+int main(void) {
+    ORBAnimation *animation = [ORBAnimation new];
+    [animation removeAll];
+    assert(animation.activeDuration == 0);
+    ORBSymbolAnimationOptionKey key = ORBSymbolAnimationSpeed;
+    assert([key isEqualToString:@"speed"]);
+    ORBSymbolAnimator *animator = [ORBSymbolAnimator new];
+    assert(animator != nil);
+    ORBTransition *transition = [ORBTransition new];
+    assert(transition != nil);
+    return 0;
+}
+EOF
+
+cat > client.swift <<'EOF'
+import OpenRenderBox
+
+precondition(ORBColor.black.alpha == 1)
+let animation = ORBAnimation()
+animation.removeAll()
+precondition(animation.activeDuration == 0)
+precondition(ORBSymbolAnimation.OptionKey.speed.rawValue == "speed")
+EOF
+
+target="$(uname -m)-apple-macos15.0"
+common=(-target "$target" -F "$test_root" -framework OpenRenderBox -Wl,-rpath,"$test_root")
+xcrun clang "${common[@]}" client.c -o client-c
+./client-c
+xcrun clang++ "${common[@]}" -std=c++20 client.cpp -o client-cxx
+./client-cxx
+xcrun clang "${common[@]}" -fmodules -fmodules-cache-path=clang-modules -fobjc-arc -framework Foundation client.m -o client-objc
+./client-objc
+xcrun swiftc -target "$target" -F "$test_root" -framework OpenRenderBox \
+    -module-cache-path swift-modules -Xlinker -rpath -Xlinker "$test_root" client.swift -o client-swift
+./client-swift
+
+echo "Framework clients passed: C, C++, Objective-C, and Swift."

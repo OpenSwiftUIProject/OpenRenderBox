@@ -2,7 +2,7 @@
 //  ORBSymbolAnimation.m
 //  OpenRenderBox
 
-#include <OpenRenderBoxObjC/Animation/ORBSymbolAnimation.h>
+#include <OpenRenderBox/ORBSymbolAnimation.h>
 
 #if ORB_OBJC_FOUNDATION
 

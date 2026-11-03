@@ -2,7 +2,7 @@
 //  Animation.cpp
 //  OpenRenderBox
 
-#include <OpenRenderBoxCxx/Animation/Animation.hpp>
+#include "Animation.hpp"
 #include <cstring>
 
 namespace ORB {

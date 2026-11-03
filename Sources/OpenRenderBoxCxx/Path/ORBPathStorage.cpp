@@ -5,8 +5,8 @@
 #if OPENRENDERBOX_CF_CGTYPES
 
 #include <OpenRenderBox/ORBPathStorage.h>
-#include <OpenRenderBoxCxx/Path/Storage.hpp>
-#include <OpenRenderBoxCxx/Util/assert.hpp>
+#include "Storage.hpp"
+#include <Util/assert.hpp>
 
 using namespace ORB;
 

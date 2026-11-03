@@ -2,7 +2,7 @@
 //  ORBDisplayListPredicate.m
 //  OpenRenderBox
 
-#include <OpenRenderBoxObjC/Render/ORBDisplayListPredicate.h>
+#include <OpenRenderBox/ORBDisplayListPredicate.h>
 
 #if ORB_OBJC_FOUNDATION
 

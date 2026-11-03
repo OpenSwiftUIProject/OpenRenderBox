@@ -2,7 +2,7 @@
 //  Transition.cpp
 //  OpenRenderBox
 
-#include <OpenRenderBoxCxx/Animation/Transition.hpp>
+#include "Transition.hpp"
 #include <cmath>
 #include <cstring>
 

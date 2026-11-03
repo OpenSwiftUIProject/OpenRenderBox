@@ -3,36 +3,80 @@ module OpenRenderBoxCxx {
 }
 
 module OpenRenderBoxCxx.C {
-    umbrella header "OpenRenderBox/OpenRenderBox.h"
+    header "OpenRenderBox/OpenRenderBox.h"
+    header "OpenRenderBox/ORBSymbolAnimation.h"
+    header "OpenRenderBox/ORBSymbolUpdate.h"
+    header "OpenRenderBox/ORBTransition.h"
+    header "OpenRenderBox/CFCGTypes.h"
+    header "OpenRenderBox/ORBBase.h"
+    header "OpenRenderBox/ORBSwiftSupport.h"
+    header "OpenRenderBox/ORBTargetConditionals.h"
+    header "OpenRenderBox/ORBColor.h"
+    header "OpenRenderBox/ORBColorMode.h"
+    header "OpenRenderBox/ORBColorSpace.h"
+    header "OpenRenderBox/ORBPath.h"
+    header "OpenRenderBox/ORBPathCallbacks.h"
+    header "OpenRenderBox/ORBPathStorage.h"
+    header "OpenRenderBox/ORBBlendMode.h"
+    header "OpenRenderBox/ORBDrawingState.h"
+    header "OpenRenderBox/ORBSymbolRenderingMode.h"
+    header "OpenRenderBox/ORBUUID.h"
+    header "OpenRenderBox/ORBVersion.h"
     export *
 }
 
 module OpenRenderBoxCxx.Color {
     requires cplusplus
-    umbrella "OpenRenderBoxCxx/Color"
+    header "../Color/ColorSpace.hpp"
     export *
 }
 
 module OpenRenderBoxCxx.Animation {
     requires cplusplus
-    umbrella "OpenRenderBoxCxx/Animation"
+    header "../Animation/Animation.hpp"
+    header "../Animation/Transition.hpp"
+    header "../Vector/vector.hpp"
+    header "../Vector/realloc_vector.hpp"
+    textual header "../Vector/vector.tpp"
     export *
 }
 
 module OpenRenderBoxCxx.Path {
     requires cplusplus
-    umbrella "OpenRenderBoxCxx/Path"
+    header "../Path/NestedCallbacks.hpp"
+    header "../Path/Storage.hpp"
     export *
 }
 
 module OpenRenderBoxCxx.Util {
     requires cplusplus
-    umbrella "OpenRenderBoxCxx/Util"
+    header "../Util/assert.hpp"
+    header "../Util/log.hpp"
+    header "../Util/refcounted_ptr.hpp"
     export *
 }
 
 module OpenRenderBoxCxx.ObjC {
     requires objc
-    umbrella "OpenRenderBoxObjC"
+    header "OpenRenderBox/ORBAnimation.h"
+    header "OpenRenderBox/ORBSymbolAnimator.h"
+    header "OpenRenderBox/ORBSymbolAnimatorObserver.h"
+    header "OpenRenderBox/ORBDevice.h"
+    header "OpenRenderBox/ORBDecodable.h"
+    header "OpenRenderBox/ORBDecoderDelegate.h"
+    header "OpenRenderBox/ORBEncodable.h"
+    header "OpenRenderBox/ORBEncoderDelegate.h"
+    header "OpenRenderBox/ORBEncoderSet.h"
+    header "OpenRenderBox/ORBDisplayList.h"
+    header "OpenRenderBox/ORBDisplayListContents.h"
+    header "OpenRenderBox/ORBDisplayListInterpolator.h"
+    header "OpenRenderBox/ORBDisplayListPredicate.h"
+    header "OpenRenderBox/ORBDisplayListTransform.h"
+    header "OpenRenderBox/ORBDrawableStatistics.h"
+    header "OpenRenderBox/ORBImageRenderer.h"
+    header "OpenRenderBox/ORBLayer.h"
+    header "OpenRenderBox/ORBLayerDelegate.h"
+    header "../Render/Private/_ORBDisplayListContents.h"
+    header "../Render/Private/_ORBDrawableDelegate.h"
     export *
 }
