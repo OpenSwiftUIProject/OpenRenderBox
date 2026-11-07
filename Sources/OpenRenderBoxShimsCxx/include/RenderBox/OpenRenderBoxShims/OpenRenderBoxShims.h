@@ -159,6 +159,9 @@ typedef RBPathApplyShapeCallback ORBPathApplyShapeCallback;
 #define ORBPathGetLength RBPathGetLength
 #define ORBPathCanInterpolate RBPathCanInterpolate
 #define ORBPathCopyInterpolatedPath RBPathCopyInterpolatedPath
+#define ORBPathCopyData RBPathCopyData
+#define ORBPathMakeWithData RBPathMakeWithData
+#define ORBPathCopyDebugDescription RBPathCopyDebugDescription
 #define ORBPathLineElementMoveToPoint RBPathLineElementMoveToPoint
 #define ORBPathLineElementAddLineToPoint RBPathLineElementAddLineToPoint
 #define ORBPathLineElementCloseSubpath RBPathLineElementCloseSubpath

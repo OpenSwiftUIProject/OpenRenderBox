@@ -23,7 +23,8 @@ The exact curve-trimming, line-flattening, and clip-stroke undershoot fixtures
 use RenderBox from iOS 18.5 (22F77).
 They run against native OpenRenderBox and Apple RenderBox on iOS 18.5.
 Other Apple releases skip those fixtures because their curve subdivision and
-clip-stroke behavior can differ. The suites also cover callback cancellation, interpolated storage lifetime, and wrapper geometry.
+clip-stroke behavior can differ. The suites also cover serialized data,
+callback cancellation, interpolated storage lifetime, and wrapper geometry.
 To test the reference runtime, open `Package.swift` in Xcode with the
 Apple compatibility environment above, select the
 `OpenRenderBoxCompatibilityTests` package scheme, and run the Path suites on

@@ -256,6 +256,15 @@ ORB_EXPORT
 ORBPath ORBPathCopyInterpolatedPath(ORBPath path, ORBPath other, float fraction) ORB_SWIFT_NAME(ORBPath.interpolated(self:to:fraction:));
 
 ORB_EXPORT
+CFDataRef ORBPathCopyData(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.data(self:));
+
+ORB_EXPORT
+ORBPath ORBPathMakeWithData(CFDataRef data) ORB_SWIFT_NAME(ORBPath.init(data:));
+
+ORB_EXPORT
+CFStringRef ORBPathCopyDebugDescription(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.debugDescription(self:));
+
+ORB_EXPORT
 CGPathRef ORBPathCopyCGPath(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.cgPath(self:));
 
 ORB_EXPORT

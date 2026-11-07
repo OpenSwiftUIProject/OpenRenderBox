@@ -199,5 +199,35 @@ struct PathOperationsTests {
         #expect(result.child.boundingRect == CGRect(x: 1.5, y: 2.5, width: 15, height: 25))
     }
 
+    @Test
+    func serializedRectUsesCompatibleWireFormat() {
+        let path = ORBPath(rect: CGRect(x: 1, y: 2, width: 10, height: 20), transform: nil)
+        defer { path.release() }
+        let data = path.data as Data
+        #expect(data == Data([0x1a, 1, 5, 0x12, 0x10, 0, 0, 0x80, 0x3f, 0, 0, 0, 0x40, 0, 0, 0x20, 0x41, 0, 0, 0xa0, 0x41]))
+        let copy = ORBPath(data: data as CFData)
+        defer { copy.release() }
+        #expect(copy.isEqual(to: path))
+        #expect(path.debugDescription as String == "RBPath:\n  rect 1 2 10 20\n")
+        let fractional = ORBPath(rect: CGRect(x: 0.1, y: 0.2, width: 10.3, height: 20.4), transform: nil)
+        let decoded = ORBPath(data: fractional.data)
+        fractional.release()
+        defer { decoded.release() }
+        #expect(pathElements(decoded) == [PathElementRecord(element: 5, points: [CGFloat(Float(0.1)), CGFloat(Float(0.2)), CGFloat(Float(10.3)), CGFloat(Float(20.4))])])
+    }
+
+    @Test(arguments: [
+        ([UInt8](), false), ([0x80], false), ([0x0f], false),
+        ([0x1a, 1, 0], true), ([0x1a, 1, 0x10], true), ([0x1a, 1, 0x91], true),
+    ])
+    func dataDecoderDistinguishesEmptyMessagesFromInvalidPaths(bytes: [UInt8], isNull: Bool) {
+        let path = ORBPath(data: Data(bytes) as CFData)
+        defer { path.release() }
+        #expect(path.isEmpty)
+        #expect((unsafeBitCast(path.storage, to: UInt.self) == 1) == isNull)
+        if !isNull {
+            #expect(unsafeBitCast(path.storage, to: UInt.self) > 1)
+        }
+    }
 }
 #endif
