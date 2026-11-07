@@ -14,10 +14,24 @@ typedef RBPath ORBPath;
 typedef RBPathElement ORBPathElement;
 typedef RBPathRoundedCornerStyle ORBPathRoundedCornerStyle;
 typedef RBPathApplyCallback ORBPathApplyCallback;
+typedef RBPathApplierCallback ORBPathApplierCallback;
+typedef RBPathLineApplyCallback ORBPathLineApplyCallback;
+typedef RBPathLineElement ORBPathLineElement;
 typedef RBPathCallbacks ORBPathCallbacks;
 typedef RBPathCallbacksFlags ORBPathCallbacksFlags;
 typedef RBPathCallbacksExtended ORBPathCallbacksExtended;
 typedef RBPathStorageRef ORBPathStorageRef;
+typedef RBPathShapeType ORBPathShapeType;
+typedef RBPathRectShape ORBPathRectShape;
+typedef RBPathFixedRoundedRectShape ORBPathFixedRoundedRectShape;
+typedef RBPathUnevenRoundedRectShape ORBPathUnevenRoundedRectShape;
+typedef RBPathLineShape ORBPathLineShape;
+typedef RBPathStrokeStyle ORBPathStrokeStyle;
+typedef RBPathStrokedShape ORBPathStrokedShape;
+typedef RBPathNestedShape ORBPathNestedShape;
+typedef RBPathTrimmedShape ORBPathTrimmedShape;
+typedef RBPathShape ORBPathShape;
+typedef RBPathApplyShapeCallback ORBPathApplyShapeCallback;
 
 #define ORBBlendModeNormal RBBlendModeNormal
 #define ORBBlendModeMultiply RBBlendModeMultiply
@@ -70,12 +84,38 @@ typedef RBPathStorageRef ORBPathStorageRef;
 #define ORBPathElementCloseSubpath RBPathElementCloseSubpath
 #define ORBPathElementRect RBPathElementRect
 #define ORBPathElementRoundedRect RBPathElementRoundedRect
+#define ORBPathElementEllipse RBPathElementEllipse
 #define ORBPathElementFixedRoundedRectCircular RBPathElementFixedRoundedRectCircular
 #define ORBPathElementFixedRoundedRectContinuous RBPathElementFixedRoundedRectContinuous
+#define ORBPathElementUnevenRoundedRectCircular RBPathElementUnevenRoundedRectCircular
+#define ORBPathElementUnevenRoundedRectContinuous RBPathElementUnevenRoundedRectContinuous
+#define ORBPathElementRelativeArc RBPathElementRelativeArc
+#define ORBPathElementArc RBPathElementArc
+#define ORBPathElementArcCounterclockwise RBPathElementArcCounterclockwise
+#define ORBPathElementArcTo RBPathElementArcTo
+#define ORBPathElementEnd RBPathElementEnd
+#define ORBPathElementTransformed RBPathElementTransformed
+#define ORBPathElementTrimmed RBPathElementTrimmed
+#define ORBPathElementStroked RBPathElementStroked
+#define ORBPathElementBoolean RBPathElementBoolean
+#define ORBPathElementBooleanSeparator RBPathElementBooleanSeparator
+#define ORBPathElementDilateGlyph RBPathElementDilateGlyph
+#define ORBPathElementOffset RBPathElementOffset
+#define ORBPathElementClipStroke RBPathElementClipStroke
 #define ORBPathElementInvalid RBPathElementInvalid
 
 #define ORBPathRoundedCornerStyleCircular RBPathRoundedCornerStyleCircular
 #define ORBPathRoundedCornerStyleContinuous RBPathRoundedCornerStyleContinuous
+
+#define ORBPathShapeTypeRect RBPathShapeTypeRect
+#define ORBPathShapeTypeEllipse RBPathShapeTypeEllipse
+#define ORBPathShapeTypeLine RBPathShapeTypeLine
+#define ORBPathShapeTypeFixedRoundedRect RBPathShapeTypeFixedRoundedRect
+#define ORBPathShapeTypeUnevenRoundedRect RBPathShapeTypeUnevenRoundedRect
+#define ORBPathShapeTypeNested RBPathShapeTypeNested
+#define ORBPathShapeTypeStroked RBPathShapeTypeStroked
+#define ORBPathShapeTypeTrimmed RBPathShapeTypeTrimmed
+#define ORBPathShapeTypeOffset RBPathShapeTypeOffset
 
 #define ORBPathEmpty RBPathEmpty
 #define ORBPathNull RBPathNull
@@ -86,6 +126,13 @@ typedef RBPathStorageRef ORBPathStorageRef;
 #define ORBPathMakeEllipse RBPathMakeEllipse
 #define ORBPathMakeRoundedRect RBPathMakeRoundedRect
 #define ORBPathMakeUnevenRoundedRect RBPathMakeUnevenRoundedRect
+#define ORBPathCopyTransformedPath RBPathCopyTransformedPath
+#define ORBPathCopyStrokedPath RBPathCopyStrokedPath
+#define ORBPathCopyTrimmedPath RBPathCopyTrimmedPath
+#define ORBPathIsSingleElement RBPathIsSingleElement
+#define ORBPathGetBezierOrder RBPathGetBezierOrder
+#define ORBPathApplyShape RBPathApplyShape
+#define ORBPathGetBoundingRect RBPathGetBoundingRect
 #define ORBPathIsEmpty RBPathIsEmpty
 #define ORBPathApplyElements RBPathApplyElements
 #define ORBPathEqualToPath RBPathEqualToPath
@@ -106,3 +153,17 @@ typedef RBPathStorageRef ORBPathStorageRef;
 #define ORBPathStorageGetBezierOrder RBPathStorageGetBezierOrder
 #define ORBPathStorageGetBoundingRect RBPathStorageGetBoundingRect
 #define ORBPathStorageGetCGPath RBPathStorageGetCGPath
+
+#define ORBPathApply RBPathApply
+#define ORBPathApplyLines RBPathApplyLines
+#define ORBPathGetLength RBPathGetLength
+#define ORBPathCanInterpolate RBPathCanInterpolate
+#define ORBPathCopyInterpolatedPath RBPathCopyInterpolatedPath
+#define ORBPathCopyData RBPathCopyData
+#define ORBPathMakeWithData RBPathMakeWithData
+#define ORBPathCopyDebugDescription RBPathCopyDebugDescription
+#define ORBPathLineElementMoveToPoint RBPathLineElementMoveToPoint
+#define ORBPathLineElementAddLineToPoint RBPathLineElementAddLineToPoint
+#define ORBPathLineElementCloseSubpath RBPathLineElementCloseSubpath
+
+#define __ORBPathElementArgumentCount __RBPathElementArgumentCount

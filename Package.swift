@@ -155,12 +155,11 @@ let compatibilityTestCondition = envBoolValue("COMPATIBILITY_TEST", default: fal
 let useLocalDeps = envBoolValue("USE_LOCAL_DEPS")
 let renderBoxCondtion = envBoolValue("RENDERBOX", default: buildForDarwinPlatform && !isSPIBuild)
 
-/// CGFloat and CGRect def in CFCGTypes.h will conflict with Foundation's CGSize/CGRect def on Linux.
-/// macOS: true -> no issue
-/// macOS: false -> use Swift implementation with OpenCoreGraphics Swift CGPath
-/// Linux: true + No CGPathRef support in ORBPath -> confilict with Foundation def
-/// Linux: false -> use Swift implementation with OpenCoreGraphics Swift CGPath
+// C geometry types conflict with Foundation's Swift geometry types on Linux.
+// Disable this flag to use Swift Path instead of the C++ implementation.
 let cfCGTypes = envBoolValue("CF_CGTYPES", default: buildForDarwinPlatform)
+// Use OPENSWIFTUI_COREGRAPHICS to select the same backend in ORB and OCG shims.
+let coreGraphicsCondition = envBoolValue("COREGRAPHICS", default: buildForDarwinPlatform)
 
 // MARK: - Shared Settings
 
@@ -188,6 +187,10 @@ if cfCGTypes {
     sharedCSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
     sharedCxxSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
     sharedSwiftSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
+}
+
+if coreGraphicsCondition {
+    sharedSwiftSettings.append(.define("OPENRENDERBOX_COREGRAPHICS"))
 }
 
 // MARK: - Extension

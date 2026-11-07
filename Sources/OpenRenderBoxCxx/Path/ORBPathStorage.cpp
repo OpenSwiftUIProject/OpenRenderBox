@@ -7,25 +7,24 @@
 #include <OpenRenderBox/ORBPathStorage.h>
 #include "Storage.hpp"
 #include <Util/assert.hpp>
+#include <new>
 
 using namespace ORB;
 
 namespace ORB {
 namespace Path {
-namespace {
 bool append_element_callback(void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo) {
     reinterpret_cast<Storage *>(info)->append_element(element, points, userInfo);
     return true;
 }
-} /* anonymous namespace */
 } /* Path */
 } /* ORB */
 
-void ORBPathStorageInit(ORBPathStorageRef dst, uint32_t capacity, ORBPathStorageRef source) {
+void ORBPathStorageInit(ORBPathStorageRef dst, size_t capacity, ORBPathStorageRef source) {
     if (source != nullptr) {
-        dst->storage = ORB::Path::Storage(capacity, source->storage);
+        new (dst) ORBPathStorage{ORB::Path::Storage(capacity, source->storage)};
     } else {
-        dst->storage = ORB::Path::Storage(capacity);
+        new (dst) ORBPathStorage{ORB::Path::Storage(capacity)};
     }
 }
 
@@ -37,11 +36,19 @@ void ORBPathStorageClear(ORBPathStorageRef storage) {
     storage->storage.clear();
 }
 
-bool ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, const CGFloat * points, const void * userInfo) {
-    return storage->storage.append_element(element, points, userInfo);
+void ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, const CGFloat * points, const void * userInfo) {
+    storage->storage.append_element(element, points, userInfo);
 }
 
 bool ORBPathStorageAppendPath(ORBPathStorageRef storage, ORBPath path) {
+    if (path.storage == storage) {
+        ORB::Path::Storage snapshot(sizeof(ORB::Path::Storage));
+        if (!ORBPathApplyElements(path, &snapshot, ORB::Path::append_element_callback)) {
+            return false;
+        }
+        storage->storage.append_storage(snapshot);
+        return true;
+    }
     return ORBPathApplyElements(path, storage, ORB::Path::append_element_callback);
 }
 
@@ -61,18 +68,17 @@ bool ORBPathStorageIsSingleElement(ORBPathStorageRef storage) {
     return storage->storage.flags().isSingleElement();
 }
 
-uint32_t ORBPathStorageGetBezierOrder(ORBPathStorageRef storage) {
+size_t ORBPathStorageGetBezierOrder(ORBPathStorageRef storage) {
     return storage->storage.flags().bezierOrder();
 }
 
 #if ORB_TARGET_OS_DARWIN
 
 CGRect ORBPathStorageGetBoundingRect(ORBPathStorageRef storage) {
-    precondition_failure("TODO");
+    return storage->storage.bounding_rect();
 }
 
 CGPathRef ORBPathStorageGetCGPath(ORBPathStorageRef storage) {
-    // FIXME
     return storage->storage.cgpath();
 }
 #endif

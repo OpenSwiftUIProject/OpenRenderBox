@@ -13,8 +13,23 @@ public typealias ORBDisplayListContents = RBDisplayListContents
 public typealias ORBDisplayListInterpolator = RBDisplayListInterpolator
 public typealias ORBLayer = RBLayer
 public typealias ORBLayerDelegate = RBLayerDelegate
+public let __ORBPathElementArgumentCount = __RBPathElementArgumentCount
 public typealias ORBPath = RBPath
 public typealias ORBPathApplyCallback = RBPathApplyCallback
+public typealias ORBPathApplierCallback = RBPathApplierCallback
+public typealias ORBPathLineApplyCallback = RBPathLineApplyCallback
+public typealias ORBPathLineElement = RBPathLineElement
+public typealias ORBPathApplyShapeCallback = RBPathApplyShapeCallback
+public typealias ORBPathFixedRoundedRectShape = RBPathFixedRoundedRectShape
+public typealias ORBPathLineShape = RBPathLineShape
+public typealias ORBPathNestedShape = RBPathNestedShape
+public typealias ORBPathRectShape = RBPathRectShape
+public typealias ORBPathShape = RBPathShape
+public typealias ORBPathShapeType = RBPathShapeType
+public typealias ORBPathStrokedShape = RBPathStrokedShape
+public typealias ORBPathStrokeStyle = RBPathStrokeStyle
+public typealias ORBPathTrimmedShape = RBPathTrimmedShape
+public typealias ORBPathUnevenRoundedRectShape = RBPathUnevenRoundedRectShape
 public typealias ORBUUID = RBUUID
 public typealias ORBTransition = RBTransition
 public typealias ORBTransitionEffect = RBTransitionEffect
@@ -32,6 +47,9 @@ public let compatibilityTestEnabled = true
 #else
 @_exported import OpenRenderBox
 @_exported import OpenRenderBoxCxx
+#if canImport(ObjectiveC)
+@_exported import OpenRenderBoxCxx.ObjC
+#endif
 
 public let compatibilityTestEnabled = false
 #endif

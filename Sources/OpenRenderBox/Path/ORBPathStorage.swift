@@ -6,54 +6,65 @@
 public import OpenCoreGraphicsShims
 
 extension ORBPath.Storage {
-    public func initialize(capacity: UInt32, source: ORBPath.Storage?) {
-        _openRenderBoxUnimplementedFailure()
+    private var _slot: UnsafeMutablePointer<UnsafeMutableRawPointer?> {
+        UnsafeMutableRawPointer(rawValue).assumingMemoryBound(to: UnsafeMutableRawPointer?.self)
     }
-    
+
+    private var _records: _ORBPathRecords {
+        Unmanaged<_ORBPathRecords>.fromOpaque(_slot.pointee!).takeUnretainedValue()
+    }
+
+    public func initialize(capacity: Int, source: ORBPath.Storage?) {
+        precondition(capacity >= MemoryLayout<UnsafeMutableRawPointer?>.stride)
+        let records = source?._records.records ?? []
+        _slot.initialize(to: Unmanaged.passRetained(_ORBPathRecords(records)).toOpaque())
+    }
+
     public func destroy() {
-        _openRenderBoxUnimplementedFailure()
+        if let object = _slot.pointee {
+            _slot.pointee = nil
+            Unmanaged<_ORBPathRecords>.fromOpaque(object).release()
+        }
+        _slot.deinitialize(count: 1)
     }
-    
+
     public func clear() {
-        _openRenderBoxUnimplementedFailure()
+        _records.records.removeAll(keepingCapacity: true)
     }
-    
-    public func append(element: ORBPath.Element, points: UnsafePointer<CGFloat>, userInfo: UnsafeRawPointer?) -> Bool {
-        _openRenderBoxUnimplementedFailure()
+
+    public func append(element: ORBPath.Element, points: UnsafePointer<CGFloat>, userInfo: UnsafeRawPointer?) {
+        guard let record = _ORBPathRecord(element: element, points: points, userInfo: userInfo) else { return }
+        _records.records.append(record)
     }
-    
+
+    @discardableResult
     public func append(path: ORBPath) -> Bool {
-        _openRenderBoxUnimplementedFailure()
+        guard let records = path._records() else { return false }
+        _records.records.append(contentsOf: records)
+        return true
     }
-    
+
     public func apply(info: UnsafeMutableRawPointer, callback: ORBPathApplyCallback?) -> Bool {
-        _openRenderBoxUnimplementedFailure()
+        _records.apply(info: info, callback: callback)
     }
-    
-    public var isEmpty: Bool {
-        _openRenderBoxUnimplementedFailure()
-    }
-    
+
+    public var isEmpty: Bool { _records.records.isEmpty }
+
     public func isEqual(to rhs: ORBPath.Storage) -> Bool {
-        _openRenderBoxUnimplementedFailure()
+        _records.records == rhs._records.records
     }
-    
-    public var isSingleElement: Bool {
-        _openRenderBoxUnimplementedFailure()
-    }
-    
-    public var bezierOrder: UInt32 {
-        _openRenderBoxUnimplementedFailure()
-    }
-    
+
+    public var isSingleElement: Bool { _orbIsSingleElement(_records.records) }
+
+    public var bezierOrder: Int { _records.records.map(\.order).max() ?? 1 }
+
     public var boundingRect: CGRect {
-        _openRenderBoxUnimplementedFailure()
+        let path = ORBPath._fromRecords(_records.records)
+        defer { path.release() }
+        return path.boundingRect
     }
-    
-    public var cgPath: CGPath? {
-        _openRenderBoxUnimplementedFailure()
-    }
+
+    public var cgPath: CGPath? { _orbMakeCGPath(_records.records) }
 }
 
 #endif
-

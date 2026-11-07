@@ -22,10 +22,10 @@ module OpenRenderBoxCxx.C {
     header "OpenRenderBox/ORBSymbolRenderingMode.h"
     header "OpenRenderBox/ORBUUID.h"
     header "OpenRenderBox/ORBVersion.h"
-    export *
 }
 
-module OpenRenderBoxCxx.Color {
+// These modules import system CoreGraphics and must be selected explicitly.
+explicit module OpenRenderBoxCxx.Color {
     requires cplusplus
     header "../Color/ColorSpace.hpp"
     export *
@@ -43,7 +43,14 @@ module OpenRenderBoxCxx.Animation {
 
 module OpenRenderBoxCxx.Path {
     requires cplusplus
+    header "../Path/ClipStrokeKeyframes.hpp"
     header "../Path/NestedCallbacks.hpp"
+    header "../Path/PathClipStroke.hpp"
+    header "../Path/PathInterpolation.hpp"
+    header "../Path/PathGeometry.hpp"
+    header "../Path/PathMapper.hpp"
+    header "../Path/PathStorageObject.hpp"
+    header "../Path/RoundedRect.hpp"
     header "../Path/Storage.hpp"
     export *
 }
@@ -56,7 +63,7 @@ module OpenRenderBoxCxx.Util {
     export *
 }
 
-module OpenRenderBoxCxx.ObjC {
+explicit module OpenRenderBoxCxx.ObjC {
     requires objc
     header "OpenRenderBox/ORBAnimation.h"
     header "OpenRenderBox/ORBSymbolAnimator.h"

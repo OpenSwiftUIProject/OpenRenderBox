@@ -44,10 +44,10 @@ extension ORBPath {
         public var isEqual: ((UnsafeRawPointer, UnsafeRawPointer) -> Bool)?
         public var isEmpty: ((UnsafeRawPointer) -> Bool)?
         public var isSingleElement: ((UnsafeRawPointer) -> Bool)?
-        public var bezierOrder: ((UnsafeRawPointer) -> UInt32)?
+        public var bezierOrder: ((UnsafeRawPointer) -> Int)?
         public var boundingRect: ((UnsafeRawPointer) -> CGRect)?
         public var cgPath: ((UnsafeRawPointer) -> Unmanaged<CGPath>?)?
-        public var next: ((UnsafeRawPointer) -> UnsafePointer<ORBPath.Callbacks>?)?
+        public var next: ((UnsafeRawPointer) -> ORBPath)?
         
         public init() {
             self.flags = ORBPath.CallbacksFlags()
@@ -71,10 +71,10 @@ extension ORBPath {
             isEqual: ((UnsafeRawPointer, UnsafeRawPointer) -> Bool)?,
             isEmpty: ((UnsafeRawPointer) -> Bool)?,
             isSingleElement: ((UnsafeRawPointer) -> Bool)?,
-            bezierOrder: ((UnsafeRawPointer) -> UInt32)?,
+            bezierOrder: ((UnsafeRawPointer) -> Int)?,
             boundingRect: ((UnsafeRawPointer) -> CGRect)?,
             cgPath: ((UnsafeRawPointer) -> Unmanaged<CGPath>?)?,
-            next: ((UnsafeRawPointer) -> UnsafePointer<ORBPath.Callbacks>?)?
+            next: ((UnsafeRawPointer) -> ORBPath)?
         ) {
             self.flags = flags
             self.retain = retain
@@ -96,7 +96,7 @@ extension ORBPath {
 extension ORBPath.Callbacks {
     /// Global callbacks for CGPath-backed paths
     public static var cgPath: ORBPath.Callbacks {
-        _openRenderBoxUnimplementedFailure()
+        _orbCGPathCallbacks.pointee
     }
 }
 
@@ -112,10 +112,10 @@ extension ORBPath {
         public var isEqual: ((UnsafeRawPointer, UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Bool)?
         public var isEmpty: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Bool)?
         public var isSingleElement: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Bool)?
-        public var bezierOrder: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> UInt32)?
+        public var bezierOrder: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Int)?
         public var boundingRect: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> CGRect)?
         public var cgPath: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Unmanaged<CGPath>?)?
-        public var next: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> UnsafePointer<ORBPath.CallbacksExtended>?)?
+        public var next: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> ORBPath)?
         
         public init() {
             self.flags = ORBPath.CallbacksFlags()
@@ -139,10 +139,10 @@ extension ORBPath {
             isEqual: ((UnsafeRawPointer, UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Bool)?,
             isEmpty: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Bool)?,
             isSingleElement: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Bool)?,
-            bezierOrder: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> UInt32)?,
+            bezierOrder: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Int)?,
             boundingRect: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> CGRect)?,
             cgPath: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> Unmanaged<CGPath>?)?,
-            next: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> UnsafePointer<ORBPath.CallbacksExtended>?)?
+            next: ((UnsafeRawPointer, UnsafePointer<ORBPath.CallbacksExtended>) -> ORBPath)?
         ) {
             self.flags = flags
             self.retain = retain

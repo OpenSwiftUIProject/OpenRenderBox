@@ -18,7 +18,7 @@ typedef void (^CGPathApplyBlock2)(const CGPathElement * element, bool *stop);
 CG_EXTERN void CGPathApplyWithBlock2(CGPathRef path, CGPathApplyBlock2 CF_NOESCAPE block);
 
 namespace {
-    uint32_t cgpath_bezier_order(CGPathRef cgPath) {
+    size_t cgpath_bezier_order(CGPathRef cgPath) {
         size_t pointsCount = CGPathGetNumberOfPoints(cgPath);
         size_t elementsCount = CGPathGetNumberOfElements(cgPath);
         if (pointsCount > elementsCount) { return 3; }
@@ -62,7 +62,7 @@ const ORBPathCallbacks ORBPathCGPathCallbacks = {
     .isSingleElement = +[](const void *object) -> bool {
         return false;
     },
-    .bezierOrder = +[](const void *object) -> uint32_t {
+    .bezierOrder = +[](const void *object) -> size_t {
         return cgpath_bezier_order(static_cast<CGPathRef>(object));
     },
     .boundingRect = +[](const void *object) -> CGRect {

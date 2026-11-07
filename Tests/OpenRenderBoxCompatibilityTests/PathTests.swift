@@ -4,10 +4,10 @@
 
 import Testing
 
-#if canImport(CoreGraphics)
+#if canImport(CoreGraphics) && (OPENRENDERBOX_CF_CGTYPES || OPENRENDERBOX_COMPATIBILITY_TEST)
 import CoreGraphics
 
-@Suite(.enabled(if: compatibilityTestEnabled))
+@Suite
 struct PathTests {
     @Test
     func createRectPath() {
@@ -33,7 +33,7 @@ struct PathTests {
     @Test
     func createUnevenRoundedRectPath() {
         let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
-        let path = ORBPath(roundedRect: rect, topLeftRadius: 5, bottomLeftRadius: 10, bottomRightRadius: 15, topRightRadius: 20, style: .continuous, transform: nil)
+        let path = ORBPath(roundedRect: rect, topLeftRadius: 5, topRightRadius: 10, bottomRightRadius: 15, bottomLeftRadius: 20, style: .continuous, transform: nil)
         path.release()
     }
 
@@ -41,8 +41,8 @@ struct PathTests {
     func pathRetainRelease() {
         let rect = CGRect(x: 0, y: 0, width: 100, height: 100)
         let path = ORBPath(rect: rect, transform: nil)
-        path.retain()
-        path.release()
+        let retained = path.retain()
+        retained.release()
         path.release()
     }
 
@@ -50,6 +50,12 @@ struct PathTests {
         (CGPoint(x: 50, y: 50), true),
         (CGPoint(x: 150, y: 150), false),
         (CGPoint(x: 0, y: 0), true),
+        (CGPoint(x: 50, y: 0), true),
+        (CGPoint(x: 100, y: 0), false),
+        (CGPoint(x: 100, y: 50), false),
+        (CGPoint(x: 50, y: 100), false),
+        (CGPoint(x: 0, y: 100), false),
+        (CGPoint(x: 0, y: 50), true),
         (CGPoint(x: 100, y: 100), false),
         (CGPoint(x: -1, y: 50), false),
     ])
@@ -82,7 +88,7 @@ struct PathTests {
             countPtr.pointee += 1
             return true // continue iteration
         }
-        #expect(elementCount == 5) // move + 4 lines for rect
+        #expect(elementCount == 5) // Move, three lines, and close.
         path.release()
     }
 
