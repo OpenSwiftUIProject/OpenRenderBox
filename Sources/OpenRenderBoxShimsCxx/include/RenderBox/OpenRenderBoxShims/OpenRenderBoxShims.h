@@ -14,6 +14,9 @@ typedef RBPath ORBPath;
 typedef RBPathElement ORBPathElement;
 typedef RBPathRoundedCornerStyle ORBPathRoundedCornerStyle;
 typedef RBPathApplyCallback ORBPathApplyCallback;
+typedef RBPathApplierCallback ORBPathApplierCallback;
+typedef RBPathLineApplyCallback ORBPathLineApplyCallback;
+typedef RBPathLineElement ORBPathLineElement;
 typedef RBPathCallbacks ORBPathCallbacks;
 typedef RBPathCallbacksFlags ORBPathCallbacksFlags;
 typedef RBPathCallbacksExtended ORBPathCallbacksExtended;
@@ -151,5 +154,13 @@ typedef RBPathApplyShapeCallback ORBPathApplyShapeCallback;
 #define ORBPathStorageGetBoundingRect RBPathStorageGetBoundingRect
 #define ORBPathStorageGetCGPath RBPathStorageGetCGPath
 
+#define ORBPathApply RBPathApply
+#define ORBPathApplyLines RBPathApplyLines
+#define ORBPathGetLength RBPathGetLength
+#define ORBPathCanInterpolate RBPathCanInterpolate
+#define ORBPathCopyInterpolatedPath RBPathCopyInterpolatedPath
+#define ORBPathLineElementMoveToPoint RBPathLineElementMoveToPoint
+#define ORBPathLineElementAddLineToPoint RBPathLineElementAddLineToPoint
+#define ORBPathLineElementCloseSubpath RBPathLineElementCloseSubpath
 
 #define __ORBPathElementArgumentCount __RBPathElementArgumentCount

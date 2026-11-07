@@ -46,8 +46,10 @@ module OpenRenderBoxCxx.Path {
     header "../Path/ClipStrokeKeyframes.hpp"
     header "../Path/NestedCallbacks.hpp"
     header "../Path/PathClipStroke.hpp"
+    header "../Path/PathInterpolation.hpp"
     header "../Path/PathGeometry.hpp"
     header "../Path/PathMapper.hpp"
+    header "../Path/PathStorageObject.hpp"
     header "../Path/RoundedRect.hpp"
     header "../Path/Storage.hpp"
     export *

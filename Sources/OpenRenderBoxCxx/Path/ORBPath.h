@@ -60,6 +60,20 @@ typedef ORB_ENUM(int32_t, ORBPathRoundedCornerStyle) {
 /// Returns true to continue enumeration, false to stop
 typedef bool (*ORBPathApplyCallback)(void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
 
+#if ORB_TARGET_OS_DARWIN
+/// Callback for mapped Core Graphics elements. Return false to stop callbacks.
+typedef bool (*ORBPathApplierCallback)(void *info, const CGPathElement *element);
+
+typedef ORB_ENUM(int32_t, ORBPathLineElement) {
+    ORBPathLineElementMoveToPoint = 0,
+    ORBPathLineElementAddLineToPoint = 1,
+    ORBPathLineElementCloseSubpath = 2,
+};
+
+/// The point is unused for a close-subpath callback.
+typedef bool (*ORBPathLineApplyCallback)(void *info, ORBPathLineElement element, const CGPoint *point);
+#endif
+
 typedef struct ORBPathCallbacks ORBPathCallbacks ORB_SWIFT_NAME(ORBPath.ApplyCallback);
 
 typedef struct ORBPathStorage * ORBPathStorageRef ORB_SWIFT_STRUCT ORB_SWIFT_NAME(ORBPath.Storage);
@@ -226,6 +240,21 @@ bool ORBPathEqualToPath(ORBPath lhs, ORBPath rhs) ORB_SWIFT_NAME(ORBPath.isEqual
 // MARK: - CGPath Interoperability
 
 #if ORB_TARGET_OS_DARWIN
+ORB_EXPORT
+bool ORBPathApply(ORBPath path, const CGAffineTransform * _Nullable transform, void *info, ORBPathApplierCallback callback) ORB_SWIFT_NAME(ORBPath.applyCGPathElements(self:transform:info:callback:));
+
+ORB_EXPORT
+bool ORBPathApplyLines(ORBPath path, double tolerance, void *info, ORBPathLineApplyCallback callback) ORB_SWIFT_NAME(ORBPath.applyLines(self:tolerance:info:callback:));
+
+ORB_EXPORT
+double ORBPathGetLength(ORBPath path, double tolerance, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.length(self:tolerance:transform:));
+
+ORB_EXPORT
+bool ORBPathCanInterpolate(ORBPath path, ORBPath other) ORB_SWIFT_NAME(ORBPath.canInterpolate(self:to:));
+
+ORB_EXPORT
+ORBPath ORBPathCopyInterpolatedPath(ORBPath path, ORBPath other, float fraction) ORB_SWIFT_NAME(ORBPath.interpolated(self:to:fraction:));
+
 ORB_EXPORT
 CGPathRef ORBPathCopyCGPath(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.cgPath(self:));
 

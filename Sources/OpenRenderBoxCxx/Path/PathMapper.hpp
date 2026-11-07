@@ -14,6 +14,7 @@ namespace ORB {
 namespace Path {
 class Storage;
 CGPathRef copy_cg_path(ORBPath path);
+bool apply_mapped_path(ORBPath path, void *info, ORBPathApplierCallback callback);
 bool apply_mapping_element(void *context, ORBPathElement element, const CGFloat *values, const void *info);
 bool apply_mapped_storage(const Storage &storage, void *context, size_t depth);
 void invalidate_mapped_storage(uint32_t identifier);

@@ -761,6 +761,43 @@ void append_element(CGMutablePathRef path, const CGPathElement &element) {
 
 struct Mapper {
     std::vector<std::unique_ptr<Frame>> frames;
+    void *outputInfo = nullptr;
+    ORBPathApplierCallback output = nullptr;
+    bool active = true;
+    bool open = false;
+
+    bool forwards(size_t index) const {
+        while (index) {
+            if (frames[index--]->type != 17) { return false; }
+        }
+        return output != nullptr;
+    }
+
+    void emit(size_t index, const CGPathElement &element, const CGAffineTransform *transform = nullptr) {
+        if (!active || !forwards(index)) { return; }
+        if (element.type == kCGPathElementCloseSubpath) {
+            if (!open) { return; }
+            open = false;
+        } else {
+            open = true;
+        }
+        static constexpr size_t counts[] = {1, 1, 2, 3, 0};
+        size_t count = counts[element.type];
+        CGPoint points[3];
+        std::copy_n(element.points, count, points);
+        auto applyTransform = [&](const CGAffineTransform &t) {
+            for (size_t i = 0; i < count; ++i) {
+                CGPoint p = points[i];
+                points[i] = {std::fma(t.c, p.y, std::fma(t.a, p.x, t.tx)),
+                             std::fma(t.d, p.y, std::fma(t.b, p.x, t.ty))};
+            }
+        };
+        if (transform) { applyTransform(*transform); }
+        while (index) { applyTransform(frames[index--]->transform); }
+        CGPathElement mapped{element.type, count ? points : nullptr};
+        active = output(outputInfo, &mapped);
+    }
+
     Mapper() { frames.push_back(std::make_unique<Frame>(0)); }
 
     Frame &current() { return *frames.back(); }
@@ -772,13 +809,15 @@ struct Mapper {
         struct AppendInfo {
             Mapper *mapper;
             size_t index;
+            bool emit;
             size_t skip;
             size_t count = 0;
-        } info{this, index - 1, frame.type == 23 ? frame.emittedElements : 0};
+        } info{this, index - 1, frame.type != 17, frame.type == 23 ? frame.emittedElements : 0};
         CGPathApply(path, &info, +[](void *context, const CGPathElement *element) {
             auto &info = *static_cast<AppendInfo *>(context);
             if (info.count++ < info.skip) { return; }
             append_element(info.mapper->frames[info.index]->path, *element);
+            if (info.emit) { info.mapper->emit(info.index, *element); }
         });
         frame.emittedElements = info.count;
         CGPathRelease(path);
@@ -827,6 +866,23 @@ struct Mapper {
         auto *transform = static_cast<const CGAffineTransform *>(info);
         size_t index = frames.size() - 1;
         CGMutablePathRef path = current().path;
+        CGMutablePathRef primitive = nullptr;
+        bool skipMove = false;
+        if (type < 5) {
+            CGPoint points[3];
+            size_t count = Storage::argument_count(element) / 2;
+            for (size_t i = 0; i < count; ++i) { points[i] = {values[2 * i], values[2 * i + 1]}; }
+            CGPathElement mapped{static_cast<CGPathElementType>(type), count ? points : nullptr};
+            emit(index, mapped, type == 4 ? nullptr : transform);
+        } else if (type <= 15 && forwards(index)) {
+            primitive = CGPathCreateMutable();
+            if (type >= 12 && !CGPathIsEmpty(path)) {
+                CGPoint point = CGPathGetCurrentPoint(path);
+                CGPathMoveToPoint(primitive, nullptr, point.x, point.y);
+                skipMove = true;
+            }
+            path = primitive;
+        }
         switch (type) {
             case 0:
                 CGPathMoveToPoint(path, transform, values[0], values[1]);
@@ -918,6 +974,20 @@ struct Mapper {
             default:
                 precondition_failure("unsupported path mapping element: %u", type);
         }
+        if (primitive) {
+            struct ReplayInfo {
+                Mapper *mapper;
+                size_t index;
+                bool skipMove;
+            } replay{this, index, skipMove};
+            CGPathApply(primitive, &replay, +[](void *context, const CGPathElement *element) {
+                auto &replay = *static_cast<ReplayInfo *>(context);
+                if (replay.skipMove) { replay.skipMove = false; return; }
+                append_element(replay.mapper->frames[replay.index]->path, *element);
+                replay.mapper->emit(replay.index, *element);
+            });
+            CGPathRelease(primitive);
+        }
         return true;
     }
 };
@@ -975,6 +1045,16 @@ bool apply_mapped_storage(const Storage &storage, void *context, size_t depth) {
         mapped = cache.entries.emplace(key, mapped).first->second;
     }
     return mapped->apply_elements(context, apply_mapping_element);
+}
+
+bool apply_mapped_path(ORBPath path, void *info, ORBPathApplierCallback callback) {
+    Mapper mapper;
+    mapper.outputInfo = info;
+    mapper.output = callback;
+    bool complete = ORBPathApplyElements(path, &mapper, apply_mapping_element);
+    if (!complete) { precondition_failure("path enumeration stopped during conversion"); }
+    while (mapper.frames.size() > 1) { mapper.pop(); }
+    return mapper.active;
 }
 
 CGPathRef copy_cg_path(ORBPath path) {
