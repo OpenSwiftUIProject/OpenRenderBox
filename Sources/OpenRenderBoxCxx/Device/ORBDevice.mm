@@ -2,7 +2,7 @@
 //  ORBDevice.mm
 //  OpenRenderBox
 
-#include <OpenRenderBoxObjC/Device/ORBDevice.h>
+#include <OpenRenderBox/ORBDevice.h>
 
 #if ORB_OBJC_FOUNDATION
 

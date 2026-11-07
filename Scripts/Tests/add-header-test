@@ -1,0 +1,185 @@
+#!/usr/bin/env python3
+
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+
+
+SCRIPT = Path(__file__).resolve().parents[1] / "add_header.py"
+MODULE_MAP = """module OpenRenderBoxCxx {
+    export *
+}
+
+module OpenRenderBoxCxx.C {
+    export *
+}
+
+module OpenRenderBoxCxx.ObjC {
+    requires objc
+    export *
+}
+
+module OpenRenderBoxCxx.Animation {
+    requires cplusplus
+    export *
+}
+"""
+
+
+class AddHeaderTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix="orb-header-test-")
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name).resolve() / "repo with spaces"
+        self.script = self.root / "Scripts/add_header.py"
+        self.script.parent.mkdir(parents=True)
+        shutil.copy2(SCRIPT, self.script)
+        self.source = self.root / "Sources/OpenRenderBoxCxx"
+        self.public = self.source / "include/OpenRenderBox"
+        self.public.mkdir(parents=True)
+        self.module_map = self.source / "include/module.modulemap"
+        self.module_map.write_text(MODULE_MAP, encoding="utf-8")
+
+    def make_header(self, name):
+        header = self.source / name
+        header.parent.mkdir(parents=True, exist_ok=True)
+        header.write_text("#pragma once\n", encoding="utf-8")
+        return header
+
+    def run_script(self, header, module, success=True):
+        result = subprocess.run(
+            [sys.executable, str(self.script), str(header), module],
+            cwd=self.root.parent,
+            capture_output=True,
+            text=True,
+        )
+        if success:
+            self.assertEqual(result.returncode, 0, result.stderr)
+        else:
+            self.assertNotEqual(result.returncode, 0, result.stdout)
+        return result
+
+    def test_public_header_and_repeat(self):
+        header = self.make_header("Animation/ORBNewAnimation.h")
+        self.run_script(header.relative_to(self.root), "C")
+        link = self.public / header.name
+        self.assertTrue(link.is_symlink())
+        self.assertFalse(os.path.isabs(os.readlink(link)))
+        self.assertEqual(link.resolve(), header)
+        expected = MODULE_MAP.replace(
+            "module OpenRenderBoxCxx.C {\n",
+            'module OpenRenderBoxCxx.C {\n    header "OpenRenderBox/ORBNewAnimation.h"\n',
+        )
+        self.assertEqual(self.module_map.read_text(), expected)
+        modification_time = self.module_map.stat().st_mtime_ns
+        self.run_script(header, "OpenRenderBoxCxx.C")
+        self.assertEqual(self.module_map.read_text(), expected)
+        self.assertEqual(self.module_map.stat().st_mtime_ns, modification_time)
+
+    def test_objc_header(self):
+        header = self.make_header("Animation/ORBNewObserver.h")
+        self.run_script(header, "ObjC")
+        self.assertEqual((self.public / header.name).resolve(), header)
+        self.assertIn(
+            '    requires objc\n    header "OpenRenderBox/ORBNewObserver.h"\n',
+            self.module_map.read_text(),
+        )
+
+    def test_cxx_and_textual_headers(self):
+        for name in ["Animation/NewAnimation.hpp", "Animation/NewAnimation.tpp"]:
+            header = self.make_header(name)
+            self.run_script(header, "Animation")
+            self.run_script(header, "Animation")
+        self.assertEqual(list(self.public.iterdir()), [])
+        self.assertIn(
+            '    requires cplusplus\n'
+            '    header "../Animation/NewAnimation.hpp"\n'
+            '    textual header "../Animation/NewAnimation.tpp"\n',
+            self.module_map.read_text(),
+        )
+
+    def test_missing_link_is_repaired(self):
+        header = self.make_header("Color/ORBNewColor.h")
+        self.run_script(header, "C")
+        contents = self.module_map.read_bytes()
+        link = self.public / header.name
+        link.unlink()
+        self.run_script(header, "C")
+        self.assertEqual(link.resolve(), header)
+        self.assertEqual(self.module_map.read_bytes(), contents)
+
+    def test_existing_link_is_registered(self):
+        header = self.make_header("Color/ORBNewColor.h")
+        link = self.public / header.name
+        link.symlink_to(os.path.relpath(header, self.public))
+        self.run_script(header, "C")
+        self.assertEqual(link.resolve(), header)
+        self.assertIn('header "OpenRenderBox/ORBNewColor.h"', self.module_map.read_text())
+
+    def test_conflicting_public_path_is_preserved(self):
+        header = self.make_header("Color/ORBNewColor.h")
+        other = self.make_header("Animation/ORBNewColor.h")
+        link = self.public / header.name
+        for target in [other, self.source / "Missing.h", None]:
+            with self.subTest(target=target):
+                if target is None:
+                    link.write_text("User content\n")
+                else:
+                    link.symlink_to(os.path.relpath(target, self.public))
+                result = self.run_script(header, "C", success=False)
+                self.assertIn("already exists", result.stderr)
+                self.assertEqual(self.module_map.read_text(), MODULE_MAP)
+                if target is None:
+                    self.assertEqual(link.read_text(), "User content\n")
+                else:
+                    self.assertEqual(os.readlink(link), os.path.relpath(target, self.public))
+                link.unlink()
+
+    def test_other_module_is_not_changed(self):
+        header = self.make_header("Animation/ORBNewAnimation.h")
+        self.run_script(header, "C")
+        contents = self.module_map.read_bytes()
+        result = self.run_script(header, "ObjC", success=False)
+        self.assertIn("already registered", result.stderr)
+        self.assertEqual(self.module_map.read_bytes(), contents)
+
+    def test_unknown_module_does_not_create_link(self):
+        header = self.make_header("Color/ORBNewColor.h")
+        result = self.run_script(header, "Missing", success=False)
+        self.assertIn("Unknown module", result.stderr)
+        self.assertEqual(self.module_map.read_text(), MODULE_MAP)
+        self.assertEqual(list(self.public.iterdir()), [])
+
+    def test_invalid_headers_do_not_change_exports(self):
+        outside = self.root / "Outside.h"
+        outside.write_text("#pragma once\n")
+        escaped = self.source / "Escape.h"
+        escaped.symlink_to(outside)
+        headers = [
+            self.source / "Missing.h",
+            self.make_header("Animation/Implementation.cpp"),
+            self.make_header("Animation/CPPOnly.hpp"),
+            self.make_header('Animation/Bad"Name.h'),
+            self.make_header("Animation/Bad$Name.h"),
+            self.make_header("include/RealHeader.h"),
+            outside,
+            escaped,
+        ]
+        for header in headers:
+            with self.subTest(header=header):
+                self.run_script(header, "C", success=False)
+                self.assertEqual(self.module_map.read_text(), MODULE_MAP)
+                self.assertEqual(list(self.public.iterdir()), [])
+
+    def test_header_path_with_spaces(self):
+        header = self.make_header("New Feature/ORBNewHeader.h")
+        self.run_script(header, "C")
+        self.assertEqual((self.public / header.name).resolve(), header)
+
+
+if __name__ == "__main__":
+    unittest.main()

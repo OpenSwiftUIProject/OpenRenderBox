@@ -2,7 +2,7 @@
 //  ORBEncoderSet.m
 //  OpenRenderBox
 
-#include <OpenRenderBoxObjC/Encoding/ORBEncoderSet.h>
+#include <OpenRenderBox/ORBEncoderSet.h>
 
 #if ORB_OBJC_FOUNDATION
 

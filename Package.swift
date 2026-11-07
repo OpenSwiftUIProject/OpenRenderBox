@@ -226,8 +226,9 @@ let openRenderBoxTarget = Target.target(
 // The SwiftPM support for such usage is still in progress.
 let openRenderBoxCxxTarget = Target.target(
     name: "OpenRenderBoxCxx",
-    cSettings: sharedCSettings,
-    cxxSettings: sharedCxxSettings
+    publicHeadersPath: "include",
+    cSettings: sharedCSettings + [.headerSearchPath(".")],
+    cxxSettings: sharedCxxSettings + [.headerSearchPath(".")]
 )
 let openRenderBoxShimsTarget = Target.target(
     name: "OpenRenderBoxShims",

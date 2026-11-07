@@ -2,13 +2,13 @@
 //  ORBTransition.mm
 //  OpenRenderBox
 
-#include <OpenRenderBoxObjC/Animation/ORBTransition.h>
+#include <OpenRenderBox/ORBTransition.h>
 
 #if ORB_OBJC_FOUNDATION
 
-#include <OpenRenderBoxCxx/Animation/Transition.hpp>
-#include <OpenRenderBoxCxx/Util/refcounted_ptr.hpp>
-#include <OpenRenderBoxCxx/Util/assert.hpp>
+#include "Transition.hpp"
+#include <Util/refcounted_ptr.hpp>
+#include <Util/assert.hpp>
 #include "ORBAnimation_Private.h"
 #include <cstring>
 

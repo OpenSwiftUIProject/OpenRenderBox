@@ -2,8 +2,10 @@
 //  ORBSymbolUpdate.swift
 //  OpenRenderBox
 
+#if !canImport(ObjectiveC) || !OPENRENDERBOX_CF_CGTYPES
 public import OpenCoreGraphicsShims
 public import OpenRenderBoxCxx
+#endif
 
 #if !canImport(ObjectiveC)
 

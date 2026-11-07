@@ -6,8 +6,8 @@
 
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
-#include <OpenRenderBoxCxx/Path/Storage.hpp>
-#include <OpenRenderBoxCxx/Util/assert.hpp>
+#include "Storage.hpp"
+#include <Util/assert.hpp>
 
 #if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CoreGraphics.h>

@@ -2,8 +2,8 @@
 //  ORBDisplayList.m
 //  OpenRenderBox
 
-#include <OpenRenderBoxObjC/Render/ORBDisplayList.h>
-#include <OpenRenderBoxObjC/Render/Private/_ORBDisplayListContents.h>
+#include <OpenRenderBox/ORBDisplayList.h>
+#include <Render/Private/_ORBDisplayListContents.h>
 
 #if ORB_OBJC_FOUNDATION
 

@@ -8,7 +8,7 @@
 #if OPENRENDERBOX_CF_CGTYPES
 
 #include <OpenRenderBox/ORBPathCallbacks.h>
-#include <OpenRenderBoxCxx/Util/assert.hpp>
+#include <Util/assert.hpp>
 
 #if ORB_TARGET_OS_DARWIN
 

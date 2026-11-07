@@ -2,7 +2,7 @@
 //  ORBLayer.m
 //  OpenRenderBox
 
-#include <OpenRenderBoxObjC/Render/ORBLayer.h>
+#include <OpenRenderBox/ORBLayer.h>
 
 #if ORB_OBJC_FOUNDATION
 

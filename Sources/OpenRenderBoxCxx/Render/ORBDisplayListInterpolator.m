@@ -2,7 +2,7 @@
 //  ORBDisplayListInterpolator.m
 //  OpenRenderBox
 
-#include <OpenRenderBoxObjC/Render/ORBDisplayListInterpolator.h>
+#include <OpenRenderBox/ORBDisplayListInterpolator.h>
 
 #if ORB_OBJC_FOUNDATION
 
