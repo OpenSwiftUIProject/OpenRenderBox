@@ -170,6 +170,137 @@ struct PathStorageTests {
         }
     }
 
+    @Test(arguments: [CGFloat(0), 0.25, 1])
+    func clippedStrokeUsesProgressAndRoundCaps(progress: CGFloat) {
+        let keys = [
+            ClipKeyframe(tag: 0, value: 0, start: 0, end: 0.5),
+            ClipKeyframe(tag: 0, value: 1, start: 0.5, end: 1),
+        ]
+        withPathStorage { storage in
+            keys.withUnsafeBufferPointer { keys in
+                var metadata = ClipInfo(flags: 0, cap: 1, count: keys.count, keys: keys.baseAddress)
+                withUnsafePointer(to: &metadata) { metadata in
+                    storage.append(element: .clipStroke, points: [progress], userInfo: metadata)
+                }
+            }
+            storage.append(element: .rect, points: [0, 0, 10, 10], userInfo: nil)
+            storage.append(element: .end, points: [], userInfo: nil)
+            withStoragePath(storage) { path in
+                let elements = cgPathElements(path.cgPath)
+                if progress == 0 {
+                    #expect(elements.isEmpty)
+                } else if progress == 1 {
+                    #expect(elements == [
+                        PathElementRecord(element: 0, points: [0, 0]),
+                        PathElementRecord(element: 1, points: [10, 0]),
+                        PathElementRecord(element: 1, points: [10, 10]),
+                        PathElementRecord(element: 1, points: [0, 10]),
+                        PathElementRecord(element: 4, points: []),
+                    ])
+                } else {
+                    #expect(elements == [
+                        PathElementRecord(element: 0, points: [0, 0]),
+                        PathElementRecord(element: 1, points: [5, 0]),
+                        PathElementRecord(element: 3, points: [5, -1.3807119131088257, 6.1192879676818848, -2.5, 7.5, -2.5]),
+                        PathElementRecord(element: 3, points: [8.880711555480957, -2.5, 10, -1.3807119131088257, 10, 0]),
+                        PathElementRecord(element: 1, points: [10, 5]),
+                        PathElementRecord(element: 1, points: [10, 10]),
+                        PathElementRecord(element: 1, points: [5, 10]),
+                        PathElementRecord(element: 3, points: [5, 11.380711555480957, 3.8807117938995361, 12.5, 2.5, 12.5]),
+                        PathElementRecord(element: 3, points: [1.1192880868911743, 12.5, 0, 11.380711555480957, 0, 10]),
+                        PathElementRecord(element: 1, points: [0, 5]),
+                        PathElementRecord(element: 1, points: [0, 0]),
+                        PathElementRecord(element: 4, points: []),
+                    ])
+                }
+            }
+        }
+    }
+
+    @Test
+    func clippedStrokeUsesCustomKeyframeCap() {
+        let keys = [
+            ClipKeyframe(tag: 2, value: 0, start: 0, end: 0.25),
+            ClipKeyframe(tag: 0, value: 1, start: 0.5, end: 0.75),
+        ]
+        expectClippedRectangle(keys: keys, progress: 0.25, expected: [
+            PathElementRecord(element: 0, points: [0, 0]),
+            PathElementRecord(element: 1, points: [10, 0]),
+            PathElementRecord(element: 1, points: [10, 2.5]),
+            PathElementRecord(element: 1, points: [0, 2.5]),
+            PathElementRecord(element: 4, points: []),
+        ])
+    }
+
+    @Test
+    func clippedStrokeWrapsTaggedKeyframe() {
+        let keys = [
+            ClipKeyframe(tag: 0, value: 0, start: 0, end: 0.1),
+            ClipKeyframe(tag: 1, value: 0.5, start: 0.8, end: 0.7),
+            ClipKeyframe(tag: 0, value: 1, start: 0.5, end: 0.6),
+        ]
+        expectClippedRectangle(keys: keys, progress: 0.75, expected: [
+            PathElementRecord(element: 0, points: [4, 10]),
+            PathElementRecord(element: 1, points: [0, 10]),
+            PathElementRecord(element: 1, points: [0, 8]),
+            PathElementRecord(element: 1, points: [5, 9]),
+            PathElementRecord(element: 3, points: [5.3186259269714355, 9.0637245178222656, 5.525263786315918, 9.3736820220947266, 5.4615383148193359, 9.6923074722290039]),
+            PathElementRecord(element: 3, points: [5.3978133201599121, 10.010933876037598, 5.0878567695617676, 10.217571258544922, 4.769230842590332, 10.15384578704834]),
+            PathElementRecord(element: 4, points: []),
+            PathElementRecord(element: 0, points: [0, 0]),
+            PathElementRecord(element: 1, points: [4, 0]),
+            PathElementRecord(element: 1, points: [2, 10]),
+            PathElementRecord(element: 1, points: [0, 10]),
+            PathElementRecord(element: 4, points: []),
+        ])
+    }
+
+    @Test(.enabled(if: referencePathGeometryEnabled))
+    func clippedStrokeExtendsBelowProgressRange() {
+        let keys = [
+            ClipKeyframe(tag: 0, value: 0, start: 0, end: 0.5),
+            ClipKeyframe(tag: 0, value: 1, start: 0.5, end: 1),
+        ]
+        expectClippedRectangle(keys: keys, flags: 4, progress: -0.25, expected: [
+            PathElementRecord(element: 0, points: [8.821488380432129, 11.178511619567871]),
+            PathElementRecord(element: 1, points: [-1.178511381149292, 11.178511619567871]),
+            PathElementRecord(element: 1, points: [-1.178511381149292, 1.178511381149292]),
+            PathElementRecord(element: 1, points: [8.821488380432129, 1.178511381149292]),
+            PathElementRecord(element: 1, points: [8.821488380432129, 11.178511619567871]),
+            PathElementRecord(element: 1, points: [-1.178511381149292, 11.178511619567871]),
+            PathElementRecord(element: 1, points: [-1.178511381149292, 1.178511381149292]),
+            PathElementRecord(element: 1, points: [8.821488380432129, 1.178511381149292]),
+            PathElementRecord(element: 3, points: [11.582912445068359, 1.178511381149292, 13.821488380432129, 3.4170875549316406, 13.821488380432129, 6.178511142730713]),
+            PathElementRecord(element: 3, points: [13.821488380432129, 8.939934730529785, 11.582912445068359, 11.178511619567871, 8.821488380432129, 11.178511619567871]),
+            PathElementRecord(element: 4, points: []),
+        ])
+    }
+
+    private func expectClippedRectangle(
+        keys: [ClipKeyframe], flags: Int32 = 0, progress: CGFloat, expected: [PathElementRecord]
+    ) {
+        withPathStorage { storage in
+            keys.withUnsafeBufferPointer { keys in
+                var metadata = ClipInfo(flags: flags, cap: 1, count: keys.count, keys: keys.baseAddress)
+                withUnsafePointer(to: &metadata) { metadata in
+                    storage.append(element: .clipStroke, points: [progress], userInfo: metadata)
+                }
+            }
+            storage.append(element: .rect, points: [0, 0, 10, 10], userInfo: nil)
+            storage.append(element: .end, points: [], userInfo: nil)
+            withStoragePath(storage) { path in
+                let actual = normalizedClipElements(cgPathElements(path.cgPath))
+                #expect(actual.map(\.element) == expected.map(\.element))
+                for (actual, expected) in zip(actual, expected) {
+                    #expect(actual.points.count == expected.points.count)
+                    for (actual, expected) in zip(actual.points, expected.points) {
+                        #expect(abs(actual - expected) < 1e-6)
+                    }
+                }
+            }
+        }
+    }
+
     @Test
     func glyphDilationPreservesClosedGeometry() {
         withPathStorage { storage in

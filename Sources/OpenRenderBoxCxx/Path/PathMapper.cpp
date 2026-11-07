@@ -7,6 +7,7 @@
 #if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
 
 #include "PathMapper.hpp"
+#include "PathClipStroke.hpp"
 #include "PathGeometry.hpp"
 #include "RoundedRect.hpp"
 #include "Storage.hpp"
@@ -686,6 +687,8 @@ struct Frame {
     bool evenOdd = false;
     size_t emittedElements = 0;
     std::vector<CGFloat> dash;
+    uint32_t clipFlags = 0;
+    std::vector<ClipStrokeKeyframe> clipKeys;
 
     explicit Frame(unsigned type) : type(type) {}
     ~Frame() {
@@ -737,6 +740,8 @@ struct Frame {
                 return copy_dilated_path(path, CGPointMake(values[0], values[1]));
             case 23:
                 return copy_offset_path(path, values[0]);
+            case 24:
+                return copy_clip_stroke_path(path, float(values[0]), {clipFlags, cap, clipKeys.size(), clipKeys.data()});
             default:
                 return CGPathRetain(path);
         }
@@ -786,7 +791,7 @@ struct Mapper {
             case 20:
                 frame.end_boolean();
                 break;
-            case 18: case 22:
+            case 18: case 22: case 24:
                 flush(index);
                 break;
             case 19:
@@ -871,10 +876,18 @@ struct Mapper {
             case 16:
                 pop();
                 break;
-            case 17: case 18: case 19: case 20: case 22: case 23: {
+            case 17: case 18: case 19: case 20: case 22: case 23: case 24: {
                 auto frame = std::make_unique<Frame>(type);
                 if (type == 17 && info) {
                     frame->transform = *transform;
+                } else if (type == 24) {
+                    frame->values[0] = values[0];
+                    if (info) {
+                        const auto &clip = *static_cast<const ClipStrokeInfo *>(info);
+                        frame->clipFlags = clip.flags;
+                        frame->cap = clip.cap;
+                        if (clip.count) frame->clipKeys.assign(clip.keys, clip.keys + clip.count);
+                    }
                 } else if (type == 23) {
                     frame->values[0] = values[0];
                 } else if (type == 18 || type == 22) {

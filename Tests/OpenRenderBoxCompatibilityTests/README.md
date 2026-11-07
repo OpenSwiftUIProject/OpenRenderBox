@@ -19,11 +19,11 @@ The local dependency options require sibling OpenCoreGraphics and
 DarwinPrivateFrameworks checkouts. Native Path suites run without enabling
 other unfinished compatibility suites.
 
-The exact curve-trimming fixtures
+The exact curve-trimming and clip-stroke undershoot fixtures
 use RenderBox from iOS 18.5 (22F77).
 They run against native OpenRenderBox and Apple RenderBox on iOS 18.5.
-Other Apple releases skip those fixtures because their curve subdivision
-can differ. The suites also cover callback cancellation, Storage lifetime,
+Other Apple releases skip those fixtures because their curve subdivision and
+clip-stroke behavior can differ. The suites also cover callback cancellation, Storage lifetime,
 primitive queries, arcs, and wrapper geometry.
 To test the reference runtime, open `Package.swift` in Xcode with the
 Apple compatibility environment above, select the

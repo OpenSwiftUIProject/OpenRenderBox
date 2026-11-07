@@ -114,4 +114,47 @@ func cgPathElements(_ path: CGPath) -> [PathElementRecord] {
 }
 
 // Ignore commands that do not change the geometry of a closed clip result.
+func normalizedClipElements(_ elements: [PathElementRecord]) -> [PathElementRecord] {
+    func near(_ lhs: CGPoint, _ rhs: CGPoint) -> Bool {
+        abs(lhs.x - rhs.x) < 1e-8 && abs(lhs.y - rhs.y) < 1e-8
+    }
+    func endpoint(_ element: PathElementRecord) -> CGPoint {
+        CGPoint(x: element.points[element.points.count - 2], y: element.points[element.points.count - 1])
+    }
+    var result: [PathElementRecord] = []
+    var current = CGPoint.zero
+    var start = CGPoint.zero
+    for element in elements {
+        if element.element == 0 {
+            start = endpoint(element)
+        } else if element.element == 1 {
+            let next = endpoint(element)
+            if near(current, next) { continue }
+            if result.count >= 2, result.last?.element == 1,
+               !result[result.count - 2].points.isEmpty {
+                let previous = endpoint(result[result.count - 2])
+                let a = CGPoint(x: current.x - previous.x, y: current.y - previous.y)
+                let b = CGPoint(x: next.x - current.x, y: next.y - current.y)
+                if abs(a.x * b.y - a.y * b.x) < 1e-8 && a.x * b.x + a.y * b.y >= 0 {
+                    result.removeLast()
+                }
+            }
+        } else if element.element == 2 || element.element == 3 {
+            let isDegenerate = stride(from: 0, to: element.points.count, by: 2).allSatisfy {
+                near(current, CGPoint(x: element.points[$0], y: element.points[$0 + 1]))
+            }
+            if isDegenerate { continue }
+        } else if element.element == 4 {
+            if result.last?.element == 1, near(current, start) {
+                result.removeLast()
+            }
+            current = start
+            result.append(element)
+            continue
+        }
+        current = endpoint(element)
+        result.append(element)
+    }
+    return result
+}
 #endif
