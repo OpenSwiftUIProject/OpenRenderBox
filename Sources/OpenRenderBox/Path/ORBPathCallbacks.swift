@@ -96,7 +96,7 @@ extension ORBPath {
 extension ORBPath.Callbacks {
     /// Global callbacks for CGPath-backed paths
     public static var cgPath: ORBPath.Callbacks {
-        _openRenderBoxUnimplementedFailure()
+        _orbCGPathCallbacks.pointee
     }
 }
 
