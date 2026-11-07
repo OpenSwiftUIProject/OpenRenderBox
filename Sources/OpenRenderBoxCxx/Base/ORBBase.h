@@ -4,6 +4,11 @@
 
 #pragma once
 
+// Framework builds export their fixed backend configuration.
+#if __has_include(<OpenRenderBox/ORBConfiguration.h>)
+#include <OpenRenderBox/ORBConfiguration.h>
+#endif
+
 #if DEBUG
 #define ORB_ASSERTION
 #else

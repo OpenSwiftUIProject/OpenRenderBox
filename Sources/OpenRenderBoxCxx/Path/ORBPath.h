@@ -4,9 +4,9 @@
 
 #pragma once
 
-#if OPENRENDERBOX_CF_CGTYPES
-
 #include <OpenRenderBox/ORBBase.h>
+
+#if OPENRENDERBOX_CF_CGTYPES
 
 #if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CoreGraphics.h>

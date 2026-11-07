@@ -4,9 +4,10 @@
 
 #pragma once
 
+#include <OpenRenderBox/ORBBase.h>
+
 #if OPENRENDERBOX_CF_CGTYPES
 
-#include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPath.h>
 #include "../Util/assert.hpp"
 #include <stdatomic.h>

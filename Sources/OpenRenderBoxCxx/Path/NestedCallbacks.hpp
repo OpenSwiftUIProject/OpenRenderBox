@@ -4,9 +4,10 @@
 
 #pragma once
 
+#include <OpenRenderBox/ORBBase.h>
+
 #if OPENRENDERBOX_CF_CGTYPES
 
-#include <OpenRenderBox/ORBBase.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
 
 ORB_ASSUME_NONNULL_BEGIN

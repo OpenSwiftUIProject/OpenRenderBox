@@ -38,6 +38,10 @@ cat > client.c <<'EOF'
 int main(void) {
     ORBColor color = ORBColorMake(1, 0, 0, 1);
     assert(color.red == 1 && color.alpha == 1);
+    assert(ORBPathIsEmpty(ORBPathEmpty));
+    assert(ORBPathIsNull(ORBPathNull));
+    bool (*storageIsEmpty)(ORBPathStorageRef) = ORBPathStorageIsEmpty;
+    assert(storageIsEmpty != NULL);
     return 0;
 }
 EOF
@@ -52,6 +56,7 @@ int main() {
     assert(animation.empty());
     animation.add_spring(1, 1, 1, 1, 0);
     assert(!animation.empty());
+    assert(ORBPathIsEmpty(ORBPathEmpty));
 }
 EOF
 
@@ -72,6 +77,7 @@ int main(void) {
     assert(animator != nil);
     ORBTransition *transition = [ORBTransition new];
     assert(transition != nil);
+    assert(ORBPathIsEmpty(ORBPathEmpty));
     return 0;
 }
 EOF
@@ -80,6 +86,8 @@ cat > client.swift <<'EOF'
 import OpenRenderBox
 
 precondition(ORBColor.black.alpha == 1)
+precondition(ORBPath.empty.isEmpty)
+precondition(ORBPath.null.isNull)
 let animation = ORBAnimation()
 animation.removeAll()
 precondition(animation.activeDuration == 0)
@@ -88,6 +96,21 @@ EOF
 
 target="$(uname -m)-apple-macos15.0"
 common=(-target "$target" -F "$test_root" -framework OpenRenderBox -Wl,-rpath,"$test_root")
+# Each guarded header must expose its API without another header setting the backend first.
+for declaration in CFCGTypes.h:CGFloat ORBPath.h:ORBPath ORBPathCallbacks.h:ORBPathCallbacks ORBPathStorage.h:ORBPathStorageRef; do
+    printf '#include <OpenRenderBox/%s>\n%s value;\n' "${declaration%:*}" "${declaration#*:}" > path-header.c
+    xcrun clang -target "$target" -F "$test_root" -fsyntax-only path-header.c
+done
+for declaration in Path/Storage.hpp:ORB::Path::Storage Path/NestedCallbacks.hpp:ORB::Path::NestedCallbacks; do
+    printf '#include <OpenRenderBox/%s>\nstatic_assert(sizeof(%s) > 0);\n' "${declaration%%:*}" "${declaration#*:}" > path-header.cpp
+    xcrun clang++ -target "$target" -F "$test_root" -std=c++20 -fsyntax-only path-header.cpp
+done
+if xcrun clang -target "$target" -F "$test_root" -DOPENRENDERBOX_CF_CGTYPES=0 \
+    -fsyntax-only path-header.c > backend-conflict.log 2>&1; then
+    echo "The framework must reject a conflicting backend setting." >&2
+    exit 1
+fi
+grep -Fq 'requires OPENRENDERBOX_CF_CGTYPES=1' backend-conflict.log
 xcrun clang "${common[@]}" client.c -o client-c
 ./client-c
 xcrun clang++ "${common[@]}" -std=c++20 client.cpp -o client-cxx

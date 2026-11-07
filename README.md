@@ -37,6 +37,9 @@ Scripts/Tests/framework-test .build/tuist-framework/Build/Products/Release/OpenR
 The framework contains the public C headers and the C++, Objective-C, and Swift
 modules. The client test uses a separate copy of the bundle with no source search
 paths and compiles the Swift interface.
+The framework exports `ORBConfiguration.h` with its fixed CoreGraphics backend
+setting. Consumers can use its path APIs without extra compiler definitions.
+SwiftPM continues to select the backend with `OPENRENDERBOX_CF_CGTYPES`.
 
 ## Source Layout
 

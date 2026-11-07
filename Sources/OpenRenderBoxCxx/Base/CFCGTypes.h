@@ -1,3 +1,7 @@
+#if __has_include(<OpenRenderBox/ORBConfiguration.h>)
+#include <OpenRenderBox/ORBConfiguration.h>
+#endif
+
 #if OPENRENDERBOX_CF_CGTYPES
 
 /*	CFCGTypes.h
