@@ -27,6 +27,8 @@ try frameworkModuleMap.write(
 
 // Preserve feature paths for the C++ and Objective-C submodules.
 let internalHeaders = moduleHeaders.filter { $0.hasPrefix("../") }.map { String($0.dropFirst(3)) }
+// Tuist otherwise treats template headers as resources and adds a resource bundle.
+let templateHeaders = internalHeaders.filter { $0.hasSuffix(".tpp") }
 let headerCopyCommands = internalHeaders.map { header in
     let directory = (header as NSString).deletingLastPathComponent
     return """
@@ -64,7 +66,7 @@ let project = Project(
             deploymentTargets: deploymentTargets,
             infoPlist: nil,
             buildableFolders: [
-                .folder(.path(sourceRoot), exceptions: [.exception(excluded: ["include/module.modulemap", "Vector/vector.tpp"])])
+                .folder(.path(sourceRoot), exceptions: [.exception(excluded: ["include/module.modulemap"] + templateHeaders)])
             ],
             settings: .settings(base: [
                 "HEADER_SEARCH_PATHS": ["$(SRCROOT)/\(sourceRoot)", "$(SRCROOT)/\(sourceRoot)/include"],

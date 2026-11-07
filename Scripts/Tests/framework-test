@@ -14,6 +14,11 @@ case "$(xcrun otool -L OpenRenderBox.framework/OpenRenderBox)" in
         ;;
 esac
 
+if [[ -n "$(find -L OpenRenderBox.framework/Resources -type f -name '*.tpp' -print -quit)" ]]; then
+    echo "Template headers must be exported under Headers, not bundled as resources." >&2
+    exit 1
+fi
+
 # Use only the bundle, including its Swift interface, to detect source-path dependencies.
 for module in OpenRenderBox.framework/Modules/OpenRenderBox.swiftmodule/*.swiftmodule; do
     test ! -f "$module" || rm "$module"
