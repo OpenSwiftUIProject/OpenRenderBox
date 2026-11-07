@@ -22,6 +22,7 @@ struct PathStorageTests {
         var count: Int
         var keys: UnsafePointer<ClipKeyframe>?
     }
+
     @Test
     func storageIsEmpty() {
         let path = ORBPath(rect: CGRect(x: 0, y: 0, width: 100, height: 100), transform: nil)
@@ -170,6 +171,88 @@ struct PathStorageTests {
     }
 
     @Test
+    func glyphDilationPreservesClosedGeometry() {
+        withPathStorage { storage in
+            storage.append(element: .dilateGlyph, points: [2, 3], userInfo: nil)
+            storage.append(element: .rect, points: [0, 0, 10, 10], userInfo: nil)
+            storage.append(element: .end, points: [], userInfo: nil)
+            withStoragePath(storage) { path in
+                let actual = cgPathElements(path.cgPath)
+                #expect(actual == [
+                    PathElementRecord(element: 0, points: [0, 0]),
+                    PathElementRecord(element: 1, points: [10, 0]),
+                    PathElementRecord(element: 1, points: [12, 3]),
+                    PathElementRecord(element: 1, points: [12, 13]),
+                    PathElementRecord(element: 1, points: [10, 16]),
+                    PathElementRecord(element: 1, points: [0, 16]),
+                    PathElementRecord(element: 1, points: [-2, 13]),
+                    PathElementRecord(element: 1, points: [-2, 3]),
+                    PathElementRecord(element: 4, points: []),
+                ])
+            }
+        }
+    }
+
+    @Test(arguments: [CGFloat(2), -2])
+    func offsetCurveUsesMappedStorage(amount: CGFloat) {
+        withPathStorage(capacity: 64) { storage in
+            storage.append(element: .offset, points: [amount], userInfo: nil)
+            storage.append(element: .moveToPoint, points: [10, 20], userInfo: nil)
+            storage.append(element: .addCurveToPoint, points: [10, 30, 20, 30, 20, 20], userInfo: nil)
+            storage.append(element: .end, points: [], userInfo: nil)
+            withStoragePath(storage) { path in
+                let cgPath = path.cgPath
+                let expected: [PathElementRecord] = amount > 0
+                    ? [PathElementRecord(element: 0, points: [8, 20]),
+                       PathElementRecord(element: 3, points: [8, 32.666667938232422, 22, 32.666667938232422, 22, 20])]
+                    : [PathElementRecord(element: 0, points: [12, 20]),
+                       PathElementRecord(element: 3, points: [12, 27.333333969116211, 18, 27.333333969116211, 18, 20])]
+                #expect(cgPathElements(cgPath) == expected)
+                storage.append(element: .rect, points: [100, 100, 10, 10], userInfo: nil)
+                #expect(path.cgPath.boundingBoxOfPath.maxX == 110)
+                #expect(cgPathElements(cgPath) == expected)
+            }
+        }
+    }
+
+    @Test(arguments: [ORBPath.Element.boolean, .offset, .transformed])
+    func nestedBooleanPreservesPathBoundaries(inner: ORBPath.Element) {
+        withPathStorage { storage in
+            let intersection: [UInt8] = [1, 0]
+            intersection.withUnsafeBufferPointer { flags in
+                storage.append(element: .boolean, points: [], userInfo: flags.baseAddress)
+            }
+            if inner == .boolean {
+                let normalize: [UInt8] = [0, 0]
+                normalize.withUnsafeBufferPointer { flags in
+                    storage.append(element: .boolean, points: [], userInfo: flags.baseAddress)
+                }
+            } else if inner == .offset {
+                storage.append(element: .offset, points: [0], userInfo: nil)
+            } else {
+                var transform = CGAffineTransform.identity
+                withUnsafePointer(to: &transform) { transform in
+                    storage.append(element: .transformed, points: [], userInfo: transform)
+                }
+            }
+            storage.append(element: .rect, points: [0, 0, 10, 10], userInfo: nil)
+            storage.append(element: .end, points: [], userInfo: nil)
+            storage.append(element: .rect, points: [5, 5, 10, 10], userInfo: nil)
+            storage.append(element: .end, points: [], userInfo: nil)
+            withStoragePath(storage) { path in
+                let cgPath = path.cgPath
+                let coalescesPaths = inner == .transformed
+                #expect(cgPath.boundingBoxOfPath == (coalescesPaths
+                    ? CGRect(x: 0, y: 0, width: 15, height: 15)
+                    : CGRect(x: 5, y: 5, width: 5, height: 5)))
+                #expect(cgPath.contains(CGPoint(x: 7, y: 7)))
+                #expect(cgPath.contains(CGPoint(x: 2, y: 2)) == coalescesPaths)
+                #expect(cgPath.contains(CGPoint(x: 12, y: 12)) == coalescesPaths)
+            }
+        }
+    }
+
+    @Test
     func storageStopsEnumeration() {
         withPathStorage { storage in
             storage.append(element: .moveToPoint, points: [1, 2], userInfo: nil)
@@ -205,5 +288,4 @@ struct PathStorageTests {
         }
     }
 }
-
 #endif
