@@ -30,7 +30,7 @@ ORB_EXPORT
 void ORBPathStorageClear(ORBPathStorageRef storage) ORB_SWIFT_NAME(ORBPathStorageRef.clear(self:));
 
 ORB_EXPORT
-void ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, CGFloat const * points, const void * _Nullable userInfo) ORB_SWIFT_NAME(ORBPathStorageRef.append(self:element:points:userInfo:));
+void ORBPathStorageAppendElement(ORBPathStorageRef storage, ORBPathElement element, CGFloat const * _Nullable points, const void * _Nullable userInfo) ORB_SWIFT_NAME(ORBPathStorageRef.append(self:element:points:userInfo:));
 
 ORB_EXPORT
 bool ORBPathStorageAppendPath(ORBPathStorageRef, ORBPath) ORB_SWIFT_NAME(ORBPathStorageRef.append(self:path:));

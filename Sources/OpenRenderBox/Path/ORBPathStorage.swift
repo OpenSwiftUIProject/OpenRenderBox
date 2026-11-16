@@ -32,7 +32,7 @@ extension ORBPath.Storage {
         _records.records.removeAll(keepingCapacity: true)
     }
 
-    public func append(element: ORBPath.Element, points: UnsafePointer<CGFloat>, userInfo: UnsafeRawPointer?) {
+    public func append(element: ORBPath.Element, points: UnsafePointer<CGFloat>?, userInfo: UnsafeRawPointer?) {
         guard let record = _ORBPathRecord(element: element, points: points, userInfo: userInfo) else { return }
         _records.records.append(record)
     }

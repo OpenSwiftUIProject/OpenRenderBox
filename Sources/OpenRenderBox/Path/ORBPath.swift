@@ -284,13 +284,15 @@ struct _ORBPathRecord: Equatable {
         self.transform = transform?.isIdentity == false ? transform : nil
     }
 
-    init?(element: ORBPath.Element, points: UnsafePointer<CGFloat>, userInfo: UnsafeRawPointer?) {
+    init?(element: ORBPath.Element, points: UnsafePointer<CGFloat>?, userInfo: UnsafeRawPointer?) {
         let counts = [2, 2, 4, 6, 0, 4, 4, 4, 6, 6, 8, 8, 5, 5, 5, 5, 0, 0, 2, 3, 0, 0, 2, 1, 1]
         let index = Int(element.rawValue)
         guard counts.indices.contains(index) else { return nil }
+        let count = counts[index]
+        guard count == 0 || points != nil else { return nil }
         self.init(
             element: element,
-            values: Array(UnsafeBufferPointer(start: points, count: counts[index])),
+            values: count == 0 ? [] : Array(UnsafeBufferPointer(start: points, count: count)),
             transform: ((0...15).contains(index) && index != 4) || index == 17 || index == 21 ? userInfo?.load(as: CGAffineTransform.self) : nil
         )
         if element == .stroked {
