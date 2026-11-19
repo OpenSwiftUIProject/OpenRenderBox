@@ -80,9 +80,36 @@
 #define ORB_OPTIONS_ATTRIBUTES
 #endif
 
-#define ORB_ENUM(_type, _name) _type _name; enum ORB_ENUM_ATTRIBUTES
-#define ORB_CLOSED_ENUM(_type, _name) _type _name; enum ORB_CLOSED_ENUM_ATTRIBUTES
-#define ORB_OPTIONS(_type, _name) _type _name; enum ORB_OPTIONS_ATTRIBUTES
+// The Swift Clang importer needs named fixed enums to preserve members and
+// raw values. C++ options remain integers so bitwise operations work directly.
+#if (__cplusplus && __cplusplus >= 201103L && \
+     (__has_extension(cxx_strong_enums) || __has_feature(objc_fixed_enum))) || \
+    (!__cplusplus && (__has_feature(objc_fixed_enum) || __has_extension(cxx_fixed_enum)))
+#define ORB_ENUM(_type, _name) \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Welaborated-enum-base\"") \
+    enum ORB_ENUM_ATTRIBUTES _name : _type _name; enum _name : _type \
+    _Pragma("clang diagnostic pop")
+#define ORB_CLOSED_ENUM(_type, _name) \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Welaborated-enum-base\"") \
+    enum ORB_CLOSED_ENUM_ATTRIBUTES _name : _type _name; enum _name : _type \
+    _Pragma("clang diagnostic pop")
+#if defined(__cplusplus)
+#define ORB_OPTIONS(_type, _name) \
+    __attribute__((availability(swift, unavailable))) _type _name; enum ORB_OPTIONS_ATTRIBUTES : _name
+#else
+#define ORB_OPTIONS(_type, _name) \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Welaborated-enum-base\"") \
+    enum ORB_OPTIONS_ATTRIBUTES _name : _type _name; enum _name : _type \
+    _Pragma("clang diagnostic pop")
+#endif
+#else
+#define ORB_ENUM(_type, _name) _type _name; enum
+#define ORB_CLOSED_ENUM(_type, _name) _type _name; enum
+#define ORB_OPTIONS(_type, _name) _type _name; enum
+#endif
 
 #if defined(__cplusplus)
 #define ORB_EXTERN_C_BEGIN extern "C" {
