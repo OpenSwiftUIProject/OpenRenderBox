@@ -77,8 +77,8 @@ public struct ORBPathLineShape: @unchecked Sendable {
 
 public struct ORBPathStrokeStyle: @unchecked Sendable {
     public var lineWidth: CGFloat
-    public var lineCap: Int32
-    public var lineJoin: Int32
+    public var lineCap: CGLineCap
+    public var lineJoin: CGLineJoin
     public var miterLimit: CGFloat
     public var dashPhase: CGFloat
     public var dashCount: UInt64
@@ -86,8 +86,8 @@ public struct ORBPathStrokeStyle: @unchecked Sendable {
 
     public init(
         lineWidth: CGFloat,
-        lineCap: Int32,
-        lineJoin: Int32,
+        lineCap: CGLineCap,
+        lineJoin: CGLineJoin,
         miterLimit: CGFloat,
         dashPhase: CGFloat,
         dashCount: UInt64,
@@ -662,7 +662,7 @@ extension ORBPath {
         var shape = ORBPathShape(
             rect: zeroRect, ellipse: zeroRect,
             fixedRoundedRect: .init(transform: .identity, rect: .zero, cornerSize: .zero, style: .circular),
-            stroked: .init(path: self, style: .init(lineWidth: 0, lineCap: 0, lineJoin: 0, miterLimit: 0, dashPhase: 0, dashCount: 0, dash: nil))
+            stroked: .init(path: self, style: .init(lineWidth: 0, lineCap: .butt, lineJoin: .miter, miterLimit: 0, dashPhase: 0, dashCount: 0, dash: nil))
         )
         let type: ORBPathShapeType
         var ownedChild: ORBPath?
@@ -687,9 +687,18 @@ extension ORBPath {
             default:
                 type = .stroked
                 strokeDash = record.stroke?.dash ?? []
-                shape.stroked = .init(path: child, style: .init(lineWidth: record.values[0], lineCap: record.stroke?.lineCap ?? 0,
-                    lineJoin: record.stroke?.lineJoin ?? 0, miterLimit: record.values[1], dashPhase: record.values[2],
-                    dashCount: UInt64(strokeDash!.count), dash: nil))
+                shape.stroked = .init(
+                    path: child,
+                    style: .init(
+                        lineWidth: record.values[0],
+                        lineCap: CGLineCap(rawValue: record.stroke?.lineCap ?? 0) ?? .butt,
+                        lineJoin: CGLineJoin(rawValue: record.stroke?.lineJoin ?? 0) ?? .miter,
+                        miterLimit: record.values[1],
+                        dashPhase: record.values[2],
+                        dashCount: UInt64(strokeDash!.count),
+                        dash: nil
+                    )
+                )
             }
         } else if records.count == 1, let record = records.first {
             switch record.element {

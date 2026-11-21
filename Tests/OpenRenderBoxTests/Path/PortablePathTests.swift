@@ -372,7 +372,7 @@ struct PortablePathTests {
         let mixedStroke = lhs.interpolated(to: rhs, fraction: 0.25)
         lhs.release()
         rhs.release()
-        struct StrokeResult { var width: CGFloat = 0; var cap: Int32 = -1; var dash: [CGFloat] = []; var child = ORBPath.empty }
+        struct StrokeResult { var width: CGFloat = 0; var cap: CGLineCap = .butt; var dash: [CGFloat] = []; var child = ORBPath.empty }
         var result = StrokeResult()
         let strokeRecognized = withUnsafeMutablePointer(to: &result) { resultPtr in
             mixedStroke.applyShape(allowLine: true, info: resultPtr) { info, type, shape in
@@ -390,7 +390,7 @@ struct PortablePathTests {
         mixedStroke.release()
         defer { result.child.release() }
         #expect(result.width == 1.5)
-        #expect(result.cap == 2)
+        #expect(result.cap == .square)
         #expect(result.dash == [3, 5, 7])
         #expect(result.child.boundingRect == CGRect(x: 1.5, y: 2.5, width: 15, height: 25))
 
