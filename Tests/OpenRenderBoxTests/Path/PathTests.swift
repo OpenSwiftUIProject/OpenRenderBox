@@ -224,5 +224,14 @@ struct PathTests {
         #expect(abs(actual.width - expected.width) < 0.0001)
         #expect(abs(actual.height - expected.height) < 0.0001)
     }
+
+    @Test
+    func nilDataProducesNullPath() {
+        let path = ORBPath(data: nil)
+        defer { path.release() }
+
+        #expect(path.isNull)
+        #expect(path.isEmpty)
+    }
 }
 #endif

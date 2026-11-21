@@ -281,7 +281,7 @@ Encoder encode_metadata(unsigned element, const void *info) {
 
 } // namespace
 
-CFDataRef ORBPathCopyData(ORBPath path) {
+CFDataRef _Nullable ORBPathCopyData(ORBPath path) {
     struct Encoding {
         Encoder output, elements, floats, doubles;
     } encoding;
@@ -309,7 +309,7 @@ CFDataRef ORBPathCopyData(ORBPath path) {
     return CFDataCreate(nullptr, encoding.output.bytes.data(), CFIndex(encoding.output.bytes.size()));
 }
 
-ORBPath ORBPathMakeWithData(CFDataRef data) {
+ORBPath ORBPathMakeWithData(CFDataRef _Nullable data) {
     if (!data) return ORBPathNull;
     Decoder decoder{CFDataGetBytePtr(data), size_t(CFDataGetLength(data))};
     Bytes elements;

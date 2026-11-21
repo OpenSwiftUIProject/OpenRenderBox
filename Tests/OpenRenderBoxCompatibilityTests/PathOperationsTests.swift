@@ -200,17 +200,18 @@ struct PathOperationsTests {
     }
 
     @Test
-    func serializedRectUsesCompatibleWireFormat() {
+    func serializedRectUsesCompatibleWireFormat() throws {
         let path = ORBPath(rect: CGRect(x: 1, y: 2, width: 10, height: 20), transform: nil)
         defer { path.release() }
-        let data = path.data as Data
+        let data = try #require(path.data) as Data
         #expect(data == Data([0x1a, 1, 5, 0x12, 0x10, 0, 0, 0x80, 0x3f, 0, 0, 0, 0x40, 0, 0, 0x20, 0x41, 0, 0, 0xa0, 0x41]))
         let copy = ORBPath(data: data as CFData)
         defer { copy.release() }
         #expect(copy.isEqual(to: path))
         #expect(path.debugDescription as String == "RBPath:\n  rect 1 2 10 20\n")
         let fractional = ORBPath(rect: CGRect(x: 0.1, y: 0.2, width: 10.3, height: 20.4), transform: nil)
-        let decoded = ORBPath(data: fractional.data)
+        let fractionalData = try #require(fractional.data)
+        let decoded = ORBPath(data: fractionalData)
         fractional.release()
         defer { decoded.release() }
         #expect(pathElements(decoded) == [PathElementRecord(element: 5, points: [CGFloat(Float(0.1)), CGFloat(Float(0.2)), CGFloat(Float(10.3)), CGFloat(Float(20.4))])])

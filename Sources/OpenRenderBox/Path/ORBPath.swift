@@ -6,6 +6,7 @@
 public import OpenCoreGraphicsShims
 
 public typealias ORBPathApplyCallback = (UnsafeMutableRawPointer, ORBPath.Element, UnsafePointer<CGFloat>, UnsafeRawPointer?) -> Bool
+public typealias ORBPathApplierCallback = (UnsafeMutableRawPointer, UnsafePointer<CGPathElement>) -> Bool
 public typealias ORBPathApplyShapeCallback = (UnsafeMutableRawPointer, ORBPathShapeType, UnsafePointer<ORBPathShape>) -> Void
 
 public enum ORBPathShapeType: Int32, @unchecked Sendable {
@@ -284,13 +285,15 @@ struct _ORBPathRecord: Equatable {
         self.transform = transform?.isIdentity == false ? transform : nil
     }
 
-    init?(element: ORBPath.Element, points: UnsafePointer<CGFloat>, userInfo: UnsafeRawPointer?) {
+    init?(element: ORBPath.Element, points: UnsafePointer<CGFloat>?, userInfo: UnsafeRawPointer?) {
         let counts = [2, 2, 4, 6, 0, 4, 4, 4, 6, 6, 8, 8, 5, 5, 5, 5, 0, 0, 2, 3, 0, 0, 2, 1, 1]
         let index = Int(element.rawValue)
         guard counts.indices.contains(index) else { return nil }
+        let count = counts[index]
+        guard count == 0 || points != nil else { return nil }
         self.init(
             element: element,
-            values: Array(UnsafeBufferPointer(start: points, count: counts[index])),
+            values: count == 0 ? [] : Array(UnsafeBufferPointer(start: points, count: count)),
             transform: ((0...15).contains(index) && index != 4) || index == 17 || index == 21 ? userInfo?.load(as: CGAffineTransform.self) : nil
         )
         if element == .stroked {
@@ -573,6 +576,58 @@ extension ORBPath {
         return callbacks.pointee.apply?(_object, info, callback) ?? true
     }
 
+    public func applyCGPathElements(
+        transform: UnsafePointer<CGAffineTransform>?,
+        info: UnsafeMutableRawPointer,
+        callback: ORBPathApplierCallback
+    ) -> Bool {
+        guard let records = _records() else {
+            preconditionFailure("path enumeration stopped during conversion")
+        }
+        let expanded = _orbExpandedRecords(records)
+        let transform = transform?.pointee
+        var pointStorage = (CGPoint.zero, CGPoint.zero, CGPoint.zero)
+        return withUnsafeMutablePointer(to: &pointStorage) { tuplePtr in
+            tuplePtr.withMemoryRebound(to: CGPoint.self, capacity: 3) { pointsPtr in
+                for record in expanded {
+                    let type: CGPathElementType
+                    let count: Int
+                    switch record.element {
+                    case .moveToPoint:
+                        type = .moveToPoint
+                        count = 1
+                    case .addLineToPoint:
+                        type = .addLineToPoint
+                        count = 1
+                    case .addQuadCurveToPoint:
+                        type = .addQuadCurveToPoint
+                        count = 2
+                    case .addCurveToPoint:
+                        type = .addCurveToPoint
+                        count = 3
+                    case .closeSubpath:
+                        type = .closeSubpath
+                        count = 0
+                    default:
+                        preconditionFailure("Unsupported path element")
+                    }
+                    for index in 0..<count {
+                        let point = _orbPoint(record.values, index)
+                        pointsPtr[index] = transform.map { point.applying($0) } ?? point
+                    }
+                    var element = CGPathElement(type: type, points: pointsPtr)
+                    let shouldContinue = withUnsafePointer(to: &element) { elementPtr in
+                        callback(info, elementPtr)
+                    }
+                    if !shouldContinue {
+                        return false
+                    }
+                }
+                return true
+            }
+        }
+    }
+
     public func isEqual(to rhs: ORBPath) -> Bool {
         if callbacks != rhs.callbacks {
             if callbacks == _orbEmptyCallbacks { return storage == Self.null.storage ? false : rhs.isEmpty }
@@ -755,6 +810,259 @@ extension ORBPath {
         record.stroke = .init(lineCap: lineCap, lineJoin: lineJoin, dash: dash.map { Array(UnsafeBufferPointer(start: $0, count: max(0, dashCount))) } ?? [])
         return _wrapped(record)
     }
+
+    public func canInterpolate(to other: ORBPath) -> Bool {
+        if isEqual(to: other) { return true }
+        guard let lhsRecords = _records() else { return false }
+        struct ComparisonState {
+            let records: [_ORBPathRecord]
+            var position = 0
+            var trimmed: [Bool] = [false]
+        }
+        var state = ComparisonState(records: lhsRecords)
+        let result = withUnsafeMutablePointer(to: &state) { statePtr in
+            other.apply(info: UnsafeMutableRawPointer(statePtr)) { info, type, values, userInfo in
+                let state = info.assumingMemoryBound(to: ComparisonState.self)
+                if _orbIsNestingElement(type) {
+                    state.pointee.trimmed.append((state.pointee.trimmed.last ?? false) || type == .trimmed)
+                } else if type == .end, state.pointee.trimmed.count > 1 {
+                    state.pointee.trimmed.removeLast()
+                }
+                guard state.pointee.position < state.pointee.records.count else { return false }
+                let record = state.pointee.records[state.pointee.position]
+                state.pointee.position += 1
+                guard _orbCompatibleTypes(
+                    from: record.element.rawValue,
+                    to: type.rawValue,
+                    trimmed: state.pointee.trimmed.last ?? false
+                ) else {
+                    return false
+                }
+                if type == .boolean {
+                    let rhsBoolean = userInfo.map { Array(UnsafeRawBufferPointer(start: $0, count: 2)) } ?? [0, 0]
+                    return (record.boolean ?? [0, 0]) == rhsBoolean
+                }
+                if type == .clipStroke {
+                    let rhsPayload = userInfo?.load(as: _ORBPathClipPayload.self)
+                    var a = record.clipStroke?.flags ?? 0
+                    var b = rhsPayload?.flags ?? 0
+                    let rhsCap = rhsPayload?.cap ?? 1
+                    if ((a ^ b) & 1) != 0,
+                       let lhsValue = record.values.first,
+                       (lhsValue < 0.0001 || lhsValue > 0.9999),
+                       abs(lhsValue + (values[0] - 1)) < 0.0001 {
+                        a &= ~1
+                        b &= ~1
+                    }
+                    return a == b && (record.clipStroke?.cap ?? 1) == rhsCap
+                }
+                return true
+            }
+        }
+        return result && state.position == lhsRecords.count
+    }
+
+    public func interpolated(to other: ORBPath, fraction: Float) -> ORBPath {
+        if fraction == 0 || (storage == other.storage && callbacks == other.callbacks) {
+            return retain()
+        }
+        if fraction == 1 {
+            return other.retain()
+        }
+        guard let lhsRecords = _records() else { return .null }
+        struct MixingState {
+            let records: [_ORBPathRecord]
+            let fraction: Float
+            var position = 0
+            var output: [_ORBPathRecord] = []
+        }
+        var state = MixingState(records: lhsRecords, fraction: fraction)
+        let result = withUnsafeMutablePointer(to: &state) { statePtr in
+            other.apply(info: UnsafeMutableRawPointer(statePtr)) { info, type, values, userInfo in
+                let state = info.assumingMemoryBound(to: MixingState.self)
+                guard state.pointee.position < state.pointee.records.count,
+                      let rhsRecord = _ORBPathRecord(element: type, points: values, userInfo: userInfo) else {
+                    return false
+                }
+                let record = state.pointee.records[state.pointee.position]
+                state.pointee.position += 1
+
+                var outputElement = record.element
+                var left = record.values
+                var right = rhsRecord.values
+                if record.element != type {
+                    let fromRaw = record.element.rawValue
+                    let toRaw = type.rawValue
+                    let fromRect = fromRaw == 5 || fromRaw == 6
+                    let toRect = toRaw == 5 || toRaw == 6
+                    let fromRounded = (8...11).contains(fromRaw)
+                    let toRounded = (8...11).contains(toRaw)
+                    if fromRect && toRounded {
+                        outputElement = type
+                        left.append(contentsOf: repeatElement(0, count: right.count - left.count))
+                    } else if fromRounded && toRect {
+                        right.append(contentsOf: repeatElement(0, count: left.count - right.count))
+                    } else if !(fromRect && toRect) {
+                        return false
+                    }
+                }
+
+                let amount = Double(state.pointee.fraction)
+                let outputValues = zip(left, right).map { _orbInterpolateScalar($0, $1, amount) }
+
+                var outputTransform: CGAffineTransform? = nil
+                if _orbHasAffineInfo(type) {
+                    let lhsTransform = record.transform ?? .identity
+                    let rhsTransform = rhsRecord.transform ?? .identity
+                    if record.transform != nil || rhsRecord.transform != nil {
+                        let mixed = _orbInterpolateTransform(lhsTransform, rhsTransform, state.pointee.fraction)
+                        outputTransform = mixed.isIdentity ? nil : mixed
+                    }
+                }
+
+                var outputRecord = _ORBPathRecord(element: outputElement, values: outputValues, transform: outputTransform)
+                outputRecord.stroke = rhsRecord.stroke
+                outputRecord.boolean = rhsRecord.boolean
+                outputRecord.clipStroke = rhsRecord.clipStroke
+                state.pointee.output.append(outputRecord)
+                return true
+            }
+        }
+        return result ? Self._fromRecords(state.output) : .null
+    }
+}
+
+private func _orbHasAffineInfo(_ element: ORBPath.Element) -> Bool {
+    guard element.rawValue >= 0 else { return false }
+    let type = UInt32(element.rawValue)
+    return type <= 24 && ((1 << type) & 0x1dd0010) == 0
+}
+
+private func _orbIsNestingElement(_ element: ORBPath.Element) -> Bool {
+    switch element {
+    case .transformed, .trimmed, .stroked, .boolean, .dilateGlyph, .offset, .clipStroke:
+        return true
+    default:
+        return false
+    }
+}
+
+private func _orbCompatibleTypes(from: Int32, to: Int32, trimmed: Bool) -> Bool {
+    if from == to { return true }
+    let fromRect = from == 6 || (from == 5 && !trimmed)
+    let toRect = to == 6 || (to == 5 && !trimmed)
+    let fromRounded = (8...11).contains(from)
+    let toRounded = (8...11).contains(to)
+    return (fromRect && (toRect || toRounded)) || (fromRounded && toRect)
+}
+
+private func _orbInterpolateScalar(_ from: CGFloat, _ to: CGFloat, _ amount: Double) -> CGFloat {
+    let result = Double(from).addingProduct(Double(to) - Double(from), amount)
+    return result.isNaN ? from : CGFloat(result)
+}
+
+private struct _ORBAffineComponents {
+    var scaleWidth: Double
+    var scaleHeight: Double
+    var horizontalShear: Double
+    var rotation: Double
+    var translationDX: Double
+    var translationDY: Double
+}
+
+private func _orbDecomposeTransform(_ m: CGAffineTransform) -> _ORBAffineComponents {
+    let a = Double(m.a), b = Double(m.b), c = Double(m.c), d = Double(m.d)
+    let tx = Double(m.tx), ty = Double(m.ty)
+    let det = a * d - b * c
+    var sx = _orbHypot(a, b)
+    if sx == 0 {
+        if d == 0 {
+            return _ORBAffineComponents(scaleWidth: 0, scaleHeight: 0, horizontalShear: 0, rotation: 0, translationDX: tx, translationDY: ty)
+        }
+        return _ORBAffineComponents(
+            scaleWidth: d < 0 ? -0.0 : 0.0,
+            scaleHeight: abs(d),
+            horizontalShear: c / d,
+            rotation: d < 0 ? -.pi : 0.0,
+            translationDX: tx,
+            translationDY: ty
+        )
+    }
+    if det < 0 {
+        sx = -sx
+    }
+    let co = a / sx
+    let si = b / sx
+    let rot = _orbAtan2(si, co)
+    let sy = d * co - c * si
+    let sh = sy == 0 ? 0 : (c * co + d * si) / sy
+    return _ORBAffineComponents(
+        scaleWidth: sx,
+        scaleHeight: sy,
+        horizontalShear: sh,
+        rotation: rot,
+        translationDX: tx,
+        translationDY: ty
+    )
+}
+
+private func _orbMakeTransform(_ k: _ORBAffineComponents) -> CGAffineTransform {
+    let co = _orbCos(k.rotation)
+    let si = _orbSin(k.rotation)
+    return CGAffineTransform(
+        a: CGFloat(k.scaleWidth * co),
+        b: CGFloat(k.scaleWidth * si),
+        c: CGFloat(k.scaleHeight * (k.horizontalShear * co - si)),
+        d: CGFloat(k.scaleHeight * (k.horizontalShear * si + co)),
+        tx: CGFloat(k.translationDX),
+        ty: CGFloat(k.translationDY)
+    )
+}
+
+private func _orbInterpolateTransform(_ from: CGAffineTransform, _ to: CGAffineTransform, _ fraction: Float) -> CGAffineTransform {
+    let amount = Double(fraction)
+    func mix(_ a: Double, _ b: Double) -> Double {
+        a.addingProduct(b - a, amount)
+    }
+    if from.a == to.a && from.b == to.b && from.c == to.c && from.d == to.d {
+        return CGAffineTransform(
+            a: from.a, b: from.b, c: from.c, d: from.d,
+            tx: CGFloat(mix(Double(from.tx), Double(to.tx))),
+            ty: CGFloat(mix(Double(from.ty), Double(to.ty)))
+        )
+    }
+    if (from.b == 0 && from.c == 0 && to.b == 0 && to.c == 0) ||
+       (from.a == 0 && from.d == 0 && to.a == 0 && to.d == 0) {
+        return CGAffineTransform(
+            a: CGFloat(mix(Double(from.a), Double(to.a))),
+            b: CGFloat(mix(Double(from.b), Double(to.b))),
+            c: CGFloat(mix(Double(from.c), Double(to.c))),
+            d: CGFloat(mix(Double(from.d), Double(to.d))),
+            tx: CGFloat(mix(Double(from.tx), Double(to.tx))),
+            ty: CGFloat(mix(Double(from.ty), Double(to.ty)))
+        )
+    }
+    var a = _orbDecomposeTransform(from)
+    var b = _orbDecomposeTransform(to)
+    if (a.scaleWidth < 0 && b.scaleHeight < 0) || (a.scaleHeight < 0 && b.scaleWidth < 0) {
+        a.scaleWidth = -a.scaleWidth
+        a.scaleHeight = -a.scaleHeight
+        a.rotation += a.rotation < 0 ? .pi : -.pi
+    }
+    if a.rotation == 0 { a.rotation = 2 * .pi }
+    if b.rotation == 0 { b.rotation = 2 * .pi }
+    if abs(a.rotation - b.rotation) > .pi {
+        if a.rotation > b.rotation { a.rotation -= 2 * .pi }
+        else { b.rotation -= 2 * .pi }
+    }
+    return _orbMakeTransform(_ORBAffineComponents(
+        scaleWidth: mix(a.scaleWidth, b.scaleWidth),
+        scaleHeight: mix(a.scaleHeight, b.scaleHeight),
+        horizontalShear: mix(a.horizontalShear, b.horizontalShear),
+        rotation: mix(a.rotation, b.rotation),
+        translationDX: mix(a.translationDX, b.translationDX),
+        translationDY: mix(a.translationDY, b.translationDY)
+    ))
 }
 
 

@@ -10,6 +10,11 @@ func _orbRectValues(_ rect: CGRect) -> [CGFloat] {
     [rect.origin.x, rect.origin.y, rect.size.width, rect.size.height]
 }
 
+func _orbHypot(_ x: Double, _ y: Double) -> Double { hypot(x, y) }
+func _orbAtan2(_ y: Double, _ x: Double) -> Double { atan2(y, x) }
+func _orbCos(_ x: Double) -> Double { cos(x) }
+func _orbSin(_ x: Double) -> Double { sin(x) }
+
 func _orbRect(_ values: [CGFloat]) -> CGRect {
     CGRect(x: values[0], y: values[1], width: values[2], height: values[3])
 }
