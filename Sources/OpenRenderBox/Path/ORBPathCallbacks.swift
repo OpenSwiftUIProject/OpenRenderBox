@@ -95,8 +95,8 @@ extension ORBPath {
 
 extension ORBPath.Callbacks {
     /// Global callbacks for CGPath-backed paths
-    public static var cgPath: ORBPath.Callbacks {
-        _orbCGPathCallbacks.pointee
+    public static var cgPath: UnsafePointer<ORBPath.Callbacks> {
+        _orbCGPathCallbacks
     }
 }
 
