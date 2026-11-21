@@ -611,7 +611,18 @@ bool ORBPathApplyShape(
                     static const CGFloat emptyDash = 0;
                     size_t count = stroke.values ? stroke.count : 0;
                     auto *dash = count ? static_cast<const CGFloat *>(stroke.values) : &emptyDash;
-                    shape.stroked = {nested, {values[0], stroke.cap, stroke.join, values[1], values[2], count, dash}};
+                    shape.stroked = {
+                        nested,
+                        {
+                            values[0],
+                            static_cast<CGLineCap>(stroke.cap),
+                            static_cast<CGLineJoin>(stroke.join),
+                            values[1],
+                            values[2],
+                            count,
+                            dash,
+                        },
+                    };
                     type = ORBPathShapeTypeStroked;
                 }
                 info->callback(info->info, type, &shape);
