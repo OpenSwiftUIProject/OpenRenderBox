@@ -281,7 +281,7 @@ Encoder encode_metadata(unsigned element, const void *info) {
 
 } // namespace
 
-CFDataRef ORBPathCopyData(ORBPath path) {
+CFDataRef _Nullable ORBPathCopyData(ORBPath path) {
     struct Encoding {
         Encoder output, elements, floats, doubles;
     } encoding;
