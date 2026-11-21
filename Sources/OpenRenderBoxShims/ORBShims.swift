@@ -74,7 +74,7 @@ public typealias ORBSymbolStyle = RBSymbolStyle
 
 public let renderBoxVendor = RenderBoxVendor.rb
 #else
-@_exported import OpenRenderBox
+@_exported public import OpenRenderBox
 
 public let renderBoxVendor = RenderBoxVendor.orb
 #endif
