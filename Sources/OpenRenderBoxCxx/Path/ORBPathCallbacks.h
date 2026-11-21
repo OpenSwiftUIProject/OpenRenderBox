@@ -103,7 +103,12 @@ static_assert(offsetof(struct ORBPathCallbacksExtended, next) == 0x50);
 #if ORB_TARGET_OS_DARWIN
 /// Global callbacks for CGPath-backed paths
 ORB_EXPORT
-const ORBPathCallbacks ORBPathCGPathCallbacks ORB_SWIFT_NAME(ORBPathCallbacks.cgPath);
+const ORBPathCallbacks ORBPathCGPathCallbacks ORB_REFINED_FOR_SWIFT;
+
+static ORB_INLINE const ORBPathCallbacks *_ORBPathCallbacksGetCGPath(void)
+    ORB_SWIFT_NAME(getter:ORBPathCallbacks.cgPath()) {
+    return &ORBPathCGPathCallbacks;
+}
 #endif
 
 ORB_EXTERN_C_END

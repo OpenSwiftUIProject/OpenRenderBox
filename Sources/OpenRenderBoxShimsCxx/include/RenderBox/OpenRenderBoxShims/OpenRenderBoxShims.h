@@ -141,6 +141,7 @@ typedef RBPathApplyShapeCallback ORBPathApplyShapeCallback;
 #define ORBPathContainsPoints RBPathContainsPoints
 
 #define ORBPathCGPathCallbacks RBPathCGPathCallbacks
+#define _ORBPathCallbacksGetCGPath _RBPathCallbacksGetCGPath
 #define ORBPathStorageInit RBPathStorageInit
 #define ORBPathStorageDestroy RBPathStorageDestroy
 #define ORBPathStorageClear RBPathStorageClear

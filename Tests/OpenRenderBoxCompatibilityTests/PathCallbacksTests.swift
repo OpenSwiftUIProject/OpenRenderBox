@@ -21,7 +21,11 @@ struct PathCallbacksTests {
 
     @Test
     func cgPathCallbacks() {
-        let callbacks = ORBPath.Callbacks.cgPath
+        let rectPath = ORBPath(cgPath: CGPath(rect: CGRect(x: 0, y: 0, width: 10, height: 10), transform: nil))
+        defer { rectPath.release() }
+        #expect(rectPath.callbacks == ORBPath.Callbacks.cgPath)
+
+        let callbacks = ORBPath.Callbacks.cgPath.pointee
         #expect(callbacks.flags.isExtended == false)
         #expect(callbacks.retain != nil)
         #expect(callbacks.release != nil)
