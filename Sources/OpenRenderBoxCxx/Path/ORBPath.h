@@ -259,7 +259,7 @@ ORB_EXPORT
 CFDataRef _Nullable ORBPathCopyData(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.data(self:));
 
 ORB_EXPORT
-ORBPath ORBPathMakeWithData(CFDataRef data) ORB_SWIFT_NAME(ORBPath.init(data:));
+ORBPath ORBPathMakeWithData(CFDataRef _Nullable data) ORB_SWIFT_NAME(ORBPath.init(data:));
 
 ORB_EXPORT
 CFStringRef ORBPathCopyDebugDescription(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.debugDescription(self:));
