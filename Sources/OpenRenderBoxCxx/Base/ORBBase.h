@@ -4,11 +4,6 @@
 
 #pragma once
 
-// Framework builds export their fixed backend configuration.
-#if __has_include(<OpenRenderBox/ORBConfiguration.h>)
-#include <OpenRenderBox/ORBConfiguration.h>
-#endif
-
 #if DEBUG
 #define ORB_ASSERTION
 #else
@@ -70,7 +65,3 @@
 #else
 #define ORB_OBJC_FOUNDATION 0
 #endif /* TARGET_OS_DARWIN && __OBJC__ */
-
-#if !ORB_TRRET_OS_DARWIN
-#include <OpenRenderBox/CFCGTypes.h>
-#endif

@@ -4,7 +4,7 @@
 
 #include "PathClipStroke.hpp"
 
-#if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 
 #include "ClipStrokeKeyframes.hpp"
 #include "PathGeometry.hpp"
@@ -596,4 +596,4 @@ CGPathRef copy_clip_stroke_path(CGPathRef path, float progress, const ClipStroke
 
 } // namespace ORB::Path
 
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */

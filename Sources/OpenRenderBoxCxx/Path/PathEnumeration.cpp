@@ -4,7 +4,7 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPath.h>
 #include "PathMapper.hpp"
@@ -238,4 +238,4 @@ double ORBPathGetLength(ORBPath path, double tolerance, const CGAffineTransform 
     return accumulator.length;
 }
 
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */

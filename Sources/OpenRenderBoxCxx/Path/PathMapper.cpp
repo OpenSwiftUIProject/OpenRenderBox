@@ -4,7 +4,7 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 
 #include "PathMapper.hpp"
 #include "PathClipStroke.hpp"
@@ -213,7 +213,6 @@ CGPathRef copy_trimmed_path(CGPathRef path, float from, float to) {
     }
     return result;
 }
-
 
 struct Dilator {
     CGMutablePathRef path;
@@ -1072,4 +1071,4 @@ CGPathRef copy_cg_path(ORBPath path) {
 } /* Path */
 } /* ORB */
 
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */

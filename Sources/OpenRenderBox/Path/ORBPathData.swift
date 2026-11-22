@@ -2,7 +2,7 @@
 //  ORBPathData.swift
 //  OpenRenderBox
 
-#if !OPENRENDERBOX_CF_CGTYPES
+#if !canImport(Darwin)
 import OpenCoreGraphicsShims
 
 private typealias _ORBCGFloat = CGFloat

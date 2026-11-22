@@ -2,7 +2,7 @@
 //  PathTestSupport.swift
 //  OpenRenderBoxCompatibilityTests
 
-#if canImport(CoreGraphics) && (OPENRENDERBOX_CF_CGTYPES || OPENRENDERBOX_COMPATIBILITY_TEST)
+#if canImport(Darwin)
 import CoreGraphics
 import Foundation
 
@@ -92,9 +92,7 @@ func pathElements(_ path: ORBPath) -> [PathElementRecord] {
     }
     return elements
 }
-#endif
 
-#if canImport(CoreGraphics) && (OPENRENDERBOX_CF_CGTYPES || OPENRENDERBOX_COMPATIBILITY_TEST)
 func cgPathElements(_ path: CGPath) -> [PathElementRecord] {
     var elements: [PathElementRecord] = []
     path.applyWithBlock { element in

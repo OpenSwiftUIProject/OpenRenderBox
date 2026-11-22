@@ -1,6 +1,6 @@
 ## OpenRenderBoxCompatibilityTests
 
-Run the Path suites against native OpenRenderBox:
+Run the native OpenRenderBox Path suites on Apple platforms.
 
 ```sh
 OPENRENDERBOX_USE_LOCAL_DEPS=1 OPENRENDERBOX_RENDERBOX=0 \
@@ -19,17 +19,11 @@ The local dependency options require sibling OpenCoreGraphics and
 DarwinPrivateFrameworks checkouts. Native Path suites run without enabling
 other unfinished compatibility suites.
 
-To test Swift Path with OpenCoreGraphics, use:
+The Swift Path suite runs on Linux with the default SwiftPM settings.
 
 ```sh
-OPENSWIFTUI_COREGRAPHICS=0 OPENRENDERBOX_CF_CGTYPES=0 \
-OPENRENDERBOX_USE_LOCAL_DEPS=1 OPENRENDERBOX_RENDERBOX=0 \
-OPENRENDERBOX_LIBRARY_EVOLUTION=0 swift test --filter PortablePathTests
+swift test --filter PortablePathTests
 ```
-
-Set `OPENSWIFTUI_COREGRAPHICS=1` to test Swift Path with system CoreGraphics.
-This shared setting selects the same backend in ORB and OpenCoreGraphicsShims.
-`OPENRENDERBOX_CF_CGTYPES` selects C++ Path (`1`) or Swift Path (`0`).
 
 The exact curve-trimming, line-flattening, and clip-stroke undershoot fixtures
 use RenderBox from iOS 18.5 (22F77).

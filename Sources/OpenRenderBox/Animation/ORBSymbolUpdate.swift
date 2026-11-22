@@ -2,12 +2,9 @@
 //  ORBSymbolUpdate.swift
 //  OpenRenderBox
 
-#if !canImport(ObjectiveC) || !OPENRENDERBOX_CF_CGTYPES
+#if !canImport(ObjectiveC)
 public import OpenCoreGraphicsShims
 public import OpenRenderBoxCxx.C
-#endif
-
-#if !canImport(ObjectiveC)
 
 extension ORBSymbolUpdate {
     public var nextTime: Double { .infinity }
@@ -30,11 +27,7 @@ extension ORBSymbolUpdateLayer {
     public var defaultColor: CGColor? { nil }
 
     public func draw(in state: ORBDrawingState, color: ORBColor, opacity: Float, blendMode: ORBBlendMode, flags: ORBSymbolUpdateLayerFlags) {}
-}
-#endif
 
-#if !canImport(ObjectiveC) || !OPENRENDERBOX_CF_CGTYPES
-extension ORBSymbolUpdateLayer {
     public func path(transform: UnsafeMutablePointer<CGAffineTransform>, flags: ORBSymbolUpdateLayerFlags) -> ORBPath {
         transform.pointee = .identity
         return .null

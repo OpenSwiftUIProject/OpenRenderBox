@@ -2,7 +2,7 @@
 //  ORBPathCallbacks.swift
 //  OpenRenderBox
 
-#if !OPENRENDERBOX_CF_CGTYPES
+#if !canImport(Darwin)
 public import OpenCoreGraphicsShims
 
 // MARK: - ORBPath.CallbacksFlags

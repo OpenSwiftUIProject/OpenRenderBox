@@ -5,7 +5,9 @@
 //  Created by Kyle on 2025/3/25.
 //
 
-#if OPENRENDERBOX_CF_CGTYPES
+#include <OpenRenderBox/ORBTargetConditionals.h>
+
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPath.h>
 #include <OpenRenderBox/ORBPathCallbacks.h>
@@ -62,8 +64,6 @@ void ORBPathRelease(ORBPath path) {
     }
 }
 
-#if ORB_TARGET_OS_DARWIN
-
 CG_EXTERN bool CGPathIsPrimitive(CGPathRef path);
 CG_EXTERN bool CGPathIsRectWithTransform(
     CGPathRef path,
@@ -89,7 +89,6 @@ CG_EXTERN void CGPathAddContinuousRoundedRect(
     CGFloat cornerWidth,
     CGFloat cornerHeight
 );
-
 
 // MARK: - Path Creation
 
@@ -436,8 +435,6 @@ ORBPath ORBPathCopyTrimmedPath(ORBPath path, CGFloat from, CGFloat to) {
     return {reinterpret_cast<ORBPathStorage *>(storage), &wrapped_path_callbacks};
 }
 
-#endif /* ORB_TARGET_OS_DARWIN */
-
 bool ORBPathIsEmpty(ORBPath path) {
     if (path.callbacks == &empty_path_callbacks) {
         return true;
@@ -532,7 +529,6 @@ bool ORBPathApplyShape(
         return false;
     }
 
-#if ORB_TARGET_OS_DARWIN
     if (path.callbacks == &ORBPathCGPathCallbacks) {
         auto cgPath = reinterpret_cast<CGPathRef>(path.storage);
         if (!CGPathIsPrimitive(cgPath)) {
@@ -578,7 +574,6 @@ bool ORBPathApplyShape(
         }
         return false;
     }
-#endif
 
     if (ORBPathIsSingleElement(path)) {
         struct ShapeInfo {
@@ -816,7 +811,6 @@ bool ORBPathEqualToPath(ORBPath lhs, ORBPath rhs) {
     return equal && comparison.iterator.offset >= storage.actual_size();
 }
 
-#if ORB_TARGET_OS_DARWIN
 CGPathRef ORBPathCopyCGPath(ORBPath path) {
     if (path.callbacks == &empty_path_callbacks) {
         return CGPathCreateMutable();
@@ -995,5 +989,3 @@ uint64_t ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *poin
 }
 
 #endif /* ORB_TARGET_OS_DARWIN */
-
-#endif /* OPENRENDERBOX_CF_CGTYPES */

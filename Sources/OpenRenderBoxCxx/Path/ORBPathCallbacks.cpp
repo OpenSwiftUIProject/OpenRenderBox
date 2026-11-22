@@ -5,12 +5,12 @@
 //  Audited for 6.5.1
 //  Status: Complete
 
-#if OPENRENDERBOX_CF_CGTYPES
+#include <OpenRenderBox/ORBTargetConditionals.h>
+
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPathCallbacks.h>
 #include <Util/assert.hpp>
-
-#if ORB_TARGET_OS_DARWIN
 
 CG_EXTERN size_t CGPathGetNumberOfPoints(CGPathRef cg_nullable path);
 CG_EXTERN size_t CGPathGetNumberOfElements(CGPathRef cg_nullable path);
@@ -75,5 +75,3 @@ const ORBPathCallbacks ORBPathCGPathCallbacks = {
 };
 
 #endif /* ORB_TARGET_OS_DARWIN */
-
-#endif /* OPENRENDERBOX_CF_CGTYPES */

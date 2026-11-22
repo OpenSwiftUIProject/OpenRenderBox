@@ -2,7 +2,7 @@
 //  ORBPath.swift
 //  OpenRenderBox
 
-#if !OPENRENDERBOX_CF_CGTYPES
+#if !canImport(Darwin)
 public import OpenCoreGraphicsShims
 
 public typealias ORBPathApplyCallback = (UnsafeMutableRawPointer, ORBPath.Element, UnsafePointer<CGFloat>, UnsafeRawPointer?) -> Bool

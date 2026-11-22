@@ -6,7 +6,10 @@
 
 #if ORB_OBJC_FOUNDATION
 
+#include <CoreGraphics/CoreGraphics.h>
+#include <Foundation/Foundation.h>
 #include <math.h>
+#include <stdint.h>
 
 // Symbol updates are placeholders until the symbol renderer is implemented.
 double ORBSymbolUpdateNextTime(ORBSymbolUpdate update) { return INFINITY; }
@@ -19,12 +22,10 @@ float ORBSymbolUpdateLayerDrawingOpacity(ORBSymbolUpdateLayer layer) { return 0;
 ORBSymbolStyle ORBSymbolUpdateLayerStyle(ORBSymbolUpdateLayer layer) { return ORBSymbolStylePrimary; }
 NSString *ORBSymbolUpdateLayerColorName(ORBSymbolUpdateLayer layer) { return nil; }
 CGColorRef ORBSymbolUpdateLayerDefaultColor(ORBSymbolUpdateLayer layer) { return NULL; }
-#if OPENRENDERBOX_CF_CGTYPES
 ORBPath ORBSymbolUpdateLayerPath(ORBSymbolUpdateLayer layer, CGAffineTransform *transform, ORBSymbolUpdateLayerFlags flags) {
     *transform = CGAffineTransformIdentity;
     return ORBPathNull;
 }
-#endif
 void ORBSymbolUpdateLayerDraw(ORBSymbolUpdateLayer layer, ORBDrawingState state, ORBColor color, float opacity, ORBBlendMode blendMode, ORBSymbolUpdateLayerFlags flags) {}
 
 #endif /* ORB_OBJC_FOUNDATION */

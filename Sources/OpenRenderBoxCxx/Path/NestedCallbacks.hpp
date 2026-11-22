@@ -6,7 +6,7 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPathCallbacks.h>
 #include "Storage.hpp"
@@ -57,4 +57,4 @@ static_assert(offsetof(NestedCallbacks, nestedIndex) == 0x60, "nestedIndex offse
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* OPENRENDERBOX_CF_CGTYPES */
+#endif /* ORB_TARGET_OS_DARWIN */

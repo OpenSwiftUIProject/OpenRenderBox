@@ -5,7 +5,7 @@
 //  Created by Kyle on 12/21/25.
 //
 
-#if canImport(Darwin) && OPENRENDERBOX_CF_CGTYPES
+#if canImport(Darwin)
 import Foundation
 import OpenRenderBox
 import OpenRenderBoxCxx.Path

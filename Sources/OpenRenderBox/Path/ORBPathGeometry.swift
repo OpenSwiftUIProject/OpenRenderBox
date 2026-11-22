@@ -2,7 +2,7 @@
 //  ORBPathGeometry.swift
 //  OpenRenderBox
 
-#if !OPENRENDERBOX_CF_CGTYPES
+#if !canImport(Darwin)
 import Foundation
 import OpenCoreGraphicsShims
 

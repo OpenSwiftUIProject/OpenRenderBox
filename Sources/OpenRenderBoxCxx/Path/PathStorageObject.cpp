@@ -4,7 +4,7 @@
 
 #include "PathStorageObject.hpp"
 
-#if OPENRENDERBOX_CF_CGTYPES
+#if ORB_TARGET_OS_DARWIN
 
 #include "NestedCallbacks.hpp"
 #include "Storage.hpp"
@@ -43,13 +43,8 @@ const ORBPathCallbacks callbacks = {
     .bezierOrder = +[](const void *object) -> size_t {
         return static_cast<const StorageObject *>(object)->storage.flags().bezierOrder();
     },
-    #if ORB_TARGET_OS_DARWIN
     .boundingRect = +[](const void *object) { return static_cast<const StorageObject *>(object)->storage.bounding_rect(); },
     .cgPath = +[](const void *object) { return static_cast<const StorageObject *>(object)->storage.cgpath(); },
-    #else
-    .boundingRect = nullptr,
-    .cgPath = nullptr,
-    #endif
     .next = +[](const void *object) -> ORBPath {
         auto *nested = NestedCallbacks::get(&callbacks, 1);
         return {reinterpret_cast<ORBPathStorageRef>(const_cast<void *>(object)),
@@ -65,4 +60,4 @@ ORBPath copy_storage_path(const Storage &storage) {
 
 } // namespace ORB::Path
 
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */

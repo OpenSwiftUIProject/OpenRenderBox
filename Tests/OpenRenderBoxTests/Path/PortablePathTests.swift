@@ -2,7 +2,7 @@
 //  PortablePathTests.swift
 //  OpenRenderBoxTests
 
-#if !OPENRENDERBOX_CF_CGTYPES
+#if !canImport(Darwin)
 import OpenCoreGraphicsShims
 import OpenRenderBox
 import Testing

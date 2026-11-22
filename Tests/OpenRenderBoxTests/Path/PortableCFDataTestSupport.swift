@@ -2,7 +2,7 @@
 //  PortableCFDataTestSupport.swift
 //  OpenRenderBoxTests
 
-#if !OPENRENDERBOX_CF_CGTYPES
+#if !canImport(Darwin)
 import CoreFoundation
 
 func makeTestCFData(_ bytes: [UInt8]) -> CFData {

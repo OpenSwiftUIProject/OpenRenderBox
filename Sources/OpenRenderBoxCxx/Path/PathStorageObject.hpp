@@ -6,7 +6,7 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPath.h>
 
@@ -15,4 +15,4 @@ class Storage;
 ORBPath copy_storage_path(const Storage &storage);
 }
 
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */

@@ -4,7 +4,7 @@
 
 #include "PathInterpolation.hpp"
 
-#if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 
 #include "NestedCallbacks.hpp"
 #include "PathStorageObject.hpp"
@@ -201,4 +201,4 @@ extern "C" ORBPath ORBPathCopyInterpolatedPath(ORBPath from, ORBPath to, float a
     return ORB::Path::copy_interpolated_path(from, to, amount);
 }
 
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */
