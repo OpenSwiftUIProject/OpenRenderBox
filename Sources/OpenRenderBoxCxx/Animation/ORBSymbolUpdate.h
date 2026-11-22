@@ -16,6 +16,8 @@
 
 ORB_ASSUME_NONNULL_BEGIN
 
+ORB_IMPLICIT_BRIDGING_ENABLED
+
 typedef ORB_OPTIONS(uint32_t, ORBSymbolUpdateFlags) {
     ORBSymbolUpdateFlagsSwapAxes = 1 << 0,
     ORBSymbolUpdateFlagsFlipX = 1 << 1,
@@ -69,5 +71,7 @@ ORB_EXPORT void ORBSymbolUpdateLayerDraw(ORBSymbolUpdateLayer layer, ORBDrawingS
 ORB_EXTERN_C_END
 
 #endif /* ORB_OBJC_FOUNDATION */
+
+ORB_IMPLICIT_BRIDGING_DISABLED
 
 ORB_ASSUME_NONNULL_END

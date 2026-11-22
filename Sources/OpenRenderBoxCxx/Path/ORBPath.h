@@ -12,6 +12,8 @@
 
 ORB_ASSUME_NONNULL_BEGIN
 
+ORB_IMPLICIT_BRIDGING_ENABLED
+
 ORB_EXTERN_C_BEGIN
 
 /// Path element type for path enumeration
@@ -272,6 +274,8 @@ ORB_EXPORT
 uint64_t ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.containsPoints(self:count:points:eoFill:transform:));
 
 ORB_EXTERN_C_END
+
+ORB_IMPLICIT_BRIDGING_DISABLED
 
 ORB_ASSUME_NONNULL_END
 
