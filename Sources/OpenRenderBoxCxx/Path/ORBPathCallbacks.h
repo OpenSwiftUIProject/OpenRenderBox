@@ -9,13 +9,11 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPath.h>
 #include <stddef.h>
-#if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CoreGraphics.h>
-#endif
 
 ORB_ASSUME_NONNULL_BEGIN
 
@@ -41,11 +39,7 @@ typedef struct ORB_SWIFT_NAME(ORBPath.Callbacks) ORBPathCallbacks {
     bool (* _Nullable isSingleElement)(const void *object);
     size_t (* _Nullable bezierOrder)(const void *object);
     CGRect (* _Nullable boundingRect)(const void *object);
-    #if ORB_TARGET_OS_DARWIN
     CGPathRef _Nullable (* _Nullable cgPath)(const void *object);
-    #else
-    void * _Nullable (* _Nullable cgPath)(const void *object);
-    #endif
     ORBPath (* _Nullable next)(const void *object);
 } ORBPathCallbacks;
 
@@ -76,11 +70,7 @@ typedef struct ORB_SWIFT_NAME(ORBPath.CallbacksExtended) ORBPathCallbacksExtende
     bool (* _Nullable isSingleElement)(const void *object, const struct ORBPathCallbacksExtended *extended);
     size_t (* _Nullable bezierOrder)(const void *object, const struct ORBPathCallbacksExtended *extended);
     CGRect (* _Nullable boundingRect)(const void *object, const struct ORBPathCallbacksExtended *extended);
-    #if ORB_TARGET_OS_DARWIN
     CGPathRef _Nullable (* _Nullable cgPath)(const void *object, const struct ORBPathCallbacksExtended *extended);
-    #else
-    void * _Nullable (* _Nullable cgPath)(const void *object, const struct ORBPathCallbacksExtended *extended);
-    #endif
     ORBPath (* _Nullable next)(const void *object, const struct ORBPathCallbacksExtended *extended);
 } ORBPathCallbacksExtended;
 
@@ -100,7 +90,6 @@ static_assert(offsetof(struct ORBPathCallbacksExtended, cgPath) == 0x48);
 static_assert(offsetof(struct ORBPathCallbacksExtended, next) == 0x50);
 #endif
 
-#if ORB_TARGET_OS_DARWIN
 /// Global callbacks for CGPath-backed paths
 ORB_EXPORT
 const ORBPathCallbacks ORBPathCGPathCallbacks ORB_REFINED_FOR_SWIFT;
@@ -109,10 +98,9 @@ static ORB_INLINE const ORBPathCallbacks *_ORBPathCallbacksGetCGPath(void)
     ORB_SWIFT_NAME(getter:ORBPathCallbacks.cgPath()) {
     return &ORBPathCGPathCallbacks;
 }
-#endif
 
 ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* OPENRENDERBOX_CF_CGTYPES */
+#endif /* ORB_TARGET_OS_DARWIN */

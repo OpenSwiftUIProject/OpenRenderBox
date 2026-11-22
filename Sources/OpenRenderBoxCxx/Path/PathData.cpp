@@ -4,7 +4,7 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPath.h>
 #include "PathClipStroke.hpp"
@@ -430,4 +430,4 @@ CFStringRef ORBPathCopyDebugDescription(ORBPath path) {
     return result;
 }
 
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */

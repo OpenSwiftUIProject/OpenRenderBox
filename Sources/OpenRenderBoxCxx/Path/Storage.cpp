@@ -2,7 +2,9 @@
 //  Storage.cpp
 //  OpenRenderBox
 
-#if OPENRENDERBOX_CF_CGTYPES
+#include <OpenRenderBox/ORBTargetConditionals.h>
+
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPathCallbacks.h>
 #include "NestedCallbacks.hpp"
@@ -12,10 +14,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
-#if ORB_TARGET_OS_DARWIN
 #include "PathMapper.hpp"
 #include <malloc/malloc.h>
-#endif
 
 const uint8_t __ORBPathElementArgumentCount[25] = {
     2, 2, 4, 6, 0, 4, 4, 4, 6, 6, 8, 8, 5, 5, 5, 5, 0, 0, 2, 3, 0, 0, 2, 1, 1,
@@ -71,7 +71,6 @@ void read_values(const uint8_t *bytes, size_t &offset, uint8_t encoding, CGFloat
     }
 }
 
-#if ORB_TARGET_OS_DARWIN
 const ORBPathCallbacks storageCallbacks = {
     .flags = {},
     .retain = nullptr,
@@ -89,7 +88,6 @@ const ORBPathCallbacks storageCallbacks = {
     .cgPath = nullptr,
     .next = nullptr,
 };
-#endif
 
 } // namespace
 
@@ -147,9 +145,7 @@ void Storage::reserve_slow(size_t size) {
     size_t currentCapacity = capacity();
     size_t doubled = currentCapacity <= std::numeric_limits<size_t>::max() / 2 ? currentCapacity * 2 : size;
     size_t newCapacity = std::max(doubled, size);
-    #if ORB_TARGET_OS_DARWIN
     newCapacity = malloc_good_size(newCapacity);
-    #endif
     if (_flags.isExternal()) {
         auto *newBytes = static_cast<uint8_t *>(std::realloc(_external_storage, newCapacity));
         if (!newBytes) {
@@ -168,9 +164,7 @@ void Storage::reserve_slow(size_t size) {
         _external_storage = newBytes;
         _external_size = size;
         _external_capacity = newCapacity;
-        #if ORB_TARGET_OS_DARWIN
         _cached_cgPath = nullptr;
-        #endif
     }
 }
 
@@ -206,23 +200,19 @@ void Storage::push_values(uint8_t encoding, const CGFloat *values, size_t count)
 }
 
 void Storage::invalidate() {
-#if ORB_TARGET_OS_DARWIN
     if (_flags.requiresMapping()) {
         invalidate_mapped_storage(_identifier);
     }
-#endif
     uintptr_t bounds = __atomic_exchange_n(&_bounds, 0, __ATOMIC_ACQ_REL);
     if (bounds & 1) {
         delete[] reinterpret_cast<float *>(bounds & ~uintptr_t(3));
     }
-    #if ORB_TARGET_OS_DARWIN
     if (_flags.isExternal()) {
         CGPathRef path = __atomic_exchange_n(&_cached_cgPath, nullptr, __ATOMIC_ACQ_REL);
         if (path) {
             CGPathRelease(path);
         }
     }
-    #endif
 }
 
 bool Storage::operator==(const Storage &other) const ORB_NOEXCEPT {
@@ -430,11 +420,9 @@ bool Storage::apply_elements(void *info, ORBPathApplyCallback callback) const OR
     if (callback == NestedCallbacks::single_element_callback) {
         return NestedCallbacks::single_element_fast(*this, info);
     }
-#if ORB_TARGET_OS_DARWIN
     if (_flags.requiresMapping() && callback == apply_mapping_element) {
         return apply_mapped_storage(*this, info, 0);
     }
-#endif
     return apply_elements_(info, callback);
 }
 
@@ -450,11 +438,9 @@ bool Storage::apply_elements_(void *info, ORBPathApplyCallback callback) const O
 }
 
 bool Storage::apply_elements_at_depth(void *info, ORBPathApplyCallback callback, size_t depth) const ORB_NOEXCEPT {
-#if ORB_TARGET_OS_DARWIN
     if (_flags.requiresMapping() && callback == apply_mapping_element) {
         return apply_mapped_storage(*this, info, depth);
     }
-#endif
     if (depth == 0) {
         return apply_elements_(info, callback);
     }
@@ -480,7 +466,6 @@ bool Storage::apply_elements_at_depth(void *info, ORBPathApplyCallback callback,
     return true;
 }
 
-#if ORB_TARGET_OS_DARWIN
 CGRect Storage::bounding_rect() const ORB_NOEXCEPT {
     uintptr_t cache = __atomic_load_n(&_bounds, __ATOMIC_ACQUIRE);
     if (cache) {
@@ -545,9 +530,8 @@ CGPathRef Storage::cgpath() const ORB_NOEXCEPT {
     CGPathRelease(newPath);
     return expected;
 }
-#endif
 
 } /* Path */
 } /* ORB */
 
-#endif /* OPENRENDERBOX_CF_CGTYPES */
+#endif /* ORB_TARGET_OS_DARWIN */

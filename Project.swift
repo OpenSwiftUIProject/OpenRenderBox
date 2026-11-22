@@ -15,7 +15,6 @@ let moduleHeaders = sourceModuleMap.components(separatedBy: .newlines).compactMa
 // Use the same module declarations for SwiftPM and the framework.
 let frameworkModuleMap = "framework " + sourceModuleMap
     .replacingOccurrences(of: "module OpenRenderBoxCxx", with: "module OpenRenderBox")
-    .replacingOccurrences(of: "module OpenRenderBox.C {", with: "module OpenRenderBox.C {\n    header \"ORBConfiguration.h\"")
     .replacingOccurrences(of: "header \"OpenRenderBox/", with: "header \"")
     .replacingOccurrences(of: "header \"../", with: "header \"")
 let moduleMapDirectory = root.appendingPathComponent("Derived/ModuleMaps")
@@ -25,19 +24,6 @@ try frameworkModuleMap.write(
     atomically: true,
     encoding: .utf8
 )
-
-// Consumers must use the same backend as the framework binary.
-let frameworkConfiguration = """
-#pragma once
-
-#if defined(OPENRENDERBOX_CF_CGTYPES) && OPENRENDERBOX_CF_CGTYPES != 1
-#error "This OpenRenderBox framework requires OPENRENDERBOX_CF_CGTYPES=1."
-#endif
-#ifndef OPENRENDERBOX_CF_CGTYPES
-#define OPENRENDERBOX_CF_CGTYPES 1
-#endif
-
-"""
 
 // Preserve feature paths for the C++ and Objective-C submodules.
 let internalHeaders = moduleHeaders.filter { $0.hasPrefix("../") }.map { String($0.dropFirst(3)) }
@@ -53,16 +39,11 @@ let headerCopyCommands = internalHeaders.map { header in
 let exportModuleHeaders = TargetScript.pre(
     script: """
     set -eu
-    mkdir -p "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}"
-    cat > "${TARGET_BUILD_DIR}/${PUBLIC_HEADERS_FOLDER_PATH}/ORBConfiguration.h" <<'EOF'
-    \(frameworkConfiguration)
-    EOF
     \(headerCopyCommands)
     """,
     name: "Export module headers",
     inputPaths: internalHeaders.map { .glob(.path("\(sourceRoot)/\($0)")) },
-    outputPaths: [.path("$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/ORBConfiguration.h")]
-        + internalHeaders.map { .path("$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/\($0)") },
+    outputPaths: internalHeaders.map { .path("$(TARGET_BUILD_DIR)/$(PUBLIC_HEADERS_FOLDER_PATH)/\($0)") },
     basedOnDependencyAnalysis: true
 )
 
@@ -75,8 +56,6 @@ let project = Project(
     name: "OpenRenderBox",
     settings: .settings(base: [
         "CLANG_CXX_LANGUAGE_STANDARD": "c++20",
-        "GCC_PREPROCESSOR_DEFINITIONS": ["$(inherited)", "OPENRENDERBOX_CF_CGTYPES"],
-        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": ["$(inherited)", "OPENRENDERBOX_CF_CGTYPES"],
         "SWIFT_VERSION": "5.0",
     ]),
     targets: [

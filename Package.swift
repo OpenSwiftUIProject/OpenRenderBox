@@ -155,20 +155,17 @@ let compatibilityTestCondition = envBoolValue("COMPATIBILITY_TEST", default: fal
 let useLocalDeps = envBoolValue("USE_LOCAL_DEPS")
 let renderBoxCondtion = envBoolValue("RENDERBOX", default: buildForDarwinPlatform && !isSPIBuild)
 
-// C geometry types conflict with Foundation's Swift geometry types on Linux.
-// Disable this flag to use Swift Path instead of the C++ implementation.
-let cfCGTypes = envBoolValue("CF_CGTYPES", default: buildForDarwinPlatform)
 // Use OPENSWIFTUI_COREGRAPHICS to select the same backend in ORB and OCG shims.
 let coreGraphicsCondition = envBoolValue("COREGRAPHICS", default: buildForDarwinPlatform)
 
 // MARK: - Shared Settings
 
-var sharedCSettings: [CSetting] = [
+let sharedCSettings: [CSetting] = [
     .unsafeFlags(["-I", libSwiftPath], .when(platforms: .nonDarwinPlatforms)),
     // .unsafeFlags(["-fmodules"]),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
 ]
-var sharedCxxSettings: [CXXSetting] = [
+let sharedCxxSettings: [CXXSetting] = [
     .unsafeFlags(["-I", libSwiftPath], .when(platforms: .nonDarwinPlatforms)),
     // .unsafeFlags(["-fcxx-modules"]),
     .define("__COREFOUNDATION_FORSWIFTFOUNDATIONONLY__", to: "1", .when(platforms: .nonDarwinPlatforms)),
@@ -181,12 +178,6 @@ if libraryEvolutionCondition {
     // NOTE: -enable-library-evolution will cause module verify failure for `swift build`.
     // Either set LIBRARY_EVOLUTION=0 or add `-Xswiftc -no-verify-emitted-module-interface` after `swift build`
     sharedSwiftSettings.append(.unsafeFlags(["-enable-library-evolution", "-no-verify-emitted-module-interface"]))
-}
-
-if cfCGTypes {
-    sharedCSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
-    sharedCxxSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
-    sharedSwiftSettings.append(.define("OPENRENDERBOX_CF_CGTYPES"))
 }
 
 if coreGraphicsCondition {

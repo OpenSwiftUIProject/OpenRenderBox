@@ -2,7 +2,9 @@
 //  ORBPathStorage.cpp
 //  OpenRenderBox
 
-#if OPENRENDERBOX_CF_CGTYPES
+#include <OpenRenderBox/ORBTargetConditionals.h>
+
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPathStorage.h>
 #include "Storage.hpp"
@@ -72,8 +74,6 @@ size_t ORBPathStorageGetBezierOrder(ORBPathStorageRef storage) {
     return storage->storage.flags().bezierOrder();
 }
 
-#if ORB_TARGET_OS_DARWIN
-
 CGRect ORBPathStorageGetBoundingRect(ORBPathStorageRef storage) {
     return storage->storage.bounding_rect();
 }
@@ -81,6 +81,5 @@ CGRect ORBPathStorageGetBoundingRect(ORBPathStorageRef storage) {
 CGPathRef ORBPathStorageGetCGPath(ORBPathStorageRef storage) {
     return storage->storage.cgpath();
 }
-#endif
 
-#endif /* OPENRENDERBOX_CF_CGTYPES */
+#endif /* ORB_TARGET_OS_DARWIN */

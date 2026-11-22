@@ -6,7 +6,7 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPath.h>
 #include <cmath>
@@ -124,4 +124,4 @@ inline CGFloat curve_measure(Cubic curve, CGFloat requested, bool findIndex) {
 
 } // namespace ORB::Path::Geometry
 
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */

@@ -6,7 +6,7 @@
 
 #include "PathClipStroke.hpp"
 
-#if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 
 #include <algorithm>
 #include <cmath>
@@ -261,4 +261,4 @@ inline std::vector<Keyframe> remapKeyframes(const std::vector<Keyframe> &keys,
 }
 
 } // namespace ORB::Path::ClipStroke
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */

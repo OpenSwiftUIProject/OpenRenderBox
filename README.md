@@ -23,8 +23,10 @@ Currently, this project is in early development.
 The current suggested toolchain to build the project is Swift 6.3.3 / Xcode 26.6.
 
 Tuist builds `OpenRenderBoxCxx` as a static library and links it into the dynamic
-`OpenRenderBox.framework`. This build uses the Darwin SDK's CoreGraphics types.
-Use SwiftPM for the other backend configurations.
+`OpenRenderBox.framework`.
+
+Path uses the C++ implementation and the SDK's CoreGraphics types on Apple
+platforms. It uses the Swift implementation on other platforms.
 
 ```sh
 tuist generate run --no-open --cache-profile none
@@ -37,9 +39,6 @@ Scripts/Tests/framework-test .build/tuist-framework/Build/Products/Release/OpenR
 The framework contains the public C headers and the C++, Objective-C, and Swift
 modules. The client test uses a separate copy of the bundle with no source search
 paths and compiles the Swift interface.
-The framework exports `ORBConfiguration.h` with its fixed CoreGraphics backend
-setting. Consumers can use its path APIs without extra compiler definitions.
-SwiftPM continues to select the backend with `OPENRENDERBOX_CF_CGTYPES`.
 
 ## Source Layout
 
@@ -83,7 +82,8 @@ Run the helper tests with `Scripts/Tests/add-header-test`.
 
 ## Shims
 
-The `OpenRenderBoxShims` product provides Swift aliases and a C header for path APIs.
+The `OpenRenderBoxShims` product provides Swift aliases for Path APIs. Its C
+header exposes Path APIs on Apple platforms.
 Swift clients use:
 
 ```swift

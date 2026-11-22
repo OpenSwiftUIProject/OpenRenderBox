@@ -4,7 +4,7 @@
 
 import Testing
 
-#if canImport(CoreGraphics) && (OPENRENDERBOX_CF_CGTYPES || OPENRENDERBOX_COMPATIBILITY_TEST)
+#if canImport(Darwin)
 import CoreGraphics
 import Foundation
 

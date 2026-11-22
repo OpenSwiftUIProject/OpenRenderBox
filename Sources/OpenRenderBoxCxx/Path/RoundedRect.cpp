@@ -1,5 +1,5 @@
 #include <OpenRenderBox/ORBBase.h>
-#if OPENRENDERBOX_CF_CGTYPES && ORB_TARGET_OS_DARWIN
+#if ORB_TARGET_OS_DARWIN
 #include "RoundedRect.hpp"
 #include <algorithm>
 #include <cmath>
@@ -106,4 +106,4 @@ void add_rounded_rect(CGMutablePathRef path, ORBPathElement element, const CGFlo
     CGPathCloseSubpath(path);
 }
 } // namespace ORB::Path
-#endif
+#endif /* ORB_TARGET_OS_DARWIN */

@@ -6,7 +6,7 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES
+#if ORB_TARGET_OS_DARWIN
 #include <stddef.h>
 #include <CoreGraphics/CoreGraphics.h>
 
@@ -60,7 +60,6 @@ typedef ORB_ENUM(int32_t, ORBPathRoundedCornerStyle) {
 /// Returns true to continue enumeration, false to stop
 typedef bool (*ORBPathApplyCallback)(void * info, ORBPathElement element, const CGFloat *points, const void * _Nullable userInfo);
 
-#if ORB_TARGET_OS_DARWIN
 /// Callback for mapped Core Graphics elements. Return false to stop callbacks.
 typedef bool (*ORBPathApplierCallback)(void *info, const CGPathElement *element);
 
@@ -72,7 +71,6 @@ typedef ORB_ENUM(int32_t, ORBPathLineElement) {
 
 /// The point is unused for a close-subpath callback.
 typedef bool (*ORBPathLineApplyCallback)(void *info, ORBPathLineElement element, const CGPoint *point);
-#endif
 
 typedef struct ORBPathCallbacks ORBPathCallbacks ORB_SWIFT_NAME(ORBPath.ApplyCallback);
 
@@ -186,7 +184,6 @@ void ORBPathRelease(ORBPath path) ORB_SWIFT_NAME(ORBPath.release(self:));
 
 // MARK: - Path Creation
 
-#if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
 ORBPath ORBPathMakeWithCGPath(CGPathRef _Nullable cgPath) ORB_SWIFT_NAME(ORBPath.init(cgPath:));
 
@@ -201,7 +198,6 @@ ORBPath ORBPathMakeRoundedRect(CGRect rect, CGFloat cornerWidth, CGFloat cornerH
 
 ORB_EXPORT
 ORBPath ORBPathMakeUnevenRoundedRect(CGRect rect, CGFloat topLeftRadius, CGFloat topRightRadius, CGFloat bottomRightRadius, CGFloat bottomLeftRadius, ORBPathRoundedCornerStyle style, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.init(roundedRect:topLeftRadius:topRightRadius:bottomRightRadius:bottomLeftRadius:style:transform:));
-#endif
 
 ORB_EXPORT
 ORBPath ORBPathCopyTransformedPath(ORBPath path, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.copy(self:transform:));
@@ -215,7 +211,6 @@ ORBPath ORBPathCopyTrimmedPath(ORBPath path, CGFloat from, CGFloat to) ORB_SWIFT
 static ORB_INLINE bool ORBPathIsNull(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.isNull(self:)) {
     return path.storage == ORBPathNull.storage && path.callbacks == ORBPathNull.callbacks;
 }
-
 
 // MARK: - Path Operation
 
@@ -239,7 +234,6 @@ bool ORBPathEqualToPath(ORBPath lhs, ORBPath rhs) ORB_SWIFT_NAME(ORBPath.isEqual
 
 // MARK: - CGPath Interoperability
 
-#if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
 bool ORBPathApply(ORBPath path, const CGAffineTransform * _Nullable transform, void *info, ORBPathApplierCallback callback) ORB_SWIFT_NAME(ORBPath.applyCGPathElements(self:transform:info:callback:));
 
@@ -269,19 +263,16 @@ CGPathRef ORBPathCopyCGPath(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.cgPath(s
 
 ORB_EXPORT
 CGRect ORBPathGetBoundingRect(ORBPath path) ORB_SWIFT_NAME(getter:ORBPath.boundingRect(self:));
-#endif
 
 // MARK: - Point Containment
-#if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
 bool ORBPathContainsPoint(ORBPath path, CGPoint point, bool eoFill) ORB_SWIFT_NAME(ORBPath.contains(self:point:eoFill:));
 
 ORB_EXPORT
 uint64_t ORBPathContainsPoints(ORBPath path, uint64_t count, const CGPoint *points, bool eoFill, const CGAffineTransform * _Nullable transform) ORB_SWIFT_NAME(ORBPath.containsPoints(self:count:points:eoFill:transform:));
-#endif
 
 ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* OPENRENDERBOX_CF_CGTYPES */
+#endif /* ORB_TARGET_OS_DARWIN */

@@ -84,6 +84,7 @@ EOF
 
 cat > client.swift <<'EOF'
 import OpenRenderBox
+import OpenRenderBox.ObjC
 
 precondition(ORBColor.black.alpha == 1)
 precondition(ORBPath.empty.isEmpty)
@@ -96,8 +97,9 @@ EOF
 
 target="$(uname -m)-apple-macos15.0"
 common=(-target "$target" -F "$test_root" -framework OpenRenderBox -Wl,-rpath,"$test_root")
-# Each guarded header must expose its API without another header setting the backend first.
-for declaration in CFCGTypes.h:CGFloat ORBPath.h:ORBPath ORBPathCallbacks.h:ORBPathCallbacks ORBPathStorage.h:ORBPathStorageRef; do
+# Check the public headers independently of include order.
+for declaration in CFCGTypes.h:CGFloat CFCGTypes.h:CGSize CFCGTypes.h:CGPoint CFCGTypes.h:CGRect \
+    ORBPath.h:ORBPath ORBPathCallbacks.h:ORBPathCallbacks ORBPathStorage.h:ORBPathStorageRef; do
     printf '#include <OpenRenderBox/%s>\n%s value;\n' "${declaration%:*}" "${declaration#*:}" > path-header.c
     xcrun clang -target "$target" -F "$test_root" -fsyntax-only path-header.c
 done
@@ -105,12 +107,6 @@ for declaration in Path/Storage.hpp:ORB::Path::Storage Path/NestedCallbacks.hpp:
     printf '#include <OpenRenderBox/%s>\nstatic_assert(sizeof(%s) > 0);\n' "${declaration%%:*}" "${declaration#*:}" > path-header.cpp
     xcrun clang++ -target "$target" -F "$test_root" -std=c++20 -fsyntax-only path-header.cpp
 done
-if xcrun clang -target "$target" -F "$test_root" -DOPENRENDERBOX_CF_CGTYPES=0 \
-    -fsyntax-only path-header.c > backend-conflict.log 2>&1; then
-    echo "The framework must reject a conflicting backend setting." >&2
-    exit 1
-fi
-grep -Fq 'requires OPENRENDERBOX_CF_CGTYPES=1' backend-conflict.log
 xcrun clang "${common[@]}" client.c -o client-c
 ./client-c
 xcrun clang++ "${common[@]}" -std=c++20 client.cpp -o client-cxx

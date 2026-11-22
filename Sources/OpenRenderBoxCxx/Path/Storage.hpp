@@ -6,7 +6,7 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPath.h>
 #include "../Util/assert.hpp"
@@ -14,9 +14,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <vector>
-#if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CoreGraphics.h>
-#endif
 
 ORB_ASSUME_NONNULL_BEGIN
 
@@ -202,10 +200,8 @@ public:
     bool apply_elements(void *info, ORBPathApplyCallback _Nullable callback) const ORB_NOEXCEPT;
     bool apply_elements_at_depth(void *info, ORBPathApplyCallback callback, size_t depth) const ORB_NOEXCEPT;
 
-    #if ORB_TARGET_OS_DARWIN
     CGRect bounding_rect() const ORB_NOEXCEPT;
     CGPathRef _Nullable cgpath() const ORB_NOEXCEPT;
-    #endif
 
     ORB_INLINE ORB_CONSTEXPR
     StorageFlags flags() const ORB_NOEXCEPT { return _flags; }
@@ -240,11 +236,7 @@ private:
     size_t _external_size;              // 0x18
     size_t _external_capacity;          // 0x20
     mutable float _external_bounds[4];  // 0x28
-    #if ORB_TARGET_OS_DARWIN
     mutable CGPathRef _Nullable _cached_cgPath; // 0x38
-    #else
-    void *_reserved;                    // 0x38
-    #endif
 };
 
 static_assert(sizeof(Storage) == 64, "Storage header and external overlay must fit 64 bytes");
@@ -260,4 +252,4 @@ struct ORBPathStorage {
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* OPENRENDERBOX_CF_CGTYPES */
+#endif /* ORB_TARGET_OS_DARWIN */

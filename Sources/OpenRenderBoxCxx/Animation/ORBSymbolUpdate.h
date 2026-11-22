@@ -63,9 +63,7 @@ ORB_EXPORT ORBSymbolStyle ORBSymbolUpdateLayerStyle(ORBSymbolUpdateLayer layer) 
 ORB_EXPORT NSString * _Nullable ORBSymbolUpdateLayerColorName(ORBSymbolUpdateLayer layer) ORB_SWIFT_NAME(getter:ORBSymbolUpdateLayer.colorName(self:));
 ORB_EXPORT CGColorRef _Nullable ORBSymbolUpdateLayerDefaultColor(ORBSymbolUpdateLayer layer) CF_RETURNS_NOT_RETAINED ORB_SWIFT_NAME(getter:ORBSymbolUpdateLayer.defaultColor(self:));
 // The update owns the returned path. Copy it before the update ends.
-#if OPENRENDERBOX_CF_CGTYPES
 ORB_EXPORT ORBPath ORBSymbolUpdateLayerPath(ORBSymbolUpdateLayer layer, CGAffineTransform *transform, ORBSymbolUpdateLayerFlags flags) ORB_SWIFT_NAME(ORBSymbolUpdateLayer.path(self:transform:flags:));
-#endif
 ORB_EXPORT void ORBSymbolUpdateLayerDraw(ORBSymbolUpdateLayer layer, ORBDrawingState state, ORBColor color, float opacity, ORBBlendMode blendMode, ORBSymbolUpdateLayerFlags flags) ORB_SWIFT_NAME(ORBSymbolUpdateLayer.draw(self:in:color:opacity:blendMode:flags:));
 
 ORB_EXTERN_C_END

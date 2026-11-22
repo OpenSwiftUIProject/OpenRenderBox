@@ -9,12 +9,10 @@
 
 #include <OpenRenderBox/ORBBase.h>
 
-#if OPENRENDERBOX_CF_CGTYPES
+#if ORB_TARGET_OS_DARWIN
 
 #include <OpenRenderBox/ORBPath.h>
-#if ORB_TARGET_OS_DARWIN
 #include <CoreGraphics/CoreGraphics.h>
-#endif
 
 ORB_ASSUME_NONNULL_BEGIN
 
@@ -50,17 +48,15 @@ bool ORBPathStorageIsSingleElement(ORBPathStorageRef storage) ORB_SWIFT_NAME(get
 ORB_EXPORT
 size_t ORBPathStorageGetBezierOrder(ORBPathStorageRef storage) ORB_SWIFT_NAME(getter:ORBPathStorageRef.bezierOrder(self:));
 
-#if ORB_TARGET_OS_DARWIN
 ORB_EXPORT
 CGRect ORBPathStorageGetBoundingRect(ORBPathStorageRef storage) ORB_SWIFT_NAME(getter:ORBPathStorageRef.boundingRect(self:));
 
 ORB_EXPORT
 CF_RETURNS_NOT_RETAINED
 __nullable CGPathRef ORBPathStorageGetCGPath(ORBPathStorageRef storage) ORB_SWIFT_NAME(getter:ORBPathStorageRef.cgPath(self:));
-#endif
 
 ORB_EXTERN_C_END
 
 ORB_ASSUME_NONNULL_END
 
-#endif /* OPENRENDERBOX_CF_CGTYPES */
+#endif /* ORB_TARGET_OS_DARWIN */

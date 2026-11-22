@@ -2,7 +2,9 @@
 //  NestedCallbacks.cpp
 //  OpenRenderBox
 
-#if OPENRENDERBOX_CF_CGTYPES
+#include <OpenRenderBox/ORBTargetConditionals.h>
+
+#if ORB_TARGET_OS_DARWIN
 
 #include "NestedCallbacks.hpp"
 #include <Vector/vector.hpp>
@@ -182,4 +184,4 @@ bool NestedCallbacks::first_element(const Storage &storage, Storage::Iterator &i
 } /* Path */
 } /* ORB */
 
-#endif /* OPENRENDERBOX_CF_CGTYPES */
+#endif /* ORB_TARGET_OS_DARWIN */
