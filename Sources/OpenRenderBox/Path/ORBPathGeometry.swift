@@ -659,7 +659,7 @@ private struct _ORBPathWinding {
         if minX > maximum.x { line(d); return }
         let e = c - (b + b) + a, f = b - (c + c) + d
         let x = max(abs(e.x), abs(f.x)), y = max(abs(e.y), abs(f.y))
-        let estimate = ceil((x * x + y * y).squareRoot().squareRoot())
+        let estimate = (x * x + y * y).squareRoot().squareRoot().rounded(.up)
         guard estimate.isFinite else { current = d; return }
         let segments = Int(min(estimate, 1024))
         if segments >= 2 {
@@ -692,9 +692,9 @@ func _orbContains(_ records: [_ORBPathRecord], queries: [CGPoint], bounds: CGRec
     var state = _ORBPathWinding(queries: queries.map(_ORBPathWinding.narrow), winding: Array(repeating: 0, count: queries.count),
         minimum: SIMD2(repeating: .infinity), maximum: SIMD2(repeating: -.infinity))
     for query in state.queries {
-        for axis in 0..<2 {
-            state.minimum[axis] = fmin(state.minimum[axis], query[axis])
-            state.maximum[axis] = fmax(state.maximum[axis], query[axis])
+        for axis in 0..<2 where !query[axis].isNaN {
+            state.minimum[axis] = min(state.minimum[axis], query[axis])
+            state.maximum[axis] = max(state.maximum[axis], query[axis])
         }
     }
     if state.minimum == state.maximum {
