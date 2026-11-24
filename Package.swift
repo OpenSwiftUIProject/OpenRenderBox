@@ -120,9 +120,11 @@ EnvManager.shared.register(domain: "OpenSwiftUI")
 
 // MARK: - Env and config
 
+let buildForWASIPlatform = envBoolValue("WASI", default: false)
+
 #if os(macOS)
-// NOTE: #if os(macOS) check is not accurate if we are cross compiling for Linux platform. So we add an env key to specify it.
-let buildForDarwinPlatform = envBoolValue("BUILD_FOR_DARWIN_PLATFORM", default: true)
+// NOTE: #if os(macOS) check is not accurate if we are cross compiling for Linux/WASI platform. So we add an env key to specify it.
+let buildForDarwinPlatform = envBoolValue("BUILD_FOR_DARWIN_PLATFORM", default: !buildForWASIPlatform)
 #else
 let buildForDarwinPlatform = envBoolValue("BUILD_FOR_DARWIN_PLATFORM")
 #endif
@@ -353,8 +355,10 @@ if useLocalDeps {
     }
     package.dependencies += dependencies
 } else {
+    let wasiDepsBranch = envStringValue("WASI_DEPS_BRANCH", default: "wasi/dev")
+    let openCoreGraphicsBranch = buildForWASIPlatform ? wasiDepsBranch : "main"
     var dependencies: [Package.Dependency] = [
-        .package(url: "https://github.com/OpenSwiftUIProject/OpenCoreGraphics", branch: "main"),
+        .package(url: "https://github.com/OpenSwiftUIProject/OpenCoreGraphics", branch: openCoreGraphicsBranch),
     ]
     if renderBoxCondtion {
         dependencies.append(.package(url: "https://github.com/OpenSwiftUIProject/DarwinPrivateFrameworks.git", branch: "main"))
